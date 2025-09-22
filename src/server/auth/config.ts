@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import { env } from "~/env";
 
 import { db } from "~/server/db";
 
@@ -32,16 +32,23 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    DiscordProvider,
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    {
+      id: "authentik",
+      name: "Authentik",
+      type: "oidc",
+      clientId: env.AUTH_AUTHENTIK_ID,
+      clientSecret: env.AUTH_AUTHENTIK_SECRET,
+      issuer: env.AUTH_AUTHENTIK_ISSUER,
+      checks: ["pkce", "state"],
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name ?? profile.preferred_username,
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
+    },
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
