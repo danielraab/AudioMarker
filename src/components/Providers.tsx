@@ -1,0 +1,20 @@
+"use client";
+
+import { SessionProvider } from "next-auth/react";
+import Navbar from "./navbar/Navbar";
+import { HeroUIProvider } from "@heroui/react";
+
+interface ProvidersProps {
+  children: React.ReactNode;
+}
+
+export default function Providers({ children }: ProvidersProps) {
+  return (
+    <HeroUIProvider>
+      <SessionProvider>
+        <Navbar />
+        {children}
+      </SessionProvider>
+    </HeroUIProvider>
+  );
+}
