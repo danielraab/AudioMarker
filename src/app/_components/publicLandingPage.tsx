@@ -1,34 +1,52 @@
-import Link from "next/link";
+import { Bookmark, FileMusic, FlagTriangleRight, Section, Share2 } from "lucide-react";
 
 
 export default function PublicLandingPage() {
   return (<>
-    <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-      Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+    <h1 className="flex items-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+      <img
+        src="/audio-marker-logo.svg"
+        alt="Audio Marker Logo"
+        className="h-16 w-16 object-contain transition-transform hover:scale-105"
+      />
+      <span>Audio Marker</span>
     </h1>
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-      <Link
-        className="flex max-w-xs flex-col gap-4 rounded-xl p-4"
-        href="https://create.t3.gg/en/usage/first-steps"
-        target="_blank"
-      >
-        <h3 className="text-2xl font-bold">First Steps →</h3>
+    <div className="max-w-3xl flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8">
+      <div className="flex flex-col gap-4 rounded-xl p-4">
+        <FileMusic />
+        <h3 className="text-2xl font-bold">Upload your audio file</h3>
         <div className="text-lg">
-          Just the basics - Everything you need to know to set up your
-          database and authentication.
+          Currently you can only upload MP3 files. More formats may come in the future.
         </div>
-      </Link>
-      <Link
-        className="flex max-w-xs flex-col gap-4 rounded-xl p-4"
-        href="https://create.t3.gg/en/introduction"
-        target="_blank"
-      >
-        <h3 className="text-2xl font-bold">Documentation →</h3>
+      </div>
+      <div className="flex flex-col gap-4 rounded-xl p-4" >
+        <Bookmark />
+        <h3 className="text-2xl font-bold">Set marker on your file</h3>
         <div className="text-lg">
-          Learn more about Create T3 App, the libraries it uses, and how
-          to deploy it.
+          After uploading, you can set markers on your audio file to highlight important sections.
         </div>
-      </Link>
+      </div>
+      <div className="flex flex-col gap-4 rounded-xl p-4" >
+        <Share2 />
+        <h3 className="text-2xl font-bold">Share your marker</h3>
+        <div className="text-lg">
+          Share a read-only link with others so they can view the markers you set on your audio file.
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 rounded-xl p-4" >
+        <FlagTriangleRight />
+        <h3 className="text-2xl font-bold">Marker in Browser</h3>
+        <div className="text-lg">
+          User with a read-only link can listen to the audio and see the markers you set, and they can set own marker which are available only in their browser.
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 rounded-xl p-4 col-span-2" >
+        <Section />
+        <h3 className="text-2xl font-bold">Be careful</h3>
+        <div className="text-lg">
+          Upload only files were you own the rights to. Do not upload sensitive or private information. Read-only link can be used by anyone who has it, so share it only with people you trust.
+        </div>
+      </div>
     </div>
   </>);
 }
