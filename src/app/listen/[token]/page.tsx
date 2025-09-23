@@ -1,5 +1,5 @@
 import { api } from "~/trpc/server";
-import ListenOnlyAudioPlayer from "~/components/ListenOnlyAudioPlayer";
+import ListenOnlyAudioPlayer from "~/app/_components/listen/ListenOnlyAudioPlayer";
 import { notFound } from "next/navigation";
 
 interface ListenPageProps {

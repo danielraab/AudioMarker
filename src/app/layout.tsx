@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import Providers from "~/components/Providers";
+import Providers from "~/app/_components/Providers";
 
 export const metadata: Metadata = {
   title: "Audio Marker",

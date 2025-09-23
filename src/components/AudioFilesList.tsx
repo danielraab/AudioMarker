@@ -1,8 +1,9 @@
 import { db } from "~/server/db";
 import { auth } from "~/server/auth";
-import { AudioListItem } from "./AudioListItem";
+import { AudioListItem } from "~/app/_components/main/AudioListItem";
 
 export default async function AudioFilesList() {
+  console.log("AudioFilesList");
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) {
@@ -40,7 +41,7 @@ export default async function AudioFilesList() {
       </header>
       <div className="space-y-4">
         {audios.map((audio) => (
-          <AudioListItem 
+          <AudioListItem
             key={audio.id}
             audio={audio}
           />

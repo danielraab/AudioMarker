@@ -8,7 +8,7 @@ import { Button, Chip, Slider } from '@heroui/react';
 import { Play, Pause, Square, ZoomIn, SquareArrowOutUpRight } from 'lucide-react';
 import LoadingOverlay from './LoadingOverlay';
 import Link from 'next/link';
-import type { AudioMarker } from './BrowserMarkerManager';
+import type { AudioMarker } from './listen/BrowserMarkerManager';
 
 interface AudioPlayerProps {
   audioUrl: string;

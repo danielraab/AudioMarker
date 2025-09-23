@@ -1,4 +1,4 @@
-import AudioUploadForm from "~/components/AudioUploadForm";
+import AudioUploadForm from "~/app/_components/main/AudioUploadForm";
 import { auth } from "~/server/auth";
 import { HydrateClient } from "~/trpc/server";
 import PublicLandingPage from "./_components/publicLandingPage";

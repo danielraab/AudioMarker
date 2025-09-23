@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import AudioPlayer from './AudioPlayer';
+import AudioPlayer from '../AudioPlayer';
 import BrowserMarkerManager from './BrowserMarkerManager';
 import type { AudioMarker } from './BrowserMarkerManager';
 
