@@ -2,8 +2,10 @@
 
 import {
   Navbar as HeroNavbar,
-  NavbarBrand } from "@heroui/navbar";
+  NavbarBrand
+} from "@heroui/navbar";
 import UserMenu from "./User";
+import Link from "next/link";
 
 interface NavbarProps {
   title?: string;
@@ -16,7 +18,7 @@ export default function Navbar({ title = "Audio Marker", logoSrc }: NavbarProps)
     <HeroNavbar isBordered>
       {/* Left side - Logo */}
       <NavbarBrand className="grow-0">
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           {logoSrc ? (
             <img
               src={logoSrc}
@@ -30,11 +32,11 @@ export default function Navbar({ title = "Audio Marker", logoSrc }: NavbarProps)
               className="h-8 w-8 object-contain transition-transform hover:scale-105"
             />
           )}
-          <p className="font-bold text-inherit">Audio Marker</p>
-        </div>
+          <span className="font-bold text-inherit">Audio Marker</span>
+        </Link>
       </NavbarBrand>
 
       <UserMenu />
-   </HeroNavbar>
+    </HeroNavbar>
   );
 }

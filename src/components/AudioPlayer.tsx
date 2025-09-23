@@ -3,30 +3,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { Button, Chip, Slider } from '@heroui/react';
-import { Play, Pause, Square, ZoomIn } from 'lucide-react';
+import { Play, Pause, Square, ZoomIn, SquareArrowOutUpRight } from 'lucide-react';
 import LoadingOverlay from './LoadingOverlay';
+import Link from 'next/link';
 
 interface AudioPlayerProps {
   audioUrl: string;
   audioName: string;
-  audioId?: string;
+  audioReadOnlyToken: string;
 }
 
-export default function AudioPlayer({ audioUrl, audioName, audioId }: AudioPlayerProps) {
+export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }: AudioPlayerProps) {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
+  const regionsPlugin = useRef<RegionsPlugin | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [zoomLevel, setZoomLevel] = useState(50);
+  const [zoomLevel, setZoomLevel] = useState(0);
 
-  console.log('outside', audioUrl);
 
   useEffect(() => {
-    console.log('useEffect waveform', waveformRef.current);
     if (!waveformRef.current) return;
+
+    regionsPlugin.current = RegionsPlugin.create();
 
     // Initialize WaveSurfer
     wavesurfer.current = WaveSurfer.create({
@@ -36,22 +39,22 @@ export default function AudioPlayer({ audioUrl, audioName, audioId }: AudioPlaye
       cursorColor: '#0070f0',
       barWidth: 2,
       barRadius: 3,
-      height: 80,
+      height: 100,
       normalize: true,
       mediaControls: false,
       plugins: [
         Timeline.create(),
+        regionsPlugin.current
       ],
     });
     
-
-    console.log('useEffect', audioUrl);
     // Load audio
     wavesurfer.current.load(audioUrl);
 
     // Event listeners
     wavesurfer.current.on('ready', () => {
       setIsLoading(false);
+      wavesurfer.current?.zoom(zoomLevel);
       setDuration(wavesurfer.current?.getDuration() || 0);
     });
 
@@ -110,7 +113,11 @@ export default function AudioPlayer({ audioUrl, audioName, audioId }: AudioPlaye
     <div className="relative">
       <div className='flex justify-between'>
         <div className="flex flex-col">
-          <p className="text-lg font-semibold">{audioName}</p>
+          <p className="flex items-center gap-2 text-lg font-semibold">
+            {audioName}
+            <Link href={`/listen/${audioReadOnlyToken}`}
+              title='Link to publicly available read only player'><SquareArrowOutUpRight size={16} /></Link>
+          </p>
           <p className="text-small text-default-500">Audio Player</p>
         </div>
 
@@ -143,8 +150,8 @@ export default function AudioPlayer({ audioUrl, audioName, audioId }: AudioPlaye
         <span className="text-sm text-default-500 min-w-12">Zoom:</span>
         <Slider
           size="sm"
-          step={5}
-          minValue={10}
+          step={2}
+          minValue={0}
           maxValue={100}
           value={zoomLevel}
           onChange={handleZoomChange}

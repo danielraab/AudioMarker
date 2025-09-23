@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from "react";
+import { useState } from "react";
 import {
   Card,
   CardBody,
@@ -55,7 +55,7 @@ export default function AudioFilesList() {
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return 'just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
@@ -73,6 +73,7 @@ export default function AudioFilesList() {
       </Card>
     );
   }
+  
 
   if (error) {
     return (
@@ -113,21 +114,9 @@ export default function AudioFilesList() {
           <div className="space-y-4">
             {audios.map((audio) => (
               <Card key={audio.id} className="shadow-sm">
-                <CardBody>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold">{audio.name}</h3>
-                        <Chip size="sm" color="primary" variant="flat">
-                          MP3
-                        </Chip>
-                      </div>
-                      <div className="space-y-1 text-sm text-default-500">
-                        <p><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
-                        <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
-
-                      </div>
-                    </div>
+                <CardBody className="gap-2">
+                  <div className="flex flex-row justify-between items-center gap-2">
+                    <h3 className="text-lg font-semibold">{audio.name}</h3>
                     <div className="flex items-center gap-2">
                       <Button
                         size="sm"
@@ -149,6 +138,10 @@ export default function AudioFilesList() {
                       </Button>
                     </div>
                   </div>
+                  <div className="space-y-1 text-sm text-default-500">
+                    <p><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
+                    <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
+                  </div>
                 </CardBody>
               </Card>
             ))}
@@ -166,8 +159,8 @@ export default function AudioFilesList() {
             <Button color="default" variant="light" onPress={onClose}>
               Cancel
             </Button>
-            <Button 
-              color="danger" 
+            <Button
+              color="danger"
               onPress={handleConfirmDelete}
               isLoading={deleteAudioMutation.isPending}
             >

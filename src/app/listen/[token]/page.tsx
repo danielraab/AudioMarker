@@ -18,7 +18,7 @@ export default async function ListenPage({ params }: ListenPageProps) {
           <AudioPlayer 
             audioUrl={audio.filePath}
             audioName={audio.name}
-            audioId={audio.id}
+            audioReadOnlyToken={audio.readonlyToken}
           />
         </div>
       </div>
