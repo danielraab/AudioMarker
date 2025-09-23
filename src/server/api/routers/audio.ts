@@ -98,6 +98,41 @@ export const audioRouter = createTRPCRouter({
       }
 
       // Perform soft delete by setting deletedAt timestamp
+
+  }),
+  
+  updateAudio: protectedProcedure
+    .input(z.object({ 
+      id: z.string(),
+      name: z.string().min(1, "Name is required").max(100, "Name is too long"),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const audio = await ctx.db.audio.findUnique({
+        where: { id: input.id },
+        select: { createdById: true },
+      });
+
+      if (!audio) {
+        throw new Error("Audio not found");
+      }
+
+      if (audio.createdById !== ctx.session.user.id) {
+        throw new Error("Unauthorized");
+      }
+
+      const updatedAudio = await ctx.db.audio.update({
+        where: { id: input.id },
+        data: { name: input.name },
+        select: {
+          id: true,
+          name: true,
+          originalFileName: true,
+          readonlyToken: true,
+          createdAt: true,
+        },
+      });
+
+      return updatedAudio;
       await ctx.db.audio.update({
         where: { id: input.id },
         data: { deletedAt: new Date() },

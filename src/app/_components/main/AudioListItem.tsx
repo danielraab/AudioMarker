@@ -1,11 +1,10 @@
 'use client';
 
+import { useState } from "react";
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Card, CardBody } from "@heroui/react";
-import { Play } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { useState } from "react";
+import { AudioActionsDropdown } from "./AudioActionsDropdown";
 
 interface AudioListItemProps {
   audio: {
@@ -59,27 +58,16 @@ export function AudioListItem({ audio }: AudioListItemProps) {
       <Card className="shadow-sm">
         <CardBody className="gap-2">
           <div className="flex flex-row justify-between items-center gap-2">
-            <h3 className="text-lg font-semibold">{audio.name}</h3>
-            <div className="flex items-center gap-2">
-              <Link href={`/listen/${audio.readonlyToken}`}>
-                <Button
-                  size="sm"
-                  color="primary"
-                  variant="flat"
-                  startContent={<Play size={16} />}
-                >
-                  Play
-                </Button>
-              </Link>
-              <Button
-                size="sm"
-                color="danger"
-                variant="flat"
-                onPress={handleDeleteClick}
-                isDisabled={deleteAudioMutation.isPending}
-              >
-                Delete
-              </Button>
+            <div className="grow">
+              <h3 className="text-lg font-semibold truncate">{audio.name}</h3>
+            </div>
+            <div>
+              <AudioActionsDropdown
+                audioId={audio.id}
+                readonlyToken={audio.readonlyToken}
+                onDeleteClick={handleDeleteClick}
+                isDeleteDisabled={deleteAudioMutation.isPending}
+              />
             </div>
           </div>
           <div className="space-y-1 text-sm text-default-500">
