@@ -8,14 +8,25 @@ import { Button, Chip, Slider } from '@heroui/react';
 import { Play, Pause, Square, ZoomIn, SquareArrowOutUpRight } from 'lucide-react';
 import LoadingOverlay from './LoadingOverlay';
 import Link from 'next/link';
+import type { AudioMarker } from './BrowserMarkerManager';
 
 interface AudioPlayerProps {
   audioUrl: string;
   audioName: string;
   audioReadOnlyToken: string;
+  markers?: AudioMarker[];
+  onTimeUpdate?: (time: number) => void;
+  onSeekToReady?: (seekTo: (time: number) => void) => void;
 }
 
-export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }: AudioPlayerProps) {
+export default function AudioPlayer({
+  audioUrl,
+  audioName,
+  audioReadOnlyToken,
+  markers = [],
+  onTimeUpdate,
+  onSeekToReady,
+}: AudioPlayerProps) {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const regionsPlugin = useRef<RegionsPlugin | null>(null);
@@ -30,6 +41,10 @@ export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }:
     if (!waveformRef.current) return;
 
     regionsPlugin.current = RegionsPlugin.create();
+    regionsPlugin.current.on('region-clicked', (region, e) => {
+      e.stopPropagation() // prevent triggering a click on the waveform
+      region.play(true)
+    })
 
     // Initialize WaveSurfer
     wavesurfer.current = WaveSurfer.create({
@@ -47,7 +62,7 @@ export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }:
         regionsPlugin.current
       ],
     });
-    
+
     // Load audio
     wavesurfer.current.load(audioUrl);
 
@@ -55,7 +70,11 @@ export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }:
     wavesurfer.current.on('ready', () => {
       setIsLoading(false);
       wavesurfer.current?.zoom(zoomLevel);
-      setDuration(wavesurfer.current?.getDuration() || 0);
+      const dur = wavesurfer.current?.getDuration() || 0;
+      setDuration(dur);
+
+      // Create regions from markers
+      createRegionsFromMarkers();
     });
 
     wavesurfer.current.on('play', () => setIsPlaying(true));
@@ -63,17 +82,47 @@ export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }:
     wavesurfer.current.on('finish', () => setIsPlaying(false));
 
     wavesurfer.current.on('audioprocess', () => {
-      setCurrentTime(wavesurfer.current?.getCurrentTime() || 0);
+      const time = wavesurfer.current?.getCurrentTime() || 0;
+      setCurrentTime(time);
+      onTimeUpdate?.(time);
     });
 
     wavesurfer.current.on('interaction', () => {
-      setCurrentTime(wavesurfer.current?.getCurrentTime() || 0);
+      const time = wavesurfer.current?.getCurrentTime() || 0;
+      setCurrentTime(time);
+      onTimeUpdate?.(time);
     });
 
     return () => {
       wavesurfer.current?.destroy();
     };
   }, [audioUrl]);
+
+  // Create regions from markers
+  const createRegionsFromMarkers = () => {
+    if (!regionsPlugin.current || !wavesurfer.current) return;
+
+    // Clear existing regions
+    regionsPlugin.current.clearRegions();
+
+    // Create regions from markers
+    markers.forEach((marker) => {
+      regionsPlugin.current?.addRegion({
+        start: marker.timestamp,
+        color: marker.color,
+        content: marker.label,
+        drag: false,
+        resize: false,
+      });
+    });
+  };
+
+  // Update regions when markers change
+  useEffect(() => {
+    if (wavesurfer.current && !isLoading) {
+      createRegionsFromMarkers();
+    }
+  }, [markers, isLoading]);
 
   const handleZoomChange = (value: number | number[]) => {
     const zoom = Array.isArray(value) ? value[0] : value;
@@ -107,6 +156,20 @@ export default function AudioPlayer({ audioUrl, audioName, audioReadOnlyToken }:
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  const seekTo = (time: number) => {
+    if (wavesurfer.current) {
+      wavesurfer.current.seekTo(time / duration);
+      wavesurfer.current.play();
+    }
+  };
+
+  // Expose seekTo function to parent component when ready
+  useEffect(() => {
+    if (!isLoading && onSeekToReady) {
+      onSeekToReady(seekTo);
+    }
+  }, [isLoading, duration, onSeekToReady]);
 
 
   return (

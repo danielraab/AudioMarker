@@ -1,5 +1,5 @@
 import { api } from "~/trpc/server";
-import AudioPlayer from "~/components/AudioPlayer";
+import ListenOnlyAudioPlayer from "~/components/ListenOnlyAudioPlayer";
 import { notFound } from "next/navigation";
 
 interface ListenPageProps {
@@ -15,10 +15,11 @@ export default async function ListenPage({ params }: ListenPageProps) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <AudioPlayer 
+          <ListenOnlyAudioPlayer
             audioUrl={audio.filePath}
             audioName={audio.name}
             audioReadOnlyToken={audio.readonlyToken}
+            audioId={audio.id}
           />
         </div>
       </div>
