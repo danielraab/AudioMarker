@@ -1,12 +1,12 @@
 'use client';
 
-import React from "react";
-import { 
-  Card, 
-  CardBody, 
-  CardHeader, 
-  Button, 
-  Chip, 
+import {useState} from "react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Chip,
   Spinner,
   Modal,
   ModalContent,
@@ -15,11 +15,14 @@ import {
   ModalFooter,
   useDisclosure
 } from "@heroui/react";
+import { Play } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
 export default function AudioFilesList() {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedAudioId, setSelectedAudioId] = React.useState<string>("");
+  const [selectedAudioId, setSelectedAudioId] = useState<string>("");
 
   const {
     data: audios,
@@ -126,6 +129,15 @@ export default function AudioFilesList() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        color="primary"
+                        variant="flat"
+                        startContent={<Play size={16} />}
+                        onPress={() => router.push(`/listen/${audio.readonlyToken}`)}
+                      >
+                        Play
+                      </Button>
                       <Button
                         size="sm"
                         color="danger"

@@ -74,7 +74,7 @@ export default function AudioUploadForm() {
     <Card className="max-w-md mx-auto">
       <CardHeader className="flex gap-3">
         <div className="flex flex-col">
-          <p className="text-md font-semibold">Audio Upload</p>
+          <p className="text-md font-semibold">New Audio Upload</p>
           <p className="text-small text-default-500">Upload your MP3 audio file</p>
         </div>
       </CardHeader>

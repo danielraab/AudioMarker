@@ -13,9 +13,7 @@ export default async function Home() {
   return (
     <HydrateClient>
       {session?.user && <>
-        <h2>Upload new Audio file:</h2>
         <AudioUploadForm />
-        <h2>List of uploaded files:</h2>
         <AudioFilesList />
         <Demo />
       </>}

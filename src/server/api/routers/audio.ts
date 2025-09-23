@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 export const audioRouter = createTRPCRouter({
@@ -22,6 +23,55 @@ export const audioRouter = createTRPCRouter({
 
     return audios;
   }),
+
+  getAudioById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const audio = await ctx.db.audio.findUnique({
+        where: {
+          id: input.id,
+          createdById: ctx.session.user.id
+        },
+        select: {
+          id: true,
+          name: true,
+          originalFileName: true,
+          filePath: true,
+          readonlyToken: true,
+          createdAt: true,
+        },
+      });
+
+      if (!audio) {
+        throw new Error("Audio not found");
+      }
+
+      return audio;
+    }),
+
+  getAudioByToken: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const audio = await ctx.db.audio.findFirst({
+        where: {
+          readonlyToken: input.token
+        },
+        select: {
+          id: true,
+          name: true,
+          originalFileName: true,
+          filePath: true,
+          readonlyToken: true,
+          createdAt: true,
+        },
+      });
+
+      if (!audio) {
+        throw new Error("Audio not found");
+      }
+
+      return audio;
+    }),
 
   deleteAudio: protectedProcedure
     .input(z.object({ id: z.string() }))
