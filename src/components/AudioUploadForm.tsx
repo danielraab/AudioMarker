@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 export default function AudioUploadForm() {
   const [audioName, setAudioName] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [readonlyToken, setReadonlyToken] = useState("");
   const [status, setStatus] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -60,8 +61,10 @@ export default function AudioUploadForm() {
       }
 
       const result = await response.json();
-      setReadonlyToken(result.readonlyToken);
       setStatus("Upload successful!");
+      router.refresh(); // Refresh to show the new audio file in the list
+      setAudioName("");
+      setFile(null);
 
     } catch (err: any) {
       setStatus(err.message || "Upload failed.");
@@ -129,15 +132,6 @@ export default function AudioUploadForm() {
             >
               {status}
             </Chip>
-          )}
-
-          {readonlyToken && (
-            <div className="p-3 bg-default-100 rounded-lg">
-              <p className="text-sm font-medium text-foreground mb-2">Read-only Token:</p>
-              <code className="text-xs bg-default-200 p-2 rounded block break-all">
-                {readonlyToken}
-              </code>
-            </div>
           )}
         </form>
       </CardBody>

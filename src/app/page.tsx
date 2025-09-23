@@ -1,4 +1,3 @@
-import { LatestPost } from "~/app/_components/post";
 import AudioUploadForm from "~/components/AudioUploadForm";
 import { auth } from "~/server/auth";
 import { HydrateClient } from "~/trpc/server";
