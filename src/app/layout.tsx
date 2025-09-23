@@ -24,7 +24,11 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <Providers>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <main className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+              {children}
+            </main>
+          </TRPCReactProvider>
         </Providers>
       </body>
     </html>
