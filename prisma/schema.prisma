@@ -75,13 +75,14 @@ model VerificationToken {
     }
 
     model Audio {
-        id               String   @id @default(cuid())
+        id               String    @id @default(cuid())
         name             String
         originalFileName String
         filePath         String
-        readonlyToken    String   @unique
-        createdBy        User     @relation(fields: [createdById], references: [id])
+        readonlyToken    String    @unique
+        createdBy        User      @relation(fields: [createdById], references: [id])
         createdById      String
-        createdAt        DateTime @default(now())
-        updatedAt        DateTime @updatedAt
+        createdAt        DateTime  @default(now())
+        updatedAt        DateTime  @updatedAt
+        deletedAt        DateTime?
     }

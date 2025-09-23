@@ -9,7 +9,10 @@ import {
 export const audioRouter = createTRPCRouter({
   getUserAudios: protectedProcedure.query(async ({ ctx }) => {
     const audios = await ctx.db.audio.findMany({
-      where: { createdById: ctx.session.user.id },
+      where: { 
+        createdById: ctx.session.user.id,
+        deletedAt: null // Only fetch non-deleted audios
+      },
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
@@ -76,10 +79,10 @@ export const audioRouter = createTRPCRouter({
   deleteAudio: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // First check if the audio belongs to the user
+      // First check if the audio belongs to the user and is not already deleted
       const audio = await ctx.db.audio.findUnique({
         where: { id: input.id },
-        select: { createdById: true, filePath: true },
+        select: { createdById: true, filePath: true, deletedAt: true },
       });
 
       if (!audio) {
@@ -90,9 +93,14 @@ export const audioRouter = createTRPCRouter({
         throw new Error("Unauthorized");
       }
 
-      // Delete the database record
-      await ctx.db.audio.delete({
+      if (audio.deletedAt) {
+        throw new Error("Audio already deleted");
+      }
+
+      // Perform soft delete by setting deletedAt timestamp
+      await ctx.db.audio.update({
         where: { id: input.id },
+        data: { deletedAt: new Date() },
       });
 
       return { success: true };
