@@ -1,6 +1,5 @@
 import { postRouter } from "./routers/post";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { audioRouter } from "./routers/audio";
 
 /**
  * This is the primary router for your server.
@@ -9,7 +8,6 @@ import { audioRouter } from "./routers/audio";
  */
 export const appRouter = createTRPCRouter({
   post: postRouter,
-  audio: audioRouter,
 });
 
 // export type definition of API
