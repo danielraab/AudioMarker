@@ -1,19 +1,15 @@
-import { db } from "~/server/db";
 import { auth } from "~/server/auth";
 import { AudioListItem } from "~/app/_components/main/AudioListItem";
+import { api } from "~/trpc/server";
 
 export default async function AudioFilesList() {
-  console.log("AudioFilesList");
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) {
     return null;
   }
 
-  const audios = await db.audio.findMany({
-    where: { createdById: userId },
-    orderBy: { createdAt: "desc" },
-  });
+  const audios = await api.audio.getUserAudios();
 
   if (!audios || audios.length === 0) {
     return (

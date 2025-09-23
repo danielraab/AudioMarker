@@ -1,6 +1,5 @@
 import { Bookmark, FileMusic, FlagTriangleRight, Section, Share2 } from "lucide-react";
 
-
 export default function PublicLandingPage() {
   return (<>
     <h1 className="flex items-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
