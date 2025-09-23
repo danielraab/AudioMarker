@@ -1,174 +1,51 @@
-'use client';
+import { db } from "~/server/db";
+import { auth } from "~/server/auth";
+import { AudioListItem } from "./AudioListItem";
 
-import { useState } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Chip,
-  Spinner,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure
-} from "@heroui/react";
-import { Play } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
+export default async function AudioFilesList() {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
+    return null;
+  }
 
-export default function AudioFilesList() {
-  const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedAudioId, setSelectedAudioId] = useState<string>("");
-
-  const {
-    data: audios,
-    isLoading,
-    error,
-    refetch
-  } = api.audio.getUserAudios.useQuery();
-
-  const deleteAudioMutation = api.audio.deleteAudio.useMutation({
-    onSuccess: () => {
-      refetch();
-      onClose();
-    },
-    onError: (error) => {
-      console.error("Delete error:", error);
-    },
+  const audios = await db.audio.findMany({
+    where: { createdById: userId },
+    orderBy: { createdAt: "desc" },
   });
-
-  const handleDeleteClick = (audioId: string) => {
-    setSelectedAudioId(audioId);
-    onOpen();
-  };
-
-  const handleConfirmDelete = () => {
-    if (selectedAudioId) {
-      deleteAudioMutation.mutate({ id: selectedAudioId });
-    }
-  };
-
-  const formatTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 60) return 'just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    return date.toLocaleDateString();
-  };
-
-  if (isLoading) {
-    return (
-      <Card className="max-w-4xl mx-auto">
-        <CardBody className="flex items-center justify-center py-8">
-          <Spinner size="lg" />
-          <p className="mt-4 text-default-500">Loading your audio files...</p>
-        </CardBody>
-      </Card>
-    );
-  }
-  
-
-  if (error) {
-    return (
-      <Card className="max-w-4xl mx-auto">
-        <CardBody className="flex items-center justify-center py-8">
-          <p className="text-danger">Error loading audio files: {error.message}</p>
-        </CardBody>
-      </Card>
-    );
-  }
 
   if (!audios || audios.length === 0) {
     return (
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
+      <section className="max-w-4xl mx-auto rounded-lg border border-default-200 bg-background p-6">
+        <header className="mb-4">
           <div className="flex flex-col">
             <p className="text-md font-semibold">Your Audio Files</p>
             <p className="text-small text-default-500">Manage your uploaded audio files</p>
           </div>
-        </CardHeader>
-        <CardBody className="flex items-center justify-center py-8">
+        </header>
+        <div className="flex items-center justify-center py-8">
           <p className="text-default-500">No audio files uploaded yet. Upload your first audio file above!</p>
-        </CardBody>
-      </Card>
+        </div>
+      </section>
     );
   }
 
   return (
-    <>
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <div className="flex flex-col">
-            <p className="text-md font-semibold">Your Audio Files</p>
-            <p className="text-small text-default-500">Manage your uploaded audio files ({audios.length})</p>
-          </div>
-        </CardHeader>
-        <CardBody>
-          <div className="space-y-4">
-            {audios.map((audio) => (
-              <Card key={audio.id} className="shadow-sm">
-                <CardBody className="gap-2">
-                  <div className="flex flex-row justify-between items-center gap-2">
-                    <h3 className="text-lg font-semibold">{audio.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        color="primary"
-                        variant="flat"
-                        startContent={<Play size={16} />}
-                        onPress={() => router.push(`/listen/${audio.readonlyToken}`)}
-                      >
-                        Play
-                      </Button>
-                      <Button
-                        size="sm"
-                        color="danger"
-                        variant="flat"
-                        onPress={() => handleDeleteClick(audio.id)}
-                        isDisabled={deleteAudioMutation.isPending}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-1 text-sm text-default-500">
-                    <p><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
-                    <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
-                  </div>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">Delete Audio File</ModalHeader>
-          <ModalBody>
-            <p>Are you sure you want to delete this audio file? This action cannot be undone.</p>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" variant="light" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button
-              color="danger"
-              onPress={handleConfirmDelete}
-              isLoading={deleteAudioMutation.isPending}
-            >
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+    <section className="max-w-4xl mx-auto rounded-lg border border-default-200 bg-background p-6">
+      <header className="mb-4">
+        <div className="flex flex-col">
+          <p className="text-md font-semibold">Your Audio Files</p>
+          <p className="text-small text-default-500">Manage your uploaded audio files ({audios.length})</p>
+        </div>
+      </header>
+      <div className="space-y-4">
+        {audios.map((audio) => (
+          <AudioListItem 
+            key={audio.id}
+            audio={audio}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

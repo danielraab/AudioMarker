@@ -71,7 +71,7 @@ export default function AudioUploadForm() {
   };
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-xl mx-auto">
       <CardHeader className="flex gap-3">
         <div className="flex flex-col">
           <p className="text-md font-semibold">New Audio Upload</p>
