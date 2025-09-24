@@ -6,7 +6,7 @@ import type { AudioMarker } from "~/types/Audio";
 interface MarkerListProps {
   markers: AudioMarker[];
   onMarkerClick?: (timestamp: number) => void;
-  onRemoveMarker: (markerId: string) => void;
+  onRemoveMarker?: (markerId: string) => void;
 }
 
 export default function MarkerList({ markers, onMarkerClick, onRemoveMarker }: MarkerListProps) {
@@ -40,14 +40,16 @@ export default function MarkerList({ markers, onMarkerClick, onRemoveMarker }: M
             </p>
           </div>
         </div>
-        <Button
-          size="sm"
-          color="danger"
-          variant="light"
-          isIconOnly
-          onPress={() => onRemoveMarker(marker.id)}
-          startContent={<Trash2 size={14} />}
-        />
+        {onRemoveMarker &&
+          <Button
+            size="sm"
+            color="danger"
+            variant="light"
+            isIconOnly
+            onPress={() => onRemoveMarker(marker.id)}
+            startContent={<Trash2 size={14} />}
+          />
+        }
       </div>
     ))}
   </>

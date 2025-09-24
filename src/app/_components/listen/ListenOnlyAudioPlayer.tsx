@@ -4,12 +4,14 @@ import React, { useState, useCallback } from 'react';
 import AudioPlayer from '../AudioPlayer';
 import BrowserMarkerManager from './BrowserMarkerManager';
 import type { AudioMarker } from '~/types/Audio';
+import { api } from "~/trpc/react";
+import StoredMarkers from './StoredMarkers';
 
 interface AudioPlayerWithMarkersProps {
   audioUrl: string;
   audioName: string;
   audioReadOnlyToken: string;
-  audioId?: string;
+  audioId: string;
 }
 
 export default function ListenOnlyAudioPlayer({ 
@@ -19,6 +21,7 @@ export default function ListenOnlyAudioPlayer({
   audioId 
 }: AudioPlayerWithMarkersProps) {
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
+  const [ storedMarkers ] = api.marker.getMarkers.useSuspenseQuery({ audioId });
   const [currentTime, setCurrentTime] = useState(0);
   const [seekToFunction, setSeekToFunction] = useState<((time: number) => void) | null>(null);
 
@@ -54,6 +57,12 @@ export default function ListenOnlyAudioPlayer({
         markers={markers}
         onTimeUpdate={handleTimeUpdate}
         onSeekToReady={handleSeekToReady}
+      />
+
+      {/* Stored Markers */}
+      <StoredMarkers
+        markers={storedMarkers}
+        onMarkerClick={handleMarkerClick}
       />
 
       {/* Marker Manager */}

@@ -15,6 +15,7 @@ export default async function ListenPage({ params }: ListenPageProps) {
   
   try {
     const audio = await api.audio.getAudioByToken({ token });
+    void api.marker.getMarkers.prefetch({ audioId: audio.id });
     
     // Check if the audio is deleted
     if (audio.deletedAt) {

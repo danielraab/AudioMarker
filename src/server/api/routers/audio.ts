@@ -21,10 +21,23 @@ export const audioRouter = createTRPCRouter({
         filePath: true,
         readonlyToken: true,
         createdAt: true,
+        isPublic: true,
+        _count: {
+          select: {
+            markers: true,
+          },
+        },
       },
     });
 
-    return audios;
+    // Transform the result to include markerCount at the top level
+    const audiosWithMarkerCount = audios.map(audio => ({
+      ...audio,
+      markerCount: audio._count.markers,
+      _count: undefined, // Remove the _count object
+    }));
+
+    return audiosWithMarkerCount;
   }),
 
   getAudioById: protectedProcedure

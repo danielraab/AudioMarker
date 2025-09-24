@@ -2,10 +2,11 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 export const markerRouter = createTRPCRouter({
-  getMarkers: protectedProcedure
+  getMarkers: publicProcedure
     .input(z.object({ audioId: z.string() }))
     .query(async ({ ctx, input }) => {
       const markers = await ctx.db.marker.findMany({

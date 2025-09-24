@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, Chip } from '@heroui/react';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, FlagTriangleRight } from 'lucide-react';
 import type { AudioMarker } from '~/types/Audio';
 import AddMarker from '../marker/AddMarker';
 import MarkerList from '../marker/MarkerList';
@@ -63,7 +63,7 @@ export default function BrowserMarkerManager({
     <Card className="w-full">
       <CardHeader className='flex flex-col items-start'>
         <div className='flex flex-row items-center gap-2 pb-2'>
-          <Bookmark size={20} className="text-primary" />
+          <FlagTriangleRight size={20} className="text-primary"  />
           <h3 className="text-lg font-semibold">Browser Audio Markers</h3>
           <Chip size="sm" variant="flat" color="primary">
             {markers.length}
@@ -80,7 +80,7 @@ export default function BrowserMarkerManager({
 
         {/* Markers List */}
         {markers.length > 0 && (
-          <div className="space-y-2 max-h-48 overflow-y-auto">
+          <div className="space-y-2 max-h-96 overflow-y-auto">
             <h4 className="text-sm font-medium text-default-600">
               Saved Markers:
             </h4>

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from "react";
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Card, CardBody } from "@heroui/react";
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Card, CardBody, Chip } from "@heroui/react";
+import { Globe, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { AudioActionsDropdown } from "./AudioActionsDropdown";
@@ -13,6 +14,8 @@ interface AudioListItemProps {
     originalFileName: string;
     readonlyToken: string;
     createdAt: Date;
+    markerCount: number;
+    isPublic: boolean;
   };
 }
 
@@ -58,8 +61,18 @@ export function AudioListItem({ audio }: AudioListItemProps) {
       <Card className="shadow-sm">
         <CardBody className="gap-2">
           <div className="flex flex-row justify-between items-center gap-2">
-            <div className="grow">
+            <div className="grow flex items-center gap-2">
               <h3 className="text-lg font-semibold truncate">{audio.name}</h3>
+              <Chip size="sm" variant="flat" color="primary">
+                {audio.markerCount} markers
+              </Chip>
+              <div className="flex items-center" title={audio.isPublic ? "Public" : "Private"}>
+                {audio.isPublic ? (
+                  <Globe size={16} className="text-success" />
+                ) : (
+                  <Lock size={16} className="text-warning" />
+                )}
+              </div>
             </div>
             <div>
               <AudioActionsDropdown
