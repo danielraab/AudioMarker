@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Button, Input, Card, CardBody, CardHeader, Checkbox } from "@heroui/react";
 import { api } from "~/trpc/react";
 import { Play } from "lucide-react";

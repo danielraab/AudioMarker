@@ -1,15 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Card, CardBody, CardHeader, Chip } from '@heroui/react';
-import { Plus, Trash2, Bookmark } from 'lucide-react';
-
-export interface AudioMarker {
-  id: string;
-  timestamp: number;
-  label: string;
-  color?: string;
-}
+import { Card, CardBody, CardHeader, Chip } from '@heroui/react';
+import { Bookmark } from 'lucide-react';
+import type { AudioMarker } from '~/types/Audio';
+import AddMarker from '../marker/AddMarker';
+import MarkerList from '../marker/MarkerList';
+import EmptyMarkerList from '../marker/EmptyMarkerList';
 
 interface MarkerManagerProps {
   audioId: string;
@@ -25,7 +22,6 @@ export default function BrowserMarkerManager({
   onMarkerClick
 }: MarkerManagerProps) {
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
-  const [newMarkerLabel, setNewMarkerLabel] = useState('');
 
   // Load markers from localStorage on component mount
   useEffect(() => {
@@ -47,26 +43,20 @@ export default function BrowserMarkerManager({
     onMarkersChange(markers);
   }, [markers, audioId, onMarkersChange]);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const removeMarker = (markerId: string) => {
     setMarkers(prev => prev.filter(marker => marker.id !== markerId));
   };
 
-  const addMarkerAtCurrentTime = () => {
+  const addMarkerAtCurrentTime = (label: string) => {
     const newMarker: AudioMarker = {
       id: `marker_${Date.now()}`,
       timestamp: currentTime,
-      label: newMarkerLabel.trim() || `Marker ${markers.length + 1}`,
+      label: label.trim() || `Marker ${markers.length + 1}`,
       color: `hsl(${Math.random() * 360}, 70%, 50%)`
     };
 
     setMarkers(prev => [...prev, newMarker].sort((a, b) => a.timestamp - b.timestamp));
-    setNewMarkerLabel('');
   };
 
   return (
@@ -85,32 +75,7 @@ export default function BrowserMarkerManager({
 
         {/* Add Custom Marker */}
         <div className="flex gap-2">
-          <Input
-            size="sm"
-            placeholder="Marker label (optional)"
-            value={newMarkerLabel}
-            onValueChange={setNewMarkerLabel}
-            className="flex-1"
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                addMarkerAtCurrentTime();
-              }
-            }}
-          />
-
-          {/* Quick Add Marker at Current Time */}
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              color="success"
-              variant="flat"
-              onPress={addMarkerAtCurrentTime}
-              startContent={<Plus size={16} />}
-              className="flex-shrink-0"
-            >
-              Add at {formatTime(currentTime)}
-            </Button>
-          </div>
+          <AddMarker currentTime={currentTime} onAddMarker={addMarkerAtCurrentTime} />
         </div>
 
         {/* Markers List */}
@@ -119,55 +84,13 @@ export default function BrowserMarkerManager({
             <h4 className="text-sm font-medium text-default-600">
               Saved Markers:
             </h4>
-            {markers.map((marker) => (
-              <div
-                key={marker.id}
-                className="flex items-center justify-between p-2 bg-default-100 rounded-lg"
-              >
-                <div
-                  className="flex items-center gap-2 flex-1 cursor-pointer hover:bg-default-200 -m-2 p-2 rounded-lg transition-colors"
-                  onClick={() => onMarkerClick?.(marker.timestamp)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      onMarkerClick?.(marker.timestamp);
-                    }
-                  }}
-                >
-                  <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: marker.color }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {marker.label}
-                    </p>
-                    <p className="text-xs text-default-500">
-                      {formatTime(marker.timestamp)}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  color="danger"
-                  variant="light"
-                  isIconOnly
-                  onPress={() => removeMarker(marker.id)}
-                  startContent={<Trash2 size={14} />}
-                />
-              </div>
-            ))}
+            <MarkerList markers={markers}
+              onMarkerClick={onMarkerClick}
+              onRemoveMarker={removeMarker} />
           </div>
         )}
 
-        {markers.length === 0 && (
-          <div className="text-center py-4">
-            <p className="text-sm text-default-500">
-              No markers added yet. Use the buttons above to add markers at specific timestamps.
-            </p>
-          </div>
-        )}
+        {markers.length === 0 && <EmptyMarkerList />}
       </CardBody>
     </Card>
   );

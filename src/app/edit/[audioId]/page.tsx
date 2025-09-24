@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
-import { EditAudioForm } from "~/app/_components/edit/EditAudioForm";
+import { EditPageContainer } from "~/app/_components/edit/EditPageContainer";
 import { HydrateClient } from "~/trpc/server";
 import { Suspense } from "react";
+import { StoredMarkerManager } from "~/app/_components/edit/StoredMarkerManager";
+import { EditAudioForm } from "~/app/_components/edit/EditAudioForm";
 
 interface EditAudioPageProps {
   params: {
@@ -21,6 +23,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
   // Prefetch the audio data
   try {
     void api.audio.getAudioById.prefetch({ id: audioId });
+    void api.marker.getMarkers.prefetch({ audioId: audioId });
   } catch (error) {
     notFound();
   }
@@ -34,6 +37,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
           </div>
         }>
           <EditAudioForm audioId={audioId} />
+          <EditPageContainer audioId={audioId} />
         </Suspense>
       </HydrateClient>
     </main>
