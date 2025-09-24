@@ -12,7 +12,7 @@ export default function AudioUploadForm() {
   const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       const selectedFile = e.target.files[0];
       
       // Validate file type on the frontend
@@ -57,17 +57,18 @@ export default function AudioUploadForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        throw new Error(errorData.error ?? 'Upload failed');
       }
 
-      const result = await response.json();
+      await response.json();
       setStatus("Upload successful!");
       router.refresh(); // Refresh to show the new audio file in the list
       setAudioName("");
       setFile(null);
 
-    } catch (err: any) {
-      setStatus(err.message || "Upload failed.");
+    } catch (err) {
+      console.error("Upload error:", err);
+      setStatus("Upload failed.");
     } finally {
       setIsUploading(false);
     }

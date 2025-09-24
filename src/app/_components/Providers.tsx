@@ -1,7 +1,6 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import Navbar from "./navbar/Navbar";
 import { HeroUIProvider } from "@heroui/react";
 
 interface ProvidersProps {

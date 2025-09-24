@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, Chip } from '@heroui/react';
-import { Bookmark, FlagTriangleRight } from 'lucide-react';
+import { FlagTriangleRight } from 'lucide-react';
 import type { AudioMarker } from '~/types/Audio';
 import AddMarker from '../marker/AddMarker';
 import MarkerList from '../marker/MarkerList';

@@ -6,6 +6,7 @@ import {
 } from "@heroui/navbar";
 import UserMenu from "./User";
 import Link from "next/link";
+import Image from "next/image";
 
 interface NavbarProps {
   title?: string;
@@ -20,19 +21,19 @@ export default function Navbar({ title = "Audio Marker", logoSrc }: NavbarProps)
       <NavbarBrand className="grow-0">
         <Link href="/" className="flex items-center gap-2">
           {logoSrc ? (
-            <img
+            <Image
               src={logoSrc}
               alt="Logo"
               className="h-8 w-8 object-contain"
             />
           ) : (
-            <img
+            <Image
               src="/audio-marker-logo.svg"
               alt="Audio Marker Logo"
               className="h-8 w-8 object-contain transition-transform hover:scale-105"
             />
           )}
-          <span className="font-bold text-inherit">Audio Marker</span>
+          <span className="font-bold text-inherit">{ title }</span>
         </Link>
       </NavbarBrand>
 

@@ -26,8 +26,8 @@ export default function UserMenu() {
               <DropdownTrigger>
                 <Avatar
                   as="button"
-                  src={session.user.image || undefined}
-                  name={session.user.name || session.user.email || "User"}
+                  src={session.user.image ?? undefined}
+                  name={session.user.name ?? session.user.email ?? "User"}
                   size="sm"
                   className="transition-transform hover:scale-105"
                   radius="full"

@@ -1,6 +1,6 @@
 
 
-export default () => {
+export default function EmptyMarkerList() {
   return (
   <div className="text-center py-4">
     <p className="text-sm text-default-500">

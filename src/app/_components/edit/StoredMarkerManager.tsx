@@ -19,8 +19,8 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
   const utils = api.useUtils();
 
   const createMarker = api.marker.createMarker.useMutation({
-    onSuccess: () => {
-      utils.marker.getMarkers.invalidate({ audioId });
+    onSuccess: async () => {
+      await utils.marker.getMarkers.invalidate({ audioId });
     },
   });
 
@@ -34,8 +34,8 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
   };
 
   const deleteMarker = api.marker.deleteMarker.useMutation({
-    onSuccess: () => {
-      utils.marker.getMarkers.invalidate({ audioId });
+    onSuccess: async () => {
+      await utils.marker.getMarkers.invalidate({ audioId });
     },
   });
 

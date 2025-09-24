@@ -5,7 +5,7 @@ import { auth } from "~/server/auth";
 import { VisibilityBanner } from "~/app/_components/listen/VisibilityBanner";
 
 interface ListenPageProps {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }
 
 
@@ -40,6 +40,7 @@ export default async function ListenPage({ params }: ListenPageProps) {
       </div>
     );
   } catch (error) {
+    console.error("Error fetching audio by token:", error);
     notFound();
   }
 }

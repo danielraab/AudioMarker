@@ -4,17 +4,14 @@ import { api } from "~/trpc/server";
 import { EditPageContainer } from "~/app/_components/edit/EditPageContainer";
 import { HydrateClient } from "~/trpc/server";
 import { Suspense } from "react";
-import { StoredMarkerManager } from "~/app/_components/edit/StoredMarkerManager";
 import { EditAudioForm } from "~/app/_components/edit/EditAudioForm";
 
 interface EditAudioPageProps {
-  params: {
-    audioId: string;
-  };
+  params: Promise<{ audioId: string }>;
 }
 
 export default async function EditAudioPage({ params }: EditAudioPageProps) {
-  const {audioId} = await params;
+  const { audioId } = await params;
   const session = await auth();
   if (!session?.user?.id) {
     return null;
@@ -25,6 +22,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
     void api.audio.getAudioById.prefetch({ id: audioId });
     void api.marker.getMarkers.prefetch({ audioId: audioId });
   } catch (error) {
+    console.error("Error prefetching audio data:", error);
     notFound();
   }
 

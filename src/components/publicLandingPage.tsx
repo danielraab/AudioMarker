@@ -1,9 +1,10 @@
 import { Bookmark, FileMusic, FlagTriangleRight, Section, Share2 } from "lucide-react";
+import Image from "next/image";
 
 export default function PublicLandingPage() {
   return (<>
     <h1 className="flex items-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-      <img
+      <Image
         src="/audio-marker-logo.svg"
         alt="Audio Marker Logo"
         className="h-16 w-16 object-contain transition-transform hover:scale-105"

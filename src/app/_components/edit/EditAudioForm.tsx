@@ -6,7 +6,6 @@ import { Button, Input, Card, CardBody, CardHeader, Checkbox } from "@heroui/rea
 import { api } from "~/trpc/react";
 import { Play } from "lucide-react";
 import { UnsavedChangesModal } from "../UnsavedChangesModal";
-import { exit } from "process";
 
 interface EditAudioFormProps {
   audioId: string;
