@@ -47,8 +47,8 @@ export function AudioActionsDropdown({
           key="play"
           startContent={<Play size={16} />}
           href={`/listen/${readonlyToken}`}
-          className="text-primary"
-          color="primary"
+          className="text-success"
+          color="success"
         >
           Play
         </DropdownItem>
@@ -64,6 +64,8 @@ export function AudioActionsDropdown({
           key="edit"
           startContent={<Edit size={16} />}
           href={`/edit/${audioId}`}
+          className="text-primary"
+          color="primary"
         >
           Edit
         </DropdownItem>

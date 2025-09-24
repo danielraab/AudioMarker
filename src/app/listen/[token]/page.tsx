@@ -1,6 +1,8 @@
 import { api } from "~/trpc/server";
 import ListenOnlyAudioPlayer from "~/app/_components/listen/ListenOnlyAudioPlayer";
 import { notFound } from "next/navigation";
+import { auth } from "~/server/auth";
+import { VisibilityBanner } from "~/app/_components/listen/VisibilityBanner";
 
 interface ListenPageProps {
   params: { token: string };
@@ -9,12 +11,26 @@ interface ListenPageProps {
 
 export default async function ListenPage({ params }: ListenPageProps) {
   const { token } = await params;
+  const session = await auth();
+  
   try {
     const audio = await api.audio.getAudioByToken({ token });
+    
+    // Check if the audio is deleted
+    if (audio.deletedAt) {
+      notFound();
+    }
+    
+    // Check if user has access
+    const isCreator = session?.user?.id === audio.createdById;
+    if (!audio.isPublic && !isCreator) {
+      notFound();
+    }
 
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <VisibilityBanner isPublic={audio.isPublic} isCreator={isCreator} />
           <ListenOnlyAudioPlayer
             audioUrl={audio.filePath}
             audioName={audio.name}

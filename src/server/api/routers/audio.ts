@@ -42,6 +42,8 @@ export const audioRouter = createTRPCRouter({
           filePath: true,
           readonlyToken: true,
           createdAt: true,
+          updatedAt: true,
+          isPublic: true,
         },
       });
 
@@ -57,7 +59,8 @@ export const audioRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const audio = await ctx.db.audio.findFirst({
         where: {
-          readonlyToken: input.token
+          readonlyToken: input.token,
+          deletedAt: null,
         },
         select: {
           id: true,
@@ -66,6 +69,9 @@ export const audioRouter = createTRPCRouter({
           filePath: true,
           readonlyToken: true,
           createdAt: true,
+          isPublic: true,
+          deletedAt: true,
+          createdById: true,
         },
       });
 
@@ -105,6 +111,7 @@ export const audioRouter = createTRPCRouter({
     .input(z.object({ 
       id: z.string(),
       name: z.string().min(1, "Name is required").max(100, "Name is too long"),
+      isPublic: z.boolean(),
     }))
     .mutation(async ({ ctx, input }) => {
       const audio = await ctx.db.audio.findUnique({
@@ -122,7 +129,10 @@ export const audioRouter = createTRPCRouter({
 
       const updatedAudio = await ctx.db.audio.update({
         where: { id: input.id },
-        data: { name: input.name },
+        data: { 
+          name: input.name,
+          isPublic: input.isPublic,
+        },
         select: {
           id: true,
           name: true,

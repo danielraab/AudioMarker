@@ -7,11 +7,12 @@ import { Suspense } from "react";
 
 interface EditAudioPageProps {
   params: {
-    id: string;
+    audioId: string;
   };
 }
 
 export default async function EditAudioPage({ params }: EditAudioPageProps) {
+  const {audioId} = await params;
   const session = await auth();
   if (!session?.user?.id) {
     return null;
@@ -19,7 +20,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
 
   // Prefetch the audio data
   try {
-    void api.audio.getAudioById.prefetch({ id: params.id });
+    void api.audio.getAudioById.prefetch({ id: audioId });
   } catch (error) {
     notFound();
   }
@@ -32,7 +33,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
             <p className="text-default-500">Loading audio details...</p>
           </div>
         }>
-          <EditAudioForm audioId={params.id} />
+          <EditAudioForm audioId={audioId} />
         </Suspense>
       </HydrateClient>
     </main>

@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, Input, Card, CardBody, CardHeader } from "@heroui/react";
+import { Button, Input, Card, CardBody, CardHeader, Checkbox } from "@heroui/react";
 import { api } from "~/trpc/react";
+import Link from "next/link";
+import { Play } from "lucide-react";
 
 interface EditAudioFormProps {
   audioId: string;
@@ -31,22 +33,30 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get('name') as string;
+    const isPublic = formData.get('isPublic') !== null;
 
     if (!name) {
       setError("Name is required");
       return;
     }
 
-    updateAudio.mutate({ id: audioId, name });
+    updateAudio.mutate({ id: audioId, name, isPublic });
   };
 
   return (
-    <Card className="max-w-xl w-full mx-auto">
-      <CardHeader className="flex gap-3">
+    <Card className="mx-auto">
+      <CardHeader className="flex gap-3 justify-between">
         <div className="flex flex-col">
           <p className="text-md font-semibold">Edit Audio - {audio.name}</p>
           <p className="text-small text-default-500">Update audio details</p>
         </div>
+        <Button
+          as={Link}
+          color="success"
+          startContent={<Play size={16} />}
+          href={`/listen/${audio.readonlyToken}`}>
+          test
+        </Button>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -60,10 +70,20 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
             variant="bordered"
             labelPlacement="outside"
           />
+
+          <Checkbox
+            name="isPublic"
+            defaultSelected={audio.isPublic}
+            size="sm"
+            color="primary"
+          >
+            publicly accessible
+          </Checkbox>
           
-          <div className="text-sm text-default-500">
+          <div className="text-xs text-default-500">
             <p><strong>Original File:</strong> {audio.originalFileName}</p>
-            <p><strong>Uploaded:</strong> {new Date(audio.createdAt).toLocaleString()}</p>
+            <p suppressHydrationWarning={true}><strong>Uploaded:</strong> {new Date(audio.createdAt).toLocaleString()}</p>
+            <p suppressHydrationWarning={true}><strong>Updated:</strong> {new Date(audio.updatedAt).toLocaleString()}</p>
           </div>
 
           {error && (
