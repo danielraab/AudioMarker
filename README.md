@@ -1,29 +1,54 @@
-# Create T3 App
+# Audio Marker
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+An audio annotation and marker application built with the [T3 Stack](https://create.t3.gg/).
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Upload and manage audio files
+- Add time-based markers to audio tracks
+- Share audio files with public/private visibility
+- User authentication with NextAuth.js
+- Responsive web interface
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Docker Deployment
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+This project includes Docker support and automated CI/CD pipelines.
 
-## Learn More
+### Quick Start with Docker
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+```bash
+# Using docker-compose (recommended)
+docker-compose up -d
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+# Or build and run manually
+docker build -t audio-marker .
+docker run -p 3000:3000 audio-marker
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### Automated Docker Builds
 
-## How do I deploy this?
+The project includes GitHub Actions workflows that automatically build and push Docker images:
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- **GitHub Container Registry**: Automatically builds on push to main/develop branches
+- **Docker Hub**: Optional workflow for Docker Hub deployment
+
+For detailed setup instructions, see [Docker CI/CD Documentation](./docs/docker-ci-cd.md).
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Set up the database
+npm run db:push
+
+# Start development server
+npm run dev
+```
+
+## Deployment Options
+
+- **Docker**: See [Docker CI/CD Documentation](./docs/docker-ci-cd.md)
+- **Vercel**: Follow the [T3 Vercel deployment guide](https://create.t3.gg/en/deployment/vercel)
+- **Other platforms**: Follow the [T3 deployment guides](https://create.t3.gg/en/deployment/docker)
