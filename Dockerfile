@@ -20,7 +20,8 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
-# Build the application
+# Build the application with environment validation skipped
+ENV SKIP_ENV_VALIDATION=1
 RUN npm run build
 
 # Production image, copy all the files and run next
