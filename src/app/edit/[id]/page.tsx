@@ -19,7 +19,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
 
   // Prefetch the audio data
   try {
-    await api.audio.getAudioById.prefetch({ id: params.id });
+    void api.audio.getAudioById.prefetch({ id: params.id });
   } catch (error) {
     notFound();
   }

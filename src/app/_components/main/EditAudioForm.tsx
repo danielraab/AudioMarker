@@ -11,6 +11,7 @@ interface EditAudioFormProps {
 
 export function EditAudioForm({ audioId }: EditAudioFormProps) {
   const router = useRouter();
+  const utils = api.useUtils();
   const [error, setError] = useState<string | null>(null);
 
   // Use suspense query to fetch audio details
@@ -18,9 +19,8 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
 
   // Setup mutation for updating audio
   const updateAudio = api.audio.updateAudio.useMutation({
-    onSuccess: () => {
-      router.push('/'); // Redirect back to list after successful update
-      router.refresh();
+    onSuccess: async () => {
+      await utils.audio.invalidate();
     },
     onError: (error) => {
       setError(error.message);
@@ -44,7 +44,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
     <Card className="max-w-xl w-full mx-auto">
       <CardHeader className="flex gap-3">
         <div className="flex flex-col">
-          <p className="text-md font-semibold">Edit Audio</p>
+          <p className="text-md font-semibold">Edit Audio - {audio.name}</p>
           <p className="text-small text-default-500">Update audio details</p>
         </div>
       </CardHeader>
