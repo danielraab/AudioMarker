@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button, Input, Card, CardBody, CardHeader, Checkbox } from "@heroui/react";
 import { api } from "~/trpc/react";
-import Link from "next/link";
 import { Play } from "lucide-react";
+import { UnsavedChangesModal } from "../UnsavedChangesModal";
+import { exit } from "process";
 
 interface EditAudioFormProps {
   audioId: string;
@@ -15,6 +16,10 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
   const router = useRouter();
   const utils = api.useUtils();
   const [error, setError] = useState<string | null>(null);
+  const [isFormDirty, setIsFormDirty] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Use suspense query to fetch audio details
   const [audio] = api.audio.getAudioById.useSuspenseQuery({ id: audioId });
@@ -29,9 +34,12 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const handleFormChange = () => {
+    setIsFormDirty(true);
+  };
+
+  const submitForm = (form: HTMLFormElement) => {
+    const formData = new FormData(form);
     const name = formData.get('name') as string;
     const isPublic = formData.get('isPublic') !== null;
 
@@ -40,7 +48,29 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
       return;
     }
 
-    updateAudio.mutate({ id: audioId, name, isPublic });
+    updateAudio.mutate(
+      { id: audioId, name, isPublic },
+      {
+        onSuccess: () => {
+          setIsFormDirty(false);
+          setPendingNavigation(null);
+        }
+      }
+    );
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submitForm(e.currentTarget);
+  };
+
+  const handleNavigationAttempt = (path: string) => {
+    if (isFormDirty) {
+      setPendingNavigation(path);
+      setShowModal(true);
+      return;
+    }
+    router.push(path);
   };
 
   return (
@@ -51,15 +81,16 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
           <p className="text-small text-default-500">Update audio details</p>
         </div>
         <Button
-          as={Link}
           color="success"
           startContent={<Play size={16} />}
-          href={`/listen/${audio.readonlyToken}`}>
-          test
+          onPress={() => {
+            handleNavigationAttempt(`/listen/${audio.readonlyToken}`);
+          }}>
+          Preview
         </Button>
       </CardHeader>
       <CardBody>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input
             name="name"
             type="text"
@@ -69,6 +100,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
             isRequired
             variant="bordered"
             labelPlacement="outside"
+            onChange={handleFormChange}
           />
 
           <Checkbox
@@ -76,6 +108,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
             defaultSelected={audio.isPublic}
             size="sm"
             color="primary"
+            onChange={handleFormChange}
           >
             publicly accessible
           </Checkbox>
@@ -94,7 +127,9 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
             <Button
               color="default"
               variant="light"
-              onPress={() => router.back()}
+              onPress={() => {
+                handleNavigationAttempt('/');
+              }}
             >
               Cancel
             </Button>
@@ -108,6 +143,23 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
           </div>
         </form>
       </CardBody>
+      <UnsavedChangesModal 
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onDiscard={() => {
+          setShowModal(false);
+          setIsFormDirty(false);
+          if (pendingNavigation) {
+            router.push(pendingNavigation);
+          }
+        }}
+        onSave={() => {
+          setShowModal(false);
+          if (formRef.current) {
+            submitForm(formRef.current);
+          }
+        }}
+      />
     </Card>
   );
 }

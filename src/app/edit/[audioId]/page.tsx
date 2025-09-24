@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
-import { EditAudioForm } from "~/app/_components/main/EditAudioForm";
+import { EditAudioForm } from "~/app/_components/edit/EditAudioForm";
 import { HydrateClient } from "~/trpc/server";
 import { Suspense } from "react";
 
