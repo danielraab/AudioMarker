@@ -11,7 +11,7 @@ export function VisibilityBanner({ isPublic, isCreator }: VisibilityBannerProps)
   const borderColor = isPublic ? "border-success-200" : "border-warning-200";
   
   return (
-    <div className={`w-full p-4 ${backgroundColor} ${textColor} border ${borderColor} rounded-lg mb-4`}>
+    <div className={`inline-block p-4 ${backgroundColor} ${textColor} border ${borderColor} rounded-lg mb-4`}>
       {isPublic ? (
         <p className="text-sm font-medium">
           This audio file is public and can be accessed by anyone with the link.

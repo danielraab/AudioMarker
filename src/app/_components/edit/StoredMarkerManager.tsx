@@ -28,7 +28,7 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
     createMarker.mutate({
       audioId,
       timestamp: currentTime,
-      label: label.trim() || `Marker ${markers.length + 1}`,
+      label: label.trim() || `Stored Marker ${markers.length + 1}`,
       color: `hsl(${Math.random() * 360}, 70%, 50%)`
     });
   };
@@ -43,14 +43,8 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
     deleteMarker.mutate({ id: markerId });
   }
 
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   return (
-    <Card className="w-full">
+    <Card className="max-w-xl">
       <CardHeader className='flex flex-col items-start'>
         <div className='flex flex-row items-center gap-2 pb-2'>
           <Bookmark size={20} className="text-primary" />

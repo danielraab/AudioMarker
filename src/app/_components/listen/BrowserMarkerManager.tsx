@@ -52,7 +52,7 @@ export default function BrowserMarkerManager({
     const newMarker: AudioMarker = {
       id: `marker_${Date.now()}`,
       timestamp: currentTime,
-      label: label.trim() || `Marker ${markers.length + 1}`,
+      label: label.trim() || `Browser Marker ${markers.length + 1}`,
       color: `hsl(${Math.random() * 360}, 70%, 50%)`
     };
 

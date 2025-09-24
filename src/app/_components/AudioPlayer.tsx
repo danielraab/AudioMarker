@@ -8,7 +8,7 @@ import { Button, Chip, Slider } from '@heroui/react';
 import { Play, Pause, Square, ZoomIn, SquareArrowOutUpRight } from 'lucide-react';
 import LoadingOverlay from './LoadingOverlay';
 import Link from 'next/link';
-import type { AudioMarker } from './listen/BrowserMarkerManager';
+import type { AudioMarker } from '~/types/Audio';
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -173,7 +173,7 @@ export default function AudioPlayer({
 
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className='flex justify-between'>
         <div className="flex flex-col">
           <p className="flex items-center gap-2 text-lg font-semibold">

@@ -12,16 +12,16 @@ interface ListenPageProps {
 export default async function ListenPage({ params }: ListenPageProps) {
   const { token } = await params;
   const session = await auth();
-  
+
   try {
     const audio = await api.audio.getAudioByToken({ token });
     void api.marker.getMarkers.prefetch({ audioId: audio.id });
-    
+
     // Check if the audio is deleted
     if (audio.deletedAt) {
       notFound();
     }
-    
+
     // Check if user has access
     const isCreator = session?.user?.id === audio.createdById;
     if (!audio.isPublic && !isCreator) {
@@ -29,16 +29,14 @@ export default async function ListenPage({ params }: ListenPageProps) {
     }
 
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <VisibilityBanner isPublic={audio.isPublic} isCreator={isCreator} />
-          <ListenOnlyAudioPlayer
-            audioUrl={audio.filePath}
-            audioName={audio.name}
-            audioReadOnlyToken={audio.readonlyToken}
-            audioId={audio.id}
-          />
-        </div>
+      <div className="w-full flex flex-col items-center mx-auto px-4 py-8">
+        <VisibilityBanner isPublic={audio.isPublic} isCreator={isCreator} />
+        <ListenOnlyAudioPlayer
+          audioUrl={audio.filePath}
+          audioName={audio.name}
+          audioReadOnlyToken={audio.readonlyToken}
+          audioId={audio.id}
+        />
       </div>
     );
   } catch (error) {

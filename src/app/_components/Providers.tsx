@@ -12,7 +12,6 @@ export default function Providers({ children }: ProvidersProps) {
   return (
     <HeroUIProvider>
       <SessionProvider>
-        <Navbar />
         {children}
       </SessionProvider>
     </HeroUIProvider>

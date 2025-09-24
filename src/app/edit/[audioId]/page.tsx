@@ -29,7 +29,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center gap-4 p-4">
+    <div className="w-full flex min-h-screen flex-col items-center gap-4 p-4">
       <HydrateClient>
         <Suspense fallback={
           <div className="flex items-center justify-center py-8">
@@ -40,6 +40,6 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
           <EditPageContainer audioId={audioId} />
         </Suspense>
       </HydrateClient>
-    </main>
+    </div>
   );
 }

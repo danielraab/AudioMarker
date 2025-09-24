@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Providers from "~/app/_components/Providers";
+import Navbar from "./_components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Audio Marker",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <Providers>
+          <Navbar />
           <TRPCReactProvider>
             <main className="flex flex-col items-center justify-center gap-12 px-4 py-4">
               {children}

@@ -48,30 +48,33 @@ export default function ListenOnlyAudioPlayer({
 
 
   return (
-    <div className="space-y-6">
+    <div className="w-full flex flex-col items-center space-y-6">
       {/* Audio Player */}
       <AudioPlayer
         audioUrl={audioUrl}
         audioName={audioName}
         audioReadOnlyToken={audioReadOnlyToken}
-        markers={markers}
+        markers={[...markers, ...storedMarkers]}
         onTimeUpdate={handleTimeUpdate}
         onSeekToReady={handleSeekToReady}
       />
 
-      {/* Stored Markers */}
-      <StoredMarkers
-        markers={storedMarkers}
-        onMarkerClick={handleMarkerClick}
-      />
+      <div className='flex flex-col items-center space-y-6'>
+        
+        {/* Stored Markers */}
+        <StoredMarkers
+          markers={storedMarkers}
+          onMarkerClick={handleMarkerClick}
+        />
 
-      {/* Marker Manager */}
-      <BrowserMarkerManager
-        audioId={uniqueAudioId}
-        currentTime={currentTime}
-        onMarkersChange={handleMarkersChange}
-        onMarkerClick={handleMarkerClick}
-      />
+        {/* Marker Manager */}
+        <BrowserMarkerManager
+          audioId={uniqueAudioId}
+          currentTime={currentTime}
+          onMarkersChange={handleMarkersChange}
+          onMarkerClick={handleMarkerClick}
+        />
+      </div>
     </div>
   );
 }

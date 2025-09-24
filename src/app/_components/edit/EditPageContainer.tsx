@@ -33,7 +33,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
   }, [seekToFunction]);
 
   return (
-    <div className="container mx-auto max-w-4xl space-y-6">
+    <div className="w-full flex flex-col items-center mx-auto space-y-6">
       
       <AudioPlayer
         audioUrl={audio.filePath}
