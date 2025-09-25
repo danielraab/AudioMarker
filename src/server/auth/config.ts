@@ -2,6 +2,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import { env } from "~/env";
 import Authentik from "next-auth/providers/authentik";
+import Nodemailer from "next-auth/providers/nodemailer";
 
 import { db } from "~/server/db";
 
@@ -33,12 +34,27 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    Authentik({
-      name: env.AUTH_AUTHENTIK_LABEL ?? "Authentik",
-      clientId: env.AUTH_AUTHENTIK_ID,
-      clientSecret: env.AUTH_AUTHENTIK_SECRET,
-      issuer: env.AUTH_AUTHENTIK_ISSUER,
-    }),
+    ...(env.AUTH_AUTHENTIK_ID ? [
+      Authentik({
+        name: env.AUTH_AUTHENTIK_LABEL ?? "Authentik",
+        clientId: env.AUTH_AUTHENTIK_ID,
+        clientSecret: env.AUTH_AUTHENTIK_SECRET,
+        issuer: env.AUTH_AUTHENTIK_ISSUER,
+      }),
+    ] : []),
+    ...(env.EMAIL_SERVER_HOST ? [
+      Nodemailer({
+        server: {
+          host: env.EMAIL_SERVER_HOST,
+          port: parseInt(env.EMAIL_SERVER_PORT ?? "587"),
+          auth: {
+            user: env.EMAIL_SERVER_USER,
+            pass: env.EMAIL_SERVER_PASSWORD,
+          },
+        },
+        from: env.EMAIL_FROM,
+      }),
+    ] : []),
   ],
   adapter: PrismaAdapter(db),
   callbacks: {

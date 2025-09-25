@@ -15,6 +15,12 @@ export const env = createEnv({
     AUTH_AUTHENTIK_ID: z.string().optional(),
     AUTH_AUTHENTIK_SECRET: process.env.AUTH_AUTHENTIK_ID ? z.string() : z.string().optional(),
     AUTH_AUTHENTIK_ISSUER: process.env.AUTH_AUTHENTIK_ID ? z.string().url() : z.string().url().optional(),
+    // Email configuration for magic links
+    EMAIL_SERVER_HOST: z.string().optional(),
+    EMAIL_SERVER_PORT: z.string().optional(),
+    EMAIL_SERVER_USER: z.string().optional(),
+    EMAIL_SERVER_PASSWORD: z.string().optional(),
+    EMAIL_FROM: z.string().email().optional(),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -40,6 +46,11 @@ export const env = createEnv({
     AUTH_AUTHENTIK_ID: process.env.AUTH_AUTHENTIK_ID,
     AUTH_AUTHENTIK_SECRET: process.env.AUTH_AUTHENTIK_SECRET,
     AUTH_AUTHENTIK_ISSUER: process.env.AUTH_AUTHENTIK_ISSUER,
+    EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
+    EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
+    EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
+    EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
+    EMAIL_FROM: process.env.EMAIL_FROM,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },
