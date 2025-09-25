@@ -22,12 +22,16 @@ export default function Navbar({ title = "Audio Marker", logoSrc }: NavbarProps)
         <Link href="/" className="flex items-center gap-2">
           {logoSrc ? (
             <Image
+              height={32}
+              width={32}
               src={logoSrc}
               alt="Logo"
               className="h-8 w-8 object-contain"
             />
           ) : (
             <Image
+              height={32}
+              width={32}
               src="/audio-marker-logo.svg"
               alt="Audio Marker Logo"
               className="h-8 w-8 object-contain transition-transform hover:scale-105"

@@ -5,6 +5,8 @@ export default function PublicLandingPage() {
   return (<>
     <h1 className="flex items-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
       <Image
+        height={64}
+        width={64}
         src="/audio-marker-logo.svg"
         alt="Audio Marker Logo"
         className="h-16 w-16 object-contain transition-transform hover:scale-105"

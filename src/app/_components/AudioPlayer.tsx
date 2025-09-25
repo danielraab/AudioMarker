@@ -70,7 +70,7 @@ export default function AudioPlayer({
     wavesurfer.current.on('ready', () => {
       setIsLoading(false);
       wavesurfer.current?.zoom(zoomLevel);
-      const dur = wavesurfer.current?.getDuration() || 0;
+      const dur = wavesurfer.current?.getDuration() ?? 0;
       setDuration(dur);
 
       // Create regions from markers
@@ -82,13 +82,13 @@ export default function AudioPlayer({
     wavesurfer.current.on('finish', () => setIsPlaying(false));
 
     wavesurfer.current.on('audioprocess', () => {
-      const time = wavesurfer.current?.getCurrentTime() || 0;
+      const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
       onTimeUpdate?.(time);
     });
 
     wavesurfer.current.on('interaction', () => {
-      const time = wavesurfer.current?.getCurrentTime() || 0;
+      const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
       onTimeUpdate?.(time);
     });
