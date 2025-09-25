@@ -3,13 +3,29 @@
 import React, { useState } from "react";
 import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
 
 export default function AudioUploadForm() {
   const [audioName, setAudioName] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
+  const [status, setStatus] = useState<"" | "uploading" | "success" | "error">("");
+  const [message, setMessage] = useState<string>("");
   const router = useRouter();
+  
+  const uploadAudioMutation = api.audio.uploadAudio.useMutation({
+    onSuccess: () => {
+      setStatus("success");
+      setMessage("Upload successful!");
+      router.refresh(); // Refresh to show the new audio file in the list
+      setAudioName("");
+      setFile(null);
+    },
+    onError: (error) => {
+      console.error("Upload error:", error);
+      setStatus("error");
+      setMessage(error.message || "Upload failed.");
+    },
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -17,7 +33,7 @@ export default function AudioUploadForm() {
       
       // Validate file type on the frontend
       if (!selectedFile.type.includes('audio/mpeg') && !selectedFile.type.includes('audio/mp3')) {
-        setStatus("Please select an MP3 file.");
+        setMessage("Please select an MP3 file.");
         setFile(null);
         return;
       }
@@ -25,7 +41,7 @@ export default function AudioUploadForm() {
       // Validate file extension
       const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
       if (fileExtension !== 'mp3') {
-        setStatus("Please select a file with .mp3 extension.");
+        setMessage("Please select a file with .mp3 extension.");
         setFile(null);
         return;
       }
@@ -35,42 +51,43 @@ export default function AudioUploadForm() {
     }
   };
 
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove the data URL prefix (e.g., "data:audio/mpeg;base64,")
+        const base64Data = result.split(',')[1];
+        resolve(base64Data ?? '');
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !audioName) {
-      setStatus("Please provide an audio name and select a file.");
+      setStatus("error");
+      setMessage("Please provide an audio name and select a file.");
       return;
     }
-    
-    setIsUploading(true);
-    setStatus("Uploading...");
-    
+
+    setStatus("uploading");
+    setMessage("Uploading...");
+
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('name', audioName);
-
-      const response = await fetch('/api/audio-upload', {
-        method: 'POST',
-        body: formData,
+      const fileData = await convertFileToBase64(file);
+      
+      await uploadAudioMutation.mutateAsync({
+        name: audioName,
+        fileName: file.name,
+        fileData,
+        fileSize: file.size,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error ?? 'Upload failed');
-      }
-
-      await response.json();
-      setStatus("Upload successful!");
-      router.refresh(); // Refresh to show the new audio file in the list
-      setAudioName("");
-      setFile(null);
-
     } catch (err) {
+      // Error handling is done in the mutation's onError callback
       console.error("Upload error:", err);
-      setStatus("Upload failed.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -115,23 +132,23 @@ export default function AudioUploadForm() {
             color="primary"
             size="lg"
             className="w-full"
-            isDisabled={isUploading}
-            startContent={isUploading ? <Spinner size="sm" color="white" /> : null}
+            isDisabled={uploadAudioMutation.isPending}
+            startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
           >
-            {isUploading ? "Uploading..." : "Upload Audio"}
+            {uploadAudioMutation.isPending ? "Uploading..." : "Upload Audio"}
           </Button>
 
           {status && (
             <Chip
               color={
-                status === "Upload successful!" ? "success" :
-                status === "Uploading..." ? "primary" :
-                "danger"
+                status === "success" ? "success" :
+                status === "uploading" ? "primary" :
+                status === "error" ? "danger" : "default"
               }
               variant="flat"
               className="w-full justify-center"
             >
-              {status}
+              {message}
             </Chip>
           )}
         </form>
