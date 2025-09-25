@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.1.1] - 2025-09-25
+
+### Fixed
+
+- Try to fix github action
+
 ## [0.1.0] - 2025-09-25
 
 ### Added
