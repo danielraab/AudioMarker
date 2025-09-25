@@ -12,16 +12,16 @@ An audio annotation and marker application built with the [T3 Stack](https://cre
 
 ## Docker Deployment
 
-This project includes Docker support and automated CI/CD pipelines.
+This project includes Docker support and automated CI/CD pipelines. All Docker-related files are located in the [`docker/`](docker/) directory.
 
 ### Quick Start with Docker
 
 ```bash
 # Using docker-compose (recommended)
-docker-compose up -d
+docker-compose -f docker/docker-compose.yml up -d
 
 # Or build and run manually
-docker build -t audio-marker .
+docker build -f docker/Dockerfile -t audio-marker .
 docker run -p 3000:3000 audio-marker
 ```
 
@@ -32,7 +32,7 @@ The project includes GitHub Actions workflows that automatically build and push 
 - **GitHub Container Registry**: Automatically builds on push to main/develop branches
 - **Docker Hub**: Optional workflow for Docker Hub deployment
 
-For detailed setup instructions, see [Docker CI/CD Documentation](./docs/docker-ci-cd.md).
+For detailed setup instructions, see [Docker Documentation](./docker/README.Docker.md).
 
 ## Development
 
@@ -49,6 +49,6 @@ npm run dev
 
 ## Deployment Options
 
-- **Docker**: See [Docker CI/CD Documentation](./docs/docker-ci-cd.md)
+- **Docker**: See [Docker Documentation](./docker/README.Docker.md)
 - **Vercel**: Follow the [T3 Vercel deployment guide](https://create.t3.gg/en/deployment/vercel)
 - **Other platforms**: Follow the [T3 deployment guides](https://create.t3.gg/en/deployment/docker)

@@ -28,7 +28,7 @@ This document provides instructions for running the Audio Marker application usi
 
 3. **Build and run with Docker Compose**
    ```bash
-   docker-compose up --build
+   docker-compose -f docker/docker-compose.yml up --build
    ```
 
 4. **Access the application**
@@ -58,25 +58,25 @@ The application uses two persistent volumes:
 
 ### Build the image
 ```bash
-docker build -t audio-marker .
+docker build -f docker/Dockerfile -t audio-marker .
 ```
 
 ### Run with Docker Compose
 ```bash
 # Start in foreground
-docker-compose up
+docker-compose -f docker/docker-compose.yml up
 
 # Start in background
-docker-compose up -d
+docker-compose -f docker/docker-compose.yml up -d
 
 # Build and start
-docker-compose up --build
+docker-compose -f docker/docker-compose.yml up --build
 
 # Stop the application
-docker-compose down
+docker-compose -f docker/docker-compose.yml down
 
 # Stop and remove volumes (WARNING: This will delete all data)
-docker-compose down -v
+docker-compose -f docker/docker-compose.yml down -v
 ```
 
 ### Run manually with Docker
@@ -99,7 +99,7 @@ docker run -d \
 
 ## Database Migrations
 
-Database migrations are automatically executed when the container starts. The startup script (`docker-entrypoint.sh`) handles:
+Database migrations are automatically executed when the container starts. The startup script (`docker/docker-entrypoint.sh`) handles:
 
 1. Creating necessary directories
 2. Running Prisma migrations (`prisma migrate deploy`)
@@ -157,7 +157,7 @@ For development with Docker:
 
 ```bash
 # Use the development docker-compose file (if you create one)
-docker-compose -f docker-compose.dev.yml up
+docker-compose -f docker/docker-compose.dev.yml up
 
 # Or run in development mode
 docker run -it --rm \
