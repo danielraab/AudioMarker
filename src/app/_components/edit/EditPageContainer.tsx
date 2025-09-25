@@ -11,26 +11,26 @@ interface EditPageContainerProps {
 
 export function EditPageContainer({ audioId }: EditPageContainerProps) {
   const [currentTime, setCurrentTime] = useState(0);
-  const [seekToFunction, setSeekToFunction] = useState<((time: number) => void) | null>(null);
+  const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
 
   const [audio] = api.audio.getAudioById.useSuspenseQuery({ id: audioId });
   const [markers] = api.marker.getMarkers.useSuspenseQuery({ audioId });
 
   //for player -> marker manager
-  const handleTimeUpdate = (time: number) => {
+  const handleTimeUpdate = useCallback((time: number) => {
     setCurrentTime(time);
-  };
+  }, []);
 
-  const handleSeekToReady = useCallback((seekTo: (time: number) => void) => {
-    setSeekToFunction(() => seekTo);
+  const handlePlayFromFnReady = useCallback((seekTo: (time: number) => void) => {
+    setPlayFromFunction(() => seekTo);
   }, []);
 
   // from marker manager -> player
   const handleMarkerClick = useCallback((timestamp: number) => {
-    if (seekToFunction) {
-      seekToFunction(timestamp);
+    if (playFromFunction) {
+      playFromFunction(timestamp);
     }
-  }, [seekToFunction]);
+  }, [playFromFunction]);
 
   return (
     <div className="w-full flex flex-col items-center mx-auto space-y-6">
@@ -41,7 +41,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
         audioReadOnlyToken={audio.readonlyToken}
         markers={markers}
         onTimeUpdate={handleTimeUpdate}
-        onSeekToReady={handleSeekToReady}
+        onPlayFromFnReady={handlePlayFromFnReady}
       />
 
       <StoredMarkerManager

@@ -14,10 +14,10 @@ export default function MarkerList({ markers, onMarkerClick, onRemoveMarker }: M
     {markers.map((marker) => (
       <div
         key={marker.id}
-        className="flex items-center justify-between p-2 bg-default-100 rounded-lg"
+        className="flex items-center justify-between p-2 py-1 bg-default-100 rounded-lg"
       >
         <div
-          className="flex items-center gap-2 flex-1 cursor-pointer hover:bg-default-200 -m-2 p-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 flex-1 cursor-pointer hover:bg-default-200 -m-2 p-2 py-1 rounded-lg transition-colors"
           onClick={() => onMarkerClick?.(marker.timestamp)}
           role="button"
           tabIndex={0}

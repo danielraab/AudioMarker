@@ -2,7 +2,6 @@ import AudioUploadForm from "~/app/_components/main/AudioUploadForm";
 import { auth } from "~/server/auth";
 import { HydrateClient } from "~/trpc/server";
 import PublicLandingPage from "../components/publicLandingPage";
-import Demo from "./_components/demo";
 import AudioFilesList from "~/components/AudioFilesList";
 
 export default async function Home() {
@@ -13,7 +12,6 @@ export default async function Home() {
       {session?.user && <>
         <AudioUploadForm />
         <AudioFilesList />
-        <Demo />
       </>}
       {!session?.user && <PublicLandingPage />}
     </HydrateClient>

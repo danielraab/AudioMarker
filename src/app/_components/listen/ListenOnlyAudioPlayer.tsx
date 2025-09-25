@@ -23,7 +23,7 @@ export default function ListenOnlyAudioPlayer({
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
   const [ storedMarkers ] = api.marker.getMarkers.useSuspenseQuery({ audioId });
   const [currentTime, setCurrentTime] = useState(0);
-  const [seekToFunction, setSeekToFunction] = useState<((time: number) => void) | null>(null);
+  const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
 
   // Use audioId or fallback to readonlyToken for unique identification
   const uniqueAudioId = audioId || audioReadOnlyToken;
@@ -36,15 +36,15 @@ export default function ListenOnlyAudioPlayer({
     setCurrentTime(time);
   }, []);
 
-  const handleSeekToReady = useCallback((seekTo: (time: number) => void) => {
-    setSeekToFunction(() => seekTo);
+  const handlePlayFromFnReady = useCallback((seekTo: (time: number) => void) => {
+    setPlayFromFunction(() => seekTo);
   }, []);
 
   const handleMarkerClick = useCallback((timestamp: number) => {
-    if (seekToFunction) {
-      seekToFunction(timestamp);
+    if (playFromFunction) {
+      playFromFunction(timestamp);
     }
-  }, [seekToFunction]);
+  }, [playFromFunction]);
 
 
   return (
@@ -56,7 +56,7 @@ export default function ListenOnlyAudioPlayer({
         audioReadOnlyToken={audioReadOnlyToken}
         markers={[...markers, ...storedMarkers]}
         onTimeUpdate={handleTimeUpdate}
-        onSeekToReady={handleSeekToReady}
+        onPlayFromFnReady={handlePlayFromFnReady}
       />
 
       <div className='flex flex-col items-center space-y-6'>

@@ -65,7 +65,7 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
         
         {/* Markers List */}
         {markers.length > 0 && (
-          <div className="space-y-2 max-h-48 overflow-y-auto">
+          <div className="space-y-2 max-h-96 overflow-y-auto">
             <h4 className="text-sm font-medium text-default-600">
               Saved Markers:
             </h4>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
@@ -9,6 +9,7 @@ import { Play, Pause, Square, ZoomIn, SquareArrowOutUpRight } from 'lucide-react
 import LoadingOverlay from './LoadingOverlay';
 import Link from 'next/link';
 import type { AudioMarker } from '~/types/Audio';
+import { formatTime } from '~/lib/time';
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -16,7 +17,7 @@ interface AudioPlayerProps {
   audioReadOnlyToken: string;
   markers?: AudioMarker[];
   onTimeUpdate?: (time: number) => void;
-  onSeekToReady?: (seekTo: (time: number) => void) => void;
+  onPlayFromFnReady?: (playFrom: (time: number) => void) => void;
 }
 
 export default function AudioPlayer({
@@ -25,26 +26,26 @@ export default function AudioPlayer({
   audioReadOnlyToken,
   markers = [],
   onTimeUpdate,
-  onSeekToReady,
+  onPlayFromFnReady,
 }: AudioPlayerProps) {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const regionsPlugin = useRef<RegionsPlugin | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(0);
 
-
   useEffect(() => {
+    console.log('AudioPlayer: Initializing WaveSurfe', waveformRef.current);
     if (!waveformRef.current) return;
-
+    
     regionsPlugin.current = RegionsPlugin.create();
     regionsPlugin.current.on('region-clicked', (region, e) => {
       e.stopPropagation() // prevent triggering a click on the waveform
       region.play(true)
     })
+
 
     // Initialize WaveSurfer
     wavesurfer.current = WaveSurfer.create({
@@ -63,24 +64,46 @@ export default function AudioPlayer({
       ],
     });
 
-    // Load audio
-    wavesurfer.current.load(audioUrl);
-
-    // Event listeners
-    wavesurfer.current.on('ready', () => {
-      setIsLoading(false);
-      wavesurfer.current?.zoom(zoomLevel);
-      const dur = wavesurfer.current?.getDuration() ?? 0;
-      setDuration(dur);
-
-      // Create regions from markers
-      createRegionsFromMarkers();
-    });
-
     wavesurfer.current.on('play', () => setIsPlaying(true));
     wavesurfer.current.on('pause', () => setIsPlaying(false));
     wavesurfer.current.on('finish', () => setIsPlaying(false));
+  }, []);
 
+  useEffect(() => {
+    console.log('AudioPlayer: Loading audio', audioUrl);
+    if (!wavesurfer.current) return;
+    // Load audio
+    void wavesurfer.current.load(audioUrl);
+
+    return () => {
+      wavesurfer.current?.destroy();
+    };
+  }, [audioUrl]);
+
+
+  useEffect(() => {
+    console.log('AudioPlayer: Setting up ready event listener');
+    if (!wavesurfer.current) return;
+    
+    // Event listeners
+    const unsubscribe = wavesurfer.current.on('ready', () => {
+      console.log('AudioPlayer: Audio is ready');
+      setIsLoading(false);
+      wavesurfer.current?.zoom(0);  
+
+      // Create regions from markers
+      createRegionsFromMarkers(markers);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [markers]);
+
+
+  useEffect(() => {
+    console.log('AudioPlayer: Setting up time update event listener');
+    if (!wavesurfer.current) return;
     wavesurfer.current.on('audioprocess', () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
@@ -93,13 +116,10 @@ export default function AudioPlayer({
       onTimeUpdate?.(time);
     });
 
-    return () => {
-      wavesurfer.current?.destroy();
-    };
-  }, [audioUrl]);
+  }, [onTimeUpdate]);
 
   // Create regions from markers
-  const createRegionsFromMarkers = () => {
+  const createRegionsFromMarkers = (markers: AudioMarker[]) => {
     if (!regionsPlugin.current || !wavesurfer.current) return;
 
     // Clear existing regions
@@ -120,7 +140,7 @@ export default function AudioPlayer({
   // Update regions when markers change
   useEffect(() => {
     if (wavesurfer.current && !isLoading) {
-      createRegionsFromMarkers();
+      createRegionsFromMarkers(markers);
     }
   }, [markers, isLoading]);
 
@@ -140,7 +160,7 @@ export default function AudioPlayer({
     if (isPlaying) {
       wavesurfer.current.pause();
     } else {
-      wavesurfer.current.play();
+      void wavesurfer.current.play();
     }
   };
 
@@ -151,25 +171,19 @@ export default function AudioPlayer({
     setCurrentTime(0);
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const seekTo = (time: number) => {
+  const playFrom = useCallback((time: number) => {
     if (wavesurfer.current) {
-      wavesurfer.current.seekTo(time / duration);
-      wavesurfer.current.play();
+      wavesurfer.current.seekTo(time / wavesurfer.current.getDuration());
+      void wavesurfer.current.play();
     }
-  };
+  }, []);
 
-  // Expose seekTo function to parent component when ready
+  // Expose playFrom function to parent component when ready
   useEffect(() => {
-    if (!isLoading && onSeekToReady) {
-      onSeekToReady(seekTo);
+    if (!isLoading && onPlayFromFnReady) {
+      onPlayFromFnReady(playFrom);
     }
-  }, [isLoading, duration, onSeekToReady]);
+  }, [isLoading, playFrom, onPlayFromFnReady]);
 
 
   return (
@@ -229,7 +243,7 @@ export default function AudioPlayer({
       {/* Time Display */}
       <div className="flex justify-between text-sm text-default-500">
         <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(duration)}</span>
+        <span>{formatTime(wavesurfer.current?.getDuration() ?? 0)}</span>
       </div>
 
       {/* Control Buttons */}
