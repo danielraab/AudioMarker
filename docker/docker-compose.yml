@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   audio-marker:
-    build: .
+    image: ghcr.io/danielraab/audiomarker:latest
+#    build: .
     ports:
       - "3000:3000"
     environment:
