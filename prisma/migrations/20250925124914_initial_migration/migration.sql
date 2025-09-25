@@ -1,14 +1,4 @@
 -- CreateTable
-CREATE TABLE "Post" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    "createdById" TEXT NOT NULL,
-    CONSTRAINT "Post_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
@@ -55,16 +45,28 @@ CREATE TABLE "VerificationToken" (
 CREATE TABLE "Audio" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
+    "originalFileName" TEXT NOT NULL,
     "filePath" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
+    "readonlyToken" TEXT NOT NULL,
     "createdById" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "deletedAt" DATETIME,
+    "isPublic" BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT "Audio_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateIndex
-CREATE INDEX "Post_name_idx" ON "Post"("name");
+-- CreateTable
+CREATE TABLE "Marker" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "label" TEXT NOT NULL,
+    "timestamp" REAL NOT NULL,
+    "color" TEXT NOT NULL DEFAULT '#3b82f6',
+    "audioId" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Marker_audioId_fkey" FOREIGN KEY ("audioId") REFERENCES "Audio" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
@@ -82,4 +84,7 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Audio_token_key" ON "Audio"("token");
+CREATE UNIQUE INDEX "Audio_readonlyToken_key" ON "Audio"("readonlyToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Marker_audioId_timestamp_key" ON "Marker"("audioId", "timestamp");
