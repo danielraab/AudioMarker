@@ -34,6 +34,17 @@ The project includes GitHub Actions workflows that automatically build and push 
 
 For detailed setup instructions, see [Docker Documentation](./docker/README.Docker.md).
 
+### Known issues
+
+#### File upload problem with nginx
+
+add nginx conf to solve this issue:
+
+```conf
+client_max_body_size 50M;
+proxy_request_buffering off;
+```
+
 ## Development
 
 ```bash
@@ -46,9 +57,3 @@ npm run db:push
 # Start development server
 npm run dev
 ```
-
-## Deployment Options
-
-- **Docker**: See [Docker Documentation](./docker/README.Docker.md)
-- **Vercel**: Follow the [T3 Vercel deployment guide](https://create.t3.gg/en/deployment/vercel)
-- **Other platforms**: Follow the [T3 deployment guides](https://create.t3.gg/en/deployment/docker)
