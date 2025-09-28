@@ -43,6 +43,7 @@ add nginx conf to solve this issue:
 ```conf
 client_max_body_size 50M;
 proxy_request_buffering off;
+proxy_buffering off;
 ```
 
 ## Development
