@@ -27,7 +27,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <TRPCReactProvider>
-            <main className="flex flex-col items-center justify-center gap-12 px-4 py-4">
+            <main className="flex flex-col items-center justify-center gap-8 px-4 py-4">
               {children}
             </main>
           </TRPCReactProvider>

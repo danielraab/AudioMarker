@@ -1,5 +1,6 @@
 import { audioRouter } from "./routers/audio";
 import { markerRouter } from "./routers/marker";
+import { playlistRouter } from "./routers/playlist";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -10,6 +11,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   audio: audioRouter,
   marker: markerRouter,
+  playlist: playlistRouter,
 });
 
 // export type definition of API

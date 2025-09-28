@@ -1,28 +1,26 @@
 'use client';
 
-import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, useDisclosure } from "@heroui/react";
-import { MoreVertical, Play, Edit, Trash2, Link2, Check, ListMusic } from "lucide-react";
-import { useState, useCallback } from "react";
-import { AddToPlaylistModal } from "./AddToPlaylistModal";
+import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
+import { MoreVertical, Edit, Trash2, Play, Check, Link2 } from "lucide-react";
+import { useCallback, useState } from "react";
 
-interface AudioActionsDropdownProps {
-  audioId: string;
-  readonlyToken: string;
+interface PlaylistActionsDropdownProps {
+  playlistId: string;
+  onEditClick: () => void;
   onDeleteClick: () => void;
   isDeleteDisabled?: boolean;
 }
 
-export function AudioActionsDropdown({ 
-  audioId, 
-  readonlyToken, 
+export function PlaylistActionsDropdown({ 
+  playlistId, 
+  onEditClick,
   onDeleteClick, 
   isDeleteDisabled = false 
-}: AudioActionsDropdownProps) {
+}: PlaylistActionsDropdownProps) {
   const [copySuccess, setCopySuccess] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCopyLink = useCallback(async () => {
-    const listenUrl = `${window.location.origin}/listen/${readonlyToken}`;
+    const listenUrl = `${window.location.origin}/playlist/${playlistId}/listen`;
     try {
       await navigator.clipboard.writeText(listenUrl);
       setCopySuccess(true);
@@ -30,10 +28,9 @@ export function AudioActionsDropdown({
     } catch (err) {
       console.error("Failed to copy link:", err);
     }
-  }, [readonlyToken]);
+  }, [playlistId]);
 
   return (
-    <>
     <Dropdown>
       <DropdownTrigger>
         <Button 
@@ -45,15 +42,15 @@ export function AudioActionsDropdown({
           <MoreVertical size={16} />
         </Button>
       </DropdownTrigger>
-      <DropdownMenu aria-label="Audio actions">
-        <DropdownItem
+      <DropdownMenu aria-label="Playlist actions">
+      <DropdownItem
           key="play"
           startContent={<Play size={16} />}
-          href={`/listen/${readonlyToken}`}
+          href={`/playlist/${playlistId}/listen`}
           className="text-success"
           color="success"
         >
-          Play
+          Play TODO
         </DropdownItem>
         <DropdownItem
           key="copy"
@@ -66,20 +63,11 @@ export function AudioActionsDropdown({
         <DropdownItem
           key="edit"
           startContent={<Edit size={16} />}
-          href={`/edit/${audioId}`}
+          onPress={onEditClick}
           className="text-primary"
           color="primary"
         >
           Edit
-        </DropdownItem>
-        <DropdownItem
-          key="add-to-playlist"
-          startContent={<ListMusic size={16} />}
-          onPress={onOpen}
-          className="text-secondary"
-          color="secondary"
-        >
-          Add to Playlist
         </DropdownItem>
         <DropdownItem
           key="delete"
@@ -93,12 +81,5 @@ export function AudioActionsDropdown({
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
-
-    <AddToPlaylistModal
-      isOpen={isOpen}
-      onClose={onClose}
-      audioId={audioId}
-    />
-    </>
   );
 }

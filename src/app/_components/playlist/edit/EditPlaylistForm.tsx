@@ -1,47 +1,50 @@
 'use client';
 
+import { Button, Card, CardBody, CardHeader, Input, Switch } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import { useState, useRef } from "react";
-import { Button, Input, Card, CardBody, CardHeader, Switch } from "@heroui/react";
+import { useRef, useState } from "react";
 import { api } from "~/trpc/react";
+import { UnsavedChangesModal } from "../../UnsavedChangesModal";
 import { Play, Save } from "lucide-react";
-import { UnsavedChangesModal } from "../UnsavedChangesModal";
 
-interface EditAudioFormProps {
-  audioId: string;
+
+interface EditPlaylistFormProps {
+  playlistId: string;
 }
 
-export function EditAudioForm({ audioId }: EditAudioFormProps) {
+export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) {
   const router = useRouter();
-  const utils = api.useUtils();
-  const [error, setError] = useState<string | null>(null);
   const [isFormDirty, setIsFormDirty] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const utils = api.useUtils();
 
-  // Use suspense query to fetch audio details
-  const [audio] = api.audio.getAudioById.useSuspenseQuery({ id: audioId });
+  const [playlist] = api.playlist.getPlaylistById.useSuspenseQuery({
+    id: playlistId,
+  });
 
-  // Setup mutation for updating audio
-  const updateAudio = api.audio.updateAudio.useMutation({
+
+  const updatePlaylistMutation = api.playlist.updatePlaylist.useMutation({
     onSuccess: () => {
-      void utils.audio.getAudioById.invalidate({ id: audioId });
+      void utils.playlist.getPlaylistById.invalidate({ id: playlistId });
       setIsFormDirty(false);
       setPendingNavigation(null);
     },
     onError: (error) => {
-      setError(error.message);
+      console.error("Update playlist error:", error);
     },
   });
 
-  const handleFormChange = () => {
-    setIsFormDirty(true);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submitForm(e.currentTarget);
   };
 
   const submitForm = (form: HTMLFormElement) => {
     const formData = new FormData(form);
-    const name = formData.get('name') as string;
+    const name = (formData.get('name') as string).trim();
     const isPublic = formData.get('isPublic') !== null;
 
     if (!name) {
@@ -49,15 +52,15 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
       return;
     }
 
-    updateAudio.mutate(
-      { id: audioId, name, isPublic }
+    updatePlaylistMutation.mutate(
+      { id: playlistId, name: name, isPublic },
     );
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    submitForm(e.currentTarget);
+  const handleFormChange = () => {
+    setIsFormDirty(true);
   };
+
 
   const handleNavigationAttempt = (path: string) => {
     if (isFormDirty) {
@@ -69,52 +72,44 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
   };
 
   return (
-    <Card className="mx-auto">
+    <Card>
       <CardHeader className="flex gap-3 justify-between">
         <div className="flex flex-col">
-          <p className="text-md font-semibold">Audio Settings - {audio.name}</p>
-          <p className="text-small text-default-500">Update audio details</p>
+          <p className="text-md font-semibold">Playlist Settings - {playlist.name}</p>
+          <p className="text-small text-default-500">Update playlist details</p>
         </div>
         <Button
           color="success"
           startContent={<Play size={16} />}
-          onPress={() => {
-            handleNavigationAttempt(`/listen/${audio.readonlyToken}`);
-          }}>
-          Preview
+          >
+          Preview TODO
         </Button>
       </CardHeader>
       <CardBody>
-        <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <Input
             name="name"
             type="text"
-            label="Audio Name"
-            placeholder="Enter a name for your audio"
-            defaultValue={audio.name}
+            label="Playlist Name"
+            placeholder="Enter playlist name"
+            defaultValue={playlist.name}
+            onChange={handleFormChange}
             isRequired
             variant="bordered"
             labelPlacement="outside"
-            onChange={handleFormChange}
             maxLength={100}
           />
 
           <Switch
             name="isPublic"
-            defaultSelected={audio.isPublic}
+            defaultSelected={playlist.isPublic}
             size="sm"
             color="primary"
             onChange={handleFormChange}
           >
-            Make audio public
+            Make playlist public
           </Switch>
           
-          <div className="text-xs text-default-500">
-            <p><strong>Original File:</strong> {audio.originalFileName}</p>
-            <p suppressHydrationWarning={true}><strong>Uploaded:</strong> {new Date(audio.createdAt).toLocaleString()}</p>
-            <p suppressHydrationWarning={true}><strong>Updated:</strong> {new Date(audio.updatedAt).toLocaleString()}</p>
-          </div>
-
           {error && (
             <p className="text-danger text-sm">{error}</p>
           )}
@@ -133,14 +128,14 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
               type="submit"
               color="primary"
               startContent={<Save size={16} />}
-              isLoading={updateAudio.isPending}
+              isLoading={updatePlaylistMutation.isPending}
             >
               Save Changes
             </Button>
           </div>
         </form>
       </CardBody>
-      <UnsavedChangesModal 
+      <UnsavedChangesModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onDiscard={() => {

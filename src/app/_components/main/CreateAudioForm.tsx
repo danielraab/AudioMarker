@@ -4,14 +4,16 @@ import React, { useState } from "react";
 import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { Music4, Plus } from "lucide-react";
 
-export default function AudioUploadForm() {
+export default function CreateAudioForm() {
   const [audioName, setAudioName] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"" | "uploading" | "success" | "error">("");
   const [message, setMessage] = useState<string>("");
   const router = useRouter();
-  
+
   const uploadAudioMutation = api.audio.uploadAudio.useMutation({
     onSuccess: () => {
       setStatus("success");
@@ -30,14 +32,14 @@ export default function AudioUploadForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const selectedFile = e.target.files[0];
-      
+
       // Validate file type on the frontend
       if (!selectedFile.type.includes('audio/mpeg') && !selectedFile.type.includes('audio/mp3')) {
         setMessage("Please select an MP3 file.");
         setFile(null);
         return;
       }
-      
+
       // Validate file extension
       const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
       if (fileExtension !== 'mp3') {
@@ -45,7 +47,7 @@ export default function AudioUploadForm() {
         setFile(null);
         return;
       }
-      
+
       setFile(selectedFile);
       setStatus(""); // Clear any previous error messages
     }
@@ -78,7 +80,7 @@ export default function AudioUploadForm() {
 
     try {
       const fileData = await convertFileToBase64(file);
-      
+
       await uploadAudioMutation.mutateAsync({
         name: audioName,
         fileName: file.name,
@@ -90,6 +92,21 @@ export default function AudioUploadForm() {
       console.error("Upload error:", err);
     }
   };
+
+
+  if (!isExpanded) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Button
+          color="primary"
+          startContent={<Plus size={16} />}
+          onPress={() => setIsExpanded(true)}
+        >
+          Upload New Audio <Music4 />
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Card className="max-w-xl mx-auto">
@@ -110,40 +127,49 @@ export default function AudioUploadForm() {
             isRequired
             variant="bordered"
             labelPlacement="outside"
+            autoFocus
           />
-          
-            <Input
-              type="file"
-              accept="audio/mpeg,audio/mp3,.mp3"
-              onChange={handleFileChange}
-              label="MP3 File"
-              labelPlacement="outside"
-              variant="bordered"
-              isRequired
-              description={file ? `Selected: ${file.name}` : "Choose an MP3 audio file"}
-              classNames={{
-                input: "file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer",
-                inputWrapper: "hover:border-primary-300"
-              }}
-            />
 
-          <Button
-            type="submit"
-            color="primary"
-            size="lg"
-            className="w-full"
-            isDisabled={uploadAudioMutation.isPending}
-            startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
-          >
-            {uploadAudioMutation.isPending ? "Uploading..." : "Upload Audio"}
-          </Button>
+          <Input
+            type="file"
+            accept="audio/mpeg,audio/mp3,.mp3"
+            onChange={handleFileChange}
+            label="MP3 File"
+            labelPlacement="outside"
+            variant="bordered"
+            isRequired
+            description={file ? `Selected: ${file.name}` : "Choose an MP3 audio file"}
+            classNames={{
+              input: "file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer",
+              inputWrapper: "hover:border-primary-300"
+            }}
+          />
 
+          <div className="flex justify-between gap-2">
+            <Button
+              onPress={() => setIsExpanded(false)}
+              type="button"
+                variant="light"
+              isDisabled={uploadAudioMutation.isPending}
+              startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              isDisabled={uploadAudioMutation.isPending}
+              startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
+            >
+              {uploadAudioMutation.isPending ? "Uploading..." : "Upload Audio"}
+            </Button>
+          </div>
           {status && (
             <Chip
               color={
                 status === "success" ? "success" :
-                status === "uploading" ? "primary" :
-                status === "error" ? "danger" : "default"
+                  status === "uploading" ? "primary" :
+                    status === "error" ? "danger" : "default"
               }
               variant="flat"
               className="w-full justify-center"

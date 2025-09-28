@@ -52,6 +52,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     audios        Audio[]
+    playlists     Playlist[]
 }
 
 model VerificationToken {
@@ -75,6 +76,7 @@ model Audio {
     deletedAt        DateTime?
     isPublic         Boolean   @default(true)
     markers          Marker[]
+    playlistAudios   PlaylistAudio[]
 }
 
 model Marker {
@@ -88,4 +90,28 @@ model Marker {
     updatedAt   DateTime  @updatedAt
 
     @@unique([audioId, timestamp])
+}
+
+model Playlist {
+    id            String          @id @default(cuid())
+    name          String
+    isPublic      Boolean         @default(false)
+    createdBy     User            @relation(fields: [createdById], references: [id])
+    createdById   String
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    deletedAt     DateTime?
+    audios        PlaylistAudio[]
+}
+
+model PlaylistAudio {
+    id          String   @id @default(cuid())
+    playlist    Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+    playlistId  String
+    audio       Audio    @relation(fields: [audioId], references: [id], onDelete: Cascade)
+    audioId     String
+    order       Int      @default(0)
+    addedAt     DateTime @default(now())
+
+    @@unique([playlistId, audioId])
 }
