@@ -5,16 +5,16 @@ import { auth } from "~/server/auth";
 import { VisibilityBanner } from "~/app/_components/listen/VisibilityBanner";
 
 interface ListenPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ audioId: string }>;
 }
 
 
 export default async function ListenPage({ params }: ListenPageProps) {
-  const { id } = await params;
+  const { audioId } = await params;
   const session = await auth();
 
   try {
-    const audio = await api.audio.getPublicAudioById({ id });
+    const audio = await api.audio.getPublicAudioById({ id: audioId });
     void api.marker.getMarkers.prefetch({ audioId: audio.id });
 
     // Check if the audio is deleted
@@ -47,8 +47,8 @@ export default async function ListenPage({ params }: ListenPageProps) {
 
 export async function generateMetadata({ params }: ListenPageProps) {
   try {
-    const { id } = await params;
-    const audio = await api.audio.getPublicAudioById({ id });
+    const { audioId } = await params;
+    const audio = await api.audio.getPublicAudioById({ id: audioId });
     return {
       title: `${audio.name} - Audio Player`,
       description: `Listen to ${audio.name}`,

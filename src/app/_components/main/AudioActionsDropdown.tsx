@@ -20,7 +20,7 @@ export function AudioActionsDropdown({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCopyLink = useCallback(async () => {
-    const listenUrl = `${window.location.origin}/audio/listen/${audioId}`;
+    const listenUrl = `${window.location.origin}/audios/${audioId}/listen`;
     try {
       await navigator.clipboard.writeText(listenUrl);
       setCopySuccess(true);
@@ -47,7 +47,7 @@ export function AudioActionsDropdown({
         <DropdownItem
           key="play"
           startContent={<Play size={16} />}
-          href={`/audio/listen/${audioId}`}
+          href={`/audios/${audioId}/listen`}
           className="text-success"
           color="success"
         >
@@ -64,7 +64,7 @@ export function AudioActionsDropdown({
         <DropdownItem
           key="edit"
           startContent={<Edit size={16} />}
-          href={`/audio/edit/${audioId}`}
+          href={`/audios/${audioId}/edit`}
           className="text-primary"
           color="primary"
         >

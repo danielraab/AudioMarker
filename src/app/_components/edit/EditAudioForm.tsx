@@ -79,7 +79,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
           color="success"
           startContent={<Play size={16} />}
           onPress={() => {
-            handleNavigationAttempt(`/audio/listen/${audio.id}`);
+            handleNavigationAttempt(`/audios/${audio.id}/listen`);
           }}>
           Preview
         </Button>

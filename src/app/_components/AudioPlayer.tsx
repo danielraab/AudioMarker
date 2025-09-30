@@ -192,7 +192,7 @@ export default function AudioPlayer({
         <div className="flex flex-col">
           <p className="flex items-center gap-2 text-lg font-semibold">
             {audioName}
-            <Link href={`/audio/listen/${audioReadOnlyToken}`}
+            <Link href={`/audios/${audioReadOnlyToken}/listen`}
               title='Link to publicly available read only player'><SquareArrowOutUpRight size={16} /></Link>
           </p>
           <p className="text-small text-default-500">Audio Player</p>
