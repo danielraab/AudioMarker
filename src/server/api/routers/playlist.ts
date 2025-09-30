@@ -65,7 +65,6 @@ export const playlistRouter = createTRPCRouter({
                   name: true,
                   originalFileName: true,
                   filePath: true,
-                  readonlyToken: true,
                   createdAt: true,
                   _count: {
                     select: {
@@ -128,7 +127,6 @@ export const playlistRouter = createTRPCRouter({
                   isPublic: true,
                   originalFileName: true,
                   filePath: true,
-                  readonlyToken: true,
                   createdAt: true,
                   _count: {
                     select: {
@@ -323,7 +321,6 @@ export const playlistRouter = createTRPCRouter({
               name: true,
               originalFileName: true,
               filePath: true,
-              readonlyToken: true,
             },
           },
         },
@@ -440,7 +437,6 @@ export const playlistRouter = createTRPCRouter({
           name: true,
           originalFileName: true,
           filePath: true,
-          readonlyToken: true,
           createdAt: true,
           _count: {
             select: {
@@ -532,7 +528,6 @@ export const playlistRouter = createTRPCRouter({
           name: true,
           originalFileName: true,
           filePath: true,
-          readonlyToken: true,
           createdAt: true,
           _count: {
             select: {

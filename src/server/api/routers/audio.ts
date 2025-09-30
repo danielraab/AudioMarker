@@ -9,7 +9,7 @@ import {
 export const audioRouter = createTRPCRouter({
   getUserAudios: protectedProcedure.query(async ({ ctx }) => {
     const audios = await ctx.db.audio.findMany({
-      where: { 
+      where: {
         createdById: ctx.session.user.id,
         deletedAt: null // Only fetch non-deleted audios
       },
@@ -19,7 +19,6 @@ export const audioRouter = createTRPCRouter({
         name: true,
         originalFileName: true,
         filePath: true,
-        readonlyToken: true,
         createdAt: true,
         isPublic: true,
         _count: {
@@ -53,7 +52,6 @@ export const audioRouter = createTRPCRouter({
           name: true,
           originalFileName: true,
           filePath: true,
-          readonlyToken: true,
           createdAt: true,
           updatedAt: true,
           isPublic: true,
@@ -67,12 +65,12 @@ export const audioRouter = createTRPCRouter({
       return audio;
     }),
 
-  getAudioByToken: publicProcedure
-    .input(z.object({ token: z.string() }))
+  getPublicAudioById: publicProcedure
+    .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const audio = await ctx.db.audio.findFirst({
         where: {
-          readonlyToken: input.token,
+          id: input.id,
           deletedAt: null,
         },
         select: {
@@ -80,7 +78,6 @@ export const audioRouter = createTRPCRouter({
           name: true,
           originalFileName: true,
           filePath: true,
-          readonlyToken: true,
           createdAt: true,
           isPublic: true,
           deletedAt: true,
@@ -155,7 +152,6 @@ export const audioRouter = createTRPCRouter({
           id: true,
           name: true,
           originalFileName: true,
-          readonlyToken: true,
           createdAt: true,
         },
       });
@@ -181,9 +177,8 @@ export const audioRouter = createTRPCRouter({
         throw new Error('Only .mp3 files are allowed');
       }
 
-      // Generate unique IDs
+      // Generate unique ID
       const id = uuidv4();
-      const readonlyToken = uuidv4();
       const outFileName = `${id}${fileExtension}`;
       const filePath = path.join(process.cwd(), 'public', 'uploads', outFileName);
 
@@ -199,13 +194,11 @@ export const audioRouter = createTRPCRouter({
             name: input.name,
             originalFileName: input.fileName,
             filePath: `/uploads/${outFileName}`,
-            readonlyToken,
             createdById: ctx.session.user.id,
           },
         });
 
         return {
-          readonlyToken: audio.readonlyToken,
           id: audio.id
         };
       } catch (error) {

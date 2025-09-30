@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { api } from "~/trpc/react";
 import { UnsavedChangesModal } from "../../UnsavedChangesModal";
 import { Play, Save } from "lucide-react";
+import Link from "next/link";
 
 
 interface EditPlaylistFormProps {
@@ -79,10 +80,13 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
           <p className="text-small text-default-500">Update playlist details</p>
         </div>
         <Button
-          color="success"
           startContent={<Play size={16} />}
+          as={Link}
+          href={`/playlists/${playlistId}/listen`}
+          className="text-white"
+          color="success"
           >
-          Preview TODO
+          Listen
         </Button>
       </CardHeader>
       <CardBody>

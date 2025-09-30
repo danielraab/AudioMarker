@@ -38,7 +38,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
       <AudioPlayer
         audioUrl={audio.filePath}
         audioName={audio.name}
-        audioReadOnlyToken={audio.readonlyToken}
+        audioReadOnlyToken={audio.id}
         markers={markers}
         onTimeUpdate={handleTimeUpdate}
         onPlayFromFnReady={handlePlayFromFnReady}

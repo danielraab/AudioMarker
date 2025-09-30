@@ -35,7 +35,6 @@ export interface PlaylistAudio {
     name: string;
     originalFileName: string;
     filePath: string;
-    readonlyToken: string;
     createdAt: Date;
     markerCount: number;
   };
@@ -46,7 +45,6 @@ export interface AudioForPlaylist {
   name: string;
   originalFileName: string;
   filePath: string;
-  readonlyToken: string;
   createdAt: Date;
   markerCount: number;
 }
@@ -56,7 +54,6 @@ export interface AudioWithPlaylistInfo {
   name: string;
   originalFileName: string;
   filePath: string;
-  readonlyToken: string;
   createdAt: Date;
   markerCount: number;
   isInPlaylist: boolean;

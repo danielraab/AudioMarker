@@ -40,7 +40,7 @@ export function PlaylistAudioItem({ playlistAudio, onRemove, isRemoving }: Playl
               variant="light"
               color="primary"
               as="a"
-              href={`/listen/${audio.readonlyToken}`}
+              href={`/listen/${audio.id}`}
               target="_blank"
               title="Play audio"
             >

@@ -12,7 +12,6 @@ interface AudioListItemProps {
     id: string;
     name: string;
     originalFileName: string;
-    readonlyToken: string;
     createdAt: Date;
     markerCount: number;
     isPublic: boolean;
@@ -77,7 +76,6 @@ export function AudioListItem({ audio }: AudioListItemProps) {
             <div>
               <AudioActionsDropdown
                 audioId={audio.id}
-                readonlyToken={audio.readonlyToken}
                 onDeleteClick={handleDeleteClick}
                 isDeleteDisabled={deleteAudioMutation.isPending}
               />

@@ -7,22 +7,20 @@ import { AddToPlaylistModal } from "./AddToPlaylistModal";
 
 interface AudioActionsDropdownProps {
   audioId: string;
-  readonlyToken: string;
   onDeleteClick: () => void;
   isDeleteDisabled?: boolean;
 }
 
 export function AudioActionsDropdown({ 
-  audioId, 
-  readonlyToken, 
-  onDeleteClick, 
+  audioId,
+  onDeleteClick,
   isDeleteDisabled = false 
 }: AudioActionsDropdownProps) {
   const [copySuccess, setCopySuccess] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCopyLink = useCallback(async () => {
-    const listenUrl = `${window.location.origin}/listen/${readonlyToken}`;
+    const listenUrl = `${window.location.origin}/listen/${audioId}`;
     try {
       await navigator.clipboard.writeText(listenUrl);
       setCopySuccess(true);
@@ -30,7 +28,7 @@ export function AudioActionsDropdown({
     } catch (err) {
       console.error("Failed to copy link:", err);
     }
-  }, [readonlyToken]);
+  }, [audioId]);
 
   return (
     <>
@@ -49,7 +47,7 @@ export function AudioActionsDropdown({
         <DropdownItem
           key="play"
           startContent={<Play size={16} />}
-          href={`/listen/${readonlyToken}`}
+          href={`/listen/${audioId}`}
           className="text-success"
           color="success"
         >

@@ -68,7 +68,6 @@ model Audio {
     name             String
     originalFileName String
     filePath         String
-    readonlyToken    String    @unique
     createdBy        User      @relation(fields: [createdById], references: [id])
     createdById      String
     createdAt        DateTime  @default(now())

@@ -5,16 +5,16 @@ import { auth } from "~/server/auth";
 import { VisibilityBanner } from "~/app/_components/listen/VisibilityBanner";
 
 interface ListenPageProps {
-  params: Promise<{ token: string }>;
+  params: Promise<{ id: string }>;
 }
 
 
 export default async function ListenPage({ params }: ListenPageProps) {
-  const { token } = await params;
+  const { id } = await params;
   const session = await auth();
 
   try {
-    const audio = await api.audio.getAudioByToken({ token });
+    const audio = await api.audio.getPublicAudioById({ id });
     void api.marker.getMarkers.prefetch({ audioId: audio.id });
 
     // Check if the audio is deleted
@@ -34,21 +34,21 @@ export default async function ListenPage({ params }: ListenPageProps) {
         <ListenOnlyAudioPlayer
           audioUrl={audio.filePath}
           audioName={audio.name}
-          audioReadOnlyToken={audio.readonlyToken}
+          audioReadOnlyToken={audio.id}
           audioId={audio.id}
         />
       </div>
     );
   } catch (error) {
-    console.error("Error fetching audio by token:", error);
+    console.error("Error fetching audio by id:", error);
     notFound();
   }
 }
 
 export async function generateMetadata({ params }: ListenPageProps) {
   try {
-    const { token } = await params;
-    const audio = await api.audio.getAudioByToken({ token });
+    const { id } = await params;
+    const audio = await api.audio.getPublicAudioById({ id });
     return {
       title: `${audio.name} - Audio Player`,
       description: `Listen to ${audio.name}`,
