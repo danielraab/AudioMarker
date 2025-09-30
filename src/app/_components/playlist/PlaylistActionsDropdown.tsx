@@ -11,16 +11,16 @@ interface PlaylistActionsDropdownProps {
   isDeleteDisabled?: boolean;
 }
 
-export function PlaylistActionsDropdown({ 
-  playlistId, 
+export function PlaylistActionsDropdown({
+  playlistId,
   onEditClick,
-  onDeleteClick, 
-  isDeleteDisabled = false 
+  onDeleteClick,
+  isDeleteDisabled = false
 }: PlaylistActionsDropdownProps) {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopyLink = useCallback(async () => {
-    const listenUrl = `${window.location.origin}/playlist/${playlistId}/listen`;
+    const listenUrl = `${window.location.origin}/playlists/${playlistId}/listen`;
     try {
       await navigator.clipboard.writeText(listenUrl);
       setCopySuccess(true);
@@ -33,7 +33,7 @@ export function PlaylistActionsDropdown({
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button 
+        <Button
           isIconOnly
           size="sm"
           variant="light"
@@ -43,14 +43,14 @@ export function PlaylistActionsDropdown({
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Playlist actions">
-      <DropdownItem
-          key="play"
+        <DropdownItem
+          key="listen"
           startContent={<Play size={16} />}
-          href={`/playlist/${playlistId}/listen`}
+          href={`/playlists/${playlistId}/listen`}
           className="text-success"
           color="success"
         >
-          Play TODO
+          Listen
         </DropdownItem>
         <DropdownItem
           key="copy"
@@ -58,7 +58,7 @@ export function PlaylistActionsDropdown({
           onPress={handleCopyLink}
           className={copySuccess ? "text-success" : ""}
         >
-          {copySuccess ? "Copied!" : "Copy Play Link"}
+          {copySuccess ? "Copied!" : "Copy Listen Link"}
         </DropdownItem>
         <DropdownItem
           key="edit"

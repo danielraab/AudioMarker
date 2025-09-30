@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Button, Card, CardBody, CardHeader, useDisclosure, Spinner } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, useDisclosure } from "@heroui/react";
 import { Plus } from "lucide-react";
 import { api } from "~/trpc/react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
@@ -19,7 +19,7 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
   const utils = api.useUtils();
 
   // Fetch playlist data
-  const { data: playlist, isLoading } = api.playlist.getPlaylistById.useQuery({
+  const [ playlist ] = api.playlist.getUserPlaylistById.useSuspenseQuery({
     id: playlistId,
   });
 
@@ -39,7 +39,7 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
   const removeAudioMutation = api.playlist.removeAudioFromPlaylist.useMutation({
     onSuccess: () => {
       // Refresh the playlist data
-      void utils.playlist.getPlaylistById.invalidate({ id: playlistId });
+      void utils.playlist.getUserPlaylistById.invalidate({ id: playlistId });
     },
     onError: (error) => {
       console.error("Remove audio error:", error);
@@ -75,27 +75,15 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
       playlistId,
       audioId,
     });
-    void utils.playlist.getPlaylistById.invalidate({ id: playlistId });
-    void utils.playlist.getAllAudiosForPlaylist.invalidate({ playlistId: playlistId });
+    void utils.playlist.getUserPlaylistById.invalidate({ id: playlistId });
+    void utils.playlist.getUserAudiosForPlaylist.invalidate({ playlistId: playlistId });
     
   };
 
   const handleAudioAdded = () => {
     // Refresh the playlist data when audio is added
-    void utils.playlist.getPlaylistById.invalidate({ id: playlistId });
+    void utils.playlist.getUserPlaylistById.invalidate({ id: playlistId });
   };
-
-  if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
-        <Card>
-          <CardBody className="flex justify-center py-8">
-            <Spinner size="lg" />
-          </CardBody>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">

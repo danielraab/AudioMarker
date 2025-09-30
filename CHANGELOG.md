@@ -8,14 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Playlist functionality**: Complete playlist system implementation
+  - Create, edit, and manage playlists
+  - Add/remove audio files to/from playlists
+  - Playlist-specific UI components and forms
+  - Database schema for playlist relationships
+- **Email magic link authentication**: Alternative authentication method using Nodemailer
+  - SMTP configuration support
+  - Magic link email delivery
+  - Optional authentication providers based on environment variables
 
 ### Changed
-
-### Deprecated
-
-### Removed
+- Reorganized environment variables in `.env.example` with logical grouping
+- Updated authentication configuration to support multiple providers conditionally
+- Enhanced audio management with playlist integration
 
 ### Fixed
+- GitHub Actions workflow for tag-based builds
+- Documentation improvements for nginx upload configuration
+- Added troubleshooting hints for nginx-related issues
 
 ### Security
 

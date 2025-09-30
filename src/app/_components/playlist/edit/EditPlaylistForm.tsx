@@ -21,14 +21,14 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
   const formRef = useRef<HTMLFormElement>(null);
   const utils = api.useUtils();
 
-  const [playlist] = api.playlist.getPlaylistById.useSuspenseQuery({
+  const [playlist] = api.playlist.getUserPlaylistById.useSuspenseQuery({
     id: playlistId,
   });
 
 
   const updatePlaylistMutation = api.playlist.updatePlaylist.useMutation({
     onSuccess: () => {
-      void utils.playlist.getPlaylistById.invalidate({ id: playlistId });
+      void utils.playlist.getUserPlaylistById.invalidate({ id: playlistId });
       setIsFormDirty(false);
       setPendingNavigation(null);
     },

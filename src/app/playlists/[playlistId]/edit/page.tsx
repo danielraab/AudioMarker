@@ -22,7 +22,7 @@ export default async function PlaylistEditPage({ params }: PlaylistEditPageProps
   }
 
   try {
-    void api.playlist.getPlaylistById.prefetch({ id: playlistId });
+    void api.playlist.getUserPlaylistById.prefetch({ id: playlistId });
   } catch (error) {
     console.error("Error prefetching playlist data:", error);
     notFound();

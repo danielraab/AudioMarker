@@ -29,14 +29,14 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
   const [searchTerm, setSearchTerm] = useState("");
   const utils = api.useUtils();
 
-  const { data: allAudios, isLoading } = api.playlist.getAllAudiosForPlaylist.useQuery(
+  const { data: allAudios, isLoading } = api.playlist.getUserAudiosForPlaylist.useQuery(
     { playlistId },
     { enabled: isOpen }
   );
 
   const addAudioMutation = api.playlist.addAudioToPlaylist.useMutation({
     onSuccess: () => {
-      void utils.playlist.getAllAudiosForPlaylist.invalidate({ playlistId: playlistId });
+      void utils.playlist.getUserAudiosForPlaylist.invalidate({ playlistId: playlistId });
       onAudioAdded();
     },
     onError: (error) => {

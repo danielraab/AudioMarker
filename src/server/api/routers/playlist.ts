@@ -3,12 +3,13 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 export const playlistRouter = createTRPCRouter({
   getUserPlaylists: protectedProcedure.query(async ({ ctx }) => {
     const playlists = await ctx.db.playlist.findMany({
-      where: { 
+      where: {
         createdById: ctx.session.user.id,
         deletedAt: null
       },
@@ -37,7 +38,7 @@ export const playlistRouter = createTRPCRouter({
     return playlistsWithAudioCount;
   }),
 
-  getPlaylistById: protectedProcedure
+  getUserPlaylistById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const playlist = await ctx.db.playlist.findUnique({
@@ -93,6 +94,71 @@ export const playlistRouter = createTRPCRouter({
             _count: undefined,
           },
         })),
+      };
+
+      return playlistWithMarkerCount;
+    }),
+
+  getPublicPlaylistById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const playlist = await ctx.db.playlist.findUnique({
+        where: {
+          id: input.id,
+          isPublic: true,
+          deletedAt: null
+        },
+        select: {
+          id: true,
+          name: true,
+          isPublic: true,
+          createdAt: true,
+          updatedAt: true,
+          createdBy: true,
+          audios: {
+            orderBy: { order: "asc" },
+            select: {
+              id: true,
+              order: true,
+              addedAt: true,
+              audio: {
+                select: {
+                  id: true,
+                  name: true,
+                  isPublic: true,
+                  originalFileName: true,
+                  filePath: true,
+                  readonlyToken: true,
+                  createdAt: true,
+                  _count: {
+                    select: {
+                      markers: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!playlist) {
+        throw new Error("Playlist not found");
+      }
+
+      // Transform the result to include markerCount at the audio level
+      const playlistWithMarkerCount = {
+        ...playlist,
+        audios: playlist.audios
+          .filter(playlistAudio => playlistAudio.audio.isPublic)
+          .map(playlistAudio => ({
+            ...playlistAudio,
+            audio: {
+              ...playlistAudio.audio,
+              markerCount: playlistAudio.audio._count.markers,
+              _count: undefined,
+            },
+          })),
       };
 
       return playlistWithMarkerCount;
@@ -393,6 +459,7 @@ export const playlistRouter = createTRPCRouter({
 
       return audiosWithMarkerCount;
     }),
+
   getUserPlaylistsForAudio: protectedProcedure
     .input(z.object({ audioId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -436,7 +503,7 @@ export const playlistRouter = createTRPCRouter({
       return playlistsWithAudioInfo;
     }),
 
-  getAllAudiosForPlaylist: protectedProcedure
+  getUserAudiosForPlaylist: protectedProcedure
     .input(z.object({ playlistId: z.string() }))
     .query(async ({ ctx, input }) => {
       // Check if playlist exists and belongs to user
