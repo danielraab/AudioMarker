@@ -5,7 +5,7 @@ import WaveSurfer from 'wavesurfer.js';
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { Button, Chip, Slider } from '@heroui/react';
-import { Play, Pause, Square, ZoomIn, SquareArrowOutUpRight } from 'lucide-react';
+import { Play, Pause, Square, ZoomIn, Gauge, SquareArrowOutUpRight } from 'lucide-react';
 import LoadingOverlay from './LoadingOverlay';
 import Link from 'next/link';
 import type { AudioMarker } from '~/types/Audio';
@@ -35,6 +35,7 @@ export default function AudioPlayer({
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1);
 
   useEffect(() => {
     console.log('AudioPlayer: Initializing WaveSurfe', waveformRef.current);
@@ -154,6 +155,16 @@ export default function AudioPlayer({
     }
   };
 
+  const handlePlaybackRateChange = (value: number | number[]) => {
+    const rate = Array.isArray(value) ? value[0] : value;
+    if (typeof rate === 'number') {
+      setPlaybackRate(rate);
+      if (wavesurfer.current) {
+        wavesurfer.current.setPlaybackRate(rate);
+      }
+    }
+  };
+
   const handlePlayPause = () => {
     if (!wavesurfer.current) return;
 
@@ -221,23 +232,45 @@ export default function AudioPlayer({
       {/* Loading Overlay */}
       {isLoading && <LoadingOverlay label='Audio is loading...' />}
 
-      {/* Zoom Control */}
-      <div className="flex items-center gap-3 my-4">
-        <ZoomIn size={16} className="text-default-500" />
-        <span className="text-sm text-default-500 min-w-12">Zoom:</span>
-        <Slider
-          size="sm"
-          step={2}
-          minValue={0}
-          maxValue={100}
-          value={zoomLevel}
-          onChange={handleZoomChange}
-          className="flex-1"
-          color="primary"
-          isDisabled={isLoading}
-          aria-label="Waveform zoom level"
-        />
-        <span className="text-xs text-default-500 min-w-8">{zoomLevel}</span>
+      {/* Zoom and Playback Rate Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 my-4">
+        {/* Zoom Control */}
+        <div className="flex items-center gap-3 flex-1">
+          <ZoomIn size={16} className="text-default-500" />
+          <span className="text-sm text-default-500 min-w-12">Zoom:</span>
+          <Slider
+            size="sm"
+            step={2}
+            minValue={0}
+            maxValue={100}
+            value={zoomLevel}
+            onChange={handleZoomChange}
+            className="flex-1"
+            color="primary"
+            isDisabled={isLoading}
+            aria-label="Waveform zoom level"
+          />
+          <span className="text-xs text-default-500 min-w-8">{zoomLevel}</span>
+        </div>
+
+        {/* Playback Rate Control */}
+        <div className="flex items-center gap-3 flex-1">
+          <Gauge size={16} className="text-default-500" />
+          <span className="text-sm text-default-500 min-w-12">Speed:</span>
+          <Slider
+            size="sm"
+            step={0.05}
+            minValue={0.25}
+            maxValue={2}
+            value={playbackRate}
+            onChange={handlePlaybackRateChange}
+            className="flex-1"
+            color="primary"
+            isDisabled={isLoading}
+            aria-label="Playback rate"
+          />
+          <span className="text-xs text-default-500 min-w-8">{playbackRate.toFixed(2)}x</span>
+        </div>
       </div>
 
       {/* Time Display */}

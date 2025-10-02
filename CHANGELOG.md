@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **PWA functionality**: install Audio Marker as Progressive Web App
   - cache audio and static files
+- add speed slider for audio player
 
 ## [0.2.0] - 2025-10-02
 
