@@ -2,7 +2,7 @@ import { api } from "~/trpc/server";
 import ListenOnlyAudioPlayer from "~/app/_components/listen/ListenOnlyAudioPlayer";
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
-import { VisibilityBanner } from "~/app/_components/listen/VisibilityBanner";
+import { VisibilityBanner } from "~/app/_components/VisibilityBanner";
 
 interface ListenPageProps {
   params: Promise<{ audioId: string }>;
@@ -14,17 +14,14 @@ export default async function ListenPage({ params }: ListenPageProps) {
   const session = await auth();
 
   try {
-    const audio = await api.audio.getPublicAudioById({ id: audioId });
+    const audio = session ?
+      await api.audio.getUserAudioById({ id: audioId }) :
+      await api.audio.getPublicAudioById({ id: audioId });
     void api.marker.getMarkers.prefetch({ audioId: audio.id });
-
-    // Check if the audio is deleted
-    if (audio.deletedAt) {
-      notFound();
-    }
 
     // Check if user has access
     const isCreator = session?.user?.id === audio.createdById;
-    if (!audio.isPublic && !isCreator) {
+    if (!(audio.isPublic || isCreator)) {
       notFound();
     }
 
@@ -46,9 +43,12 @@ export default async function ListenPage({ params }: ListenPageProps) {
 }
 
 export async function generateMetadata({ params }: ListenPageProps) {
+  const { audioId } = await params;
+  const session = await auth();
   try {
-    const { audioId } = await params;
-    const audio = await api.audio.getPublicAudioById({ id: audioId });
+    const audio = session ?
+      await api.audio.getUserAudioById({ id: audioId }) :
+      await api.audio.getPublicAudioById({ id: audioId });
     return {
       title: `${audio.name} - Audio Player`,
       description: `Listen to ${audio.name}`,

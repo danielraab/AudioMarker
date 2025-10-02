@@ -13,7 +13,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
 
-  const [audio] = api.audio.getAudioById.useSuspenseQuery({ id: audioId });
+  const [audio] = api.audio.getUserAudioById.useSuspenseQuery({ id: audioId });
   const [markers] = api.marker.getMarkers.useSuspenseQuery({ audioId });
 
   //for player -> marker manager

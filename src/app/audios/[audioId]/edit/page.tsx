@@ -19,7 +19,7 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
 
   // Prefetch the audio data
   try {
-    void api.audio.getAudioById.prefetch({ id: audioId });
+    void api.audio.getUserAudioById.prefetch({ id: audioId });
     void api.marker.getMarkers.prefetch({ audioId: audioId });
   } catch (error) {
     console.error("Error prefetching audio data:", error);

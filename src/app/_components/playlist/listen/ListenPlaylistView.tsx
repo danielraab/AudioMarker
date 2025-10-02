@@ -1,19 +1,18 @@
 'use client';
 
-import { api } from "~/trpc/react";
 import { ListenPlaylistAudioItem } from "./ListenPlaylistAudioItem";
 import { Card, CardBody, Chip } from "@heroui/react";
 import { Globe, User, ListMusic } from "lucide-react";
 import { formatTimeAgo } from "~/lib/time";
 import { notFound } from "next/navigation";
+import type { PlaylistWithAudios } from "~/types/Playlist";
 
 interface ListenPlaylistViewProps {
-  playlistId: string;
+  playlist: PlaylistWithAudios;
 }
 
-export function ListenPlaylistView({ playlistId }: ListenPlaylistViewProps) {
+export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
   try {
-    const [playlist] = api.playlist.getPublicPlaylistById.useSuspenseQuery({ id: playlistId });
 
     return (
       <div className="max-w-4xl mx-auto space-y-6">

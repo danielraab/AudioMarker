@@ -2,7 +2,8 @@ import { api } from "~/trpc/server";
 import { HydrateClient } from "~/trpc/server";
 import { ListenPlaylistView } from "~/app/_components/playlist/listen/ListenPlaylistView";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { auth } from "~/server/auth";
+import { VisibilityBanner } from "~/app/_components/VisibilityBanner";
 
 interface ListenPlaylistPageProps {
   params: Promise<{
@@ -12,22 +13,46 @@ interface ListenPlaylistPageProps {
 
 export default async function ListenPlaylistPage({ params }: ListenPlaylistPageProps) {
   const { playlistId } = await params;
+  const session = await auth();
 
   try {
-    void api.playlist.getPublicPlaylistById.prefetch({ id: playlistId });
+    const playlist = session ?
+      await api.playlist.getUserPlaylistById({ id: playlistId }) :
+      await api.playlist.getPublicPlaylistById({ id: playlistId });
+
+      // Check if user has access
+      const isCreator = session?.user?.id === playlist.createdBy.id;
+      if (!(playlist.isPublic || isCreator)) {
+        notFound();
+      }
+      
+    return (
+      <HydrateClient>
+        <VisibilityBanner isPublic={playlist.isPublic} isCreator={isCreator} />
+        <ListenPlaylistView playlist={playlist} />
+      </HydrateClient>
+    );
   } catch {
     notFound();
   }
 
-  return (
-    <HydrateClient>
-      <Suspense fallback={
-        <div className="flex items-center justify-center py-8">
-          <p className="text-default-500">Loading playlist details...</p>
-        </div>
-      }>
-        <ListenPlaylistView playlistId={playlistId}/>
-      </Suspense>
-    </HydrateClient>
-  );
+}
+
+export async function generateMetadata({ params }: ListenPlaylistPageProps) {
+  const { playlistId } = await params;
+  const session = await auth();
+  try {
+    const playlist = session ?
+      await api.playlist.getUserPlaylistById({ id: playlistId }) :
+      await api.playlist.getPublicPlaylistById({ id: playlistId });
+    return {
+      title: `${playlist.name} - Playlist`,
+      description: `Listen to ${playlist.name}`,
+    };
+  } catch {
+    return {
+      title: "Playlist",
+      description: "Listen to playlists",
+    };
+  }
 }

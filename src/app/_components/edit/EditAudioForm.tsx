@@ -21,12 +21,12 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
   // Use suspense query to fetch audio details
-  const [audio] = api.audio.getAudioById.useSuspenseQuery({ id: audioId });
+  const [audio] = api.audio.getUserAudioById.useSuspenseQuery({ id: audioId });
 
   // Setup mutation for updating audio
   const updateAudio = api.audio.updateAudio.useMutation({
     onSuccess: () => {
-      void utils.audio.getAudioById.invalidate({ id: audioId });
+      void utils.audio.getUserAudioById.invalidate({ id: audioId });
       setIsFormDirty(false);
       setPendingNavigation(null);
     },

@@ -1,3 +1,5 @@
+import type { User } from "next-auth";
+
 export interface Playlist {
   id: string;
   name: string;
@@ -23,6 +25,7 @@ export interface PlaylistWithAudios {
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
+  createdBy: User;
   audios: PlaylistAudio[];
 }
 

@@ -51,6 +51,7 @@ export const playlistRouter = createTRPCRouter({
           id: true,
           name: true,
           isPublic: true,
+          createdBy: true,
           createdAt: true,
           updatedAt: true,
           audios: {

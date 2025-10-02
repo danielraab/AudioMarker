@@ -39,7 +39,7 @@ export const audioRouter = createTRPCRouter({
     return audiosWithMarkerCount;
   }),
 
-  getAudioById: protectedProcedure
+  getUserAudioById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const audio = await ctx.db.audio.findUnique({
@@ -55,6 +55,7 @@ export const audioRouter = createTRPCRouter({
           createdAt: true,
           updatedAt: true,
           isPublic: true,
+          createdById: true,
         },
       });
 
@@ -71,6 +72,7 @@ export const audioRouter = createTRPCRouter({
       const audio = await ctx.db.audio.findFirst({
         where: {
           id: input.id,
+          isPublic: true,
           deletedAt: null,
         },
         select: {
@@ -80,7 +82,6 @@ export const audioRouter = createTRPCRouter({
           filePath: true,
           createdAt: true,
           isPublic: true,
-          deletedAt: true,
           createdById: true,
         },
       });
