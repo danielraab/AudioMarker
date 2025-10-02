@@ -6,11 +6,32 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import Providers from "~/app/_components/Providers";
 import Navbar from "./_components/navbar/Navbar";
+import ServiceWorkerRegistration from "./_components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
   title: "Audio Marker",
   description: "Audio Marker - Upload, mark, and share your audio files with ease. By DRaab",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Audio Marker",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Audio Marker",
+    title: "Audio Marker",
+    description: "Upload, mark, and share your audio files with ease",
+  },
+  twitter: {
+    card: "summary",
+    title: "Audio Marker",
+    description: "Upload, mark, and share your audio files with ease",
+  },
 };
 
 const geist = Geist({
@@ -18,13 +39,25 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+export const viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
+      <head>
+        <link rel="apple-touch-icon" href="/audio-marker-logo.svg" />
+      </head>
       <body>
         <Providers>
+          <ServiceWorkerRegistration />
           <Navbar />
           <TRPCReactProvider>
             <main className="flex flex-col items-center justify-center gap-8 px-4 py-4">
