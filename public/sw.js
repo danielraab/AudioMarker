@@ -1,3 +1,6 @@
+/// <reference lib="webworker" />
+// @ts-check
+
 const CACHE_NAME = 'audio-marker-v1';
 const AUDIO_CACHE_NAME = 'audio-marker-audio-v1';
 const STATIC_CACHE_NAME = 'audio-marker-static-v1';
@@ -37,6 +40,7 @@ self.addEventListener('activate', (event) => {
             console.log('[Service Worker] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
+          return Promise.resolve();
         })
       );
     })
@@ -46,7 +50,6 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - handle requests with caching strategies
 self.addEventListener('fetch', (event) => {
-  console.log('[Service Worker] Fetching:', event.request.url);
   const { request } = event;
   const url = new URL(request.url);
 
@@ -107,6 +110,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // API and dynamic content - Network First strategy
+  if (isApiRequest(request)) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, networkResponse.clone());
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            return new Response('Network error', { status: 503 });
+          });
+        })
+    );
+    return;
+  }
+
   // Default - Network First with cache fallback
   event.respondWith(
     fetch(request)
@@ -119,7 +146,12 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        return caches.match(request);
+        return caches.match(request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return new Response('Network error', { status: 503 });
+        });
       })
   );
 });
@@ -152,13 +184,20 @@ function isStaticAsset(request) {
   return staticExtensions.some(ext => pathname.endsWith(ext));
 }
 
+function isApiRequest(request) {
+  const url = new URL(request.url);
+  return url.pathname.startsWith('/api/');
+}
+
 // Message event - handle messages from clients
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  const data = event.data;
+  
+  if (data && data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
   
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
+  if (data && data.type === 'CLEAR_CACHE') {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
         return Promise.all(
