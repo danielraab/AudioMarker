@@ -59,35 +59,37 @@ export function AudioListItem({ audio }: AudioListItemProps) {
     <>
       <Card className="shadow-sm">
         <CardBody className="gap-2">
-          <div className="flex flex-row justify-between items-center gap-2">
-            <div className="grow flex items-center gap-2">
-              <h3 className="text-lg font-semibold truncate">{audio.name}</h3>
-              <Chip size="sm" variant="flat" color="primary">
-                {audio.markerCount} markers
-              </Chip>
-              <div className="flex items-center" title={audio.isPublic ? "Public" : "Private"}>
-                {audio.isPublic ? (
-                  <Globe size={16} className="text-success" />
-                ) : (
-                  <Lock size={16} className="text-warning" />
-                )}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 flex-1 flex-wrap">
+              <h3 className="flex-shrink-0 text-lg font-semibold">{audio.name}</h3>
+              <div className="flex grow items-center gap-2 justify-between">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Chip size="sm" variant="flat" color="primary">
+                    {audio.markerCount} markers
+                  </Chip>
+                  <div className="flex items-center" title={audio.isPublic ? "Public" : "Private"}>
+                    {audio.isPublic ? (
+                      <Globe size={16} className="text-success" />
+                    ) : (
+                      <Lock size={16} className="text-warning" />
+                    )}
+                  </div>
+                </div>
+                <AudioActionsDropdown
+                  audioId={audio.id}
+                  onDeleteClick={handleDeleteClick}
+                  isDeleteDisabled={deleteAudioMutation.isPending}
+                />
               </div>
-            </div>
-            <div>
-              <AudioActionsDropdown
-                audioId={audio.id}
-                onDeleteClick={handleDeleteClick}
-                isDeleteDisabled={deleteAudioMutation.isPending}
-              />
             </div>
           </div>
           <div className="space-y-1 text-sm text-default-500">
-            <p><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
+            <p className="break-words"><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
             <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
           </div>
         </CardBody>
       </Card>
-      
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">Delete Audio File</ModalHeader>

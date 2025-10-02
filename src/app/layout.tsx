@@ -60,7 +60,7 @@ export default function RootLayout({
           <ServiceWorkerRegistration />
           <Navbar />
           <TRPCReactProvider>
-            <main className="flex flex-col items-center justify-center gap-8 px-4 py-4">
+            <main className="flex flex-col items-center justify-center gap-8 px-4 py-4 w-full max-w-full overflow-x-hidden">
               {children}
             </main>
           </TRPCReactProvider>

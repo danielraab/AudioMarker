@@ -53,27 +53,29 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
     <>
       <Card className="shadow-sm">
         <CardBody className="gap-2">
-          <div className="flex flex-row justify-between items-center gap-2">
-            <div className="grow flex items-center gap-2">
-              <h3 className="text-lg font-semibold truncate">{playlist.name}</h3>
-              <Chip size="sm" variant="flat" color="secondary">
-                {playlist.audioCount} audio{playlist.audioCount !== 1 ? 's' : ''}
-              </Chip>
-              <div className="flex items-center" title={playlist.isPublic ? "Public" : "Private"}>
-                {playlist.isPublic ? (
-                  <Globe size={16} className="text-success" />
-                ) : (
-                  <Lock size={16} className="text-warning" />
-                )}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 flex-1">
+              <h3 className="flex-shrink-0 text-lg font-semibold">{playlist.name}</h3>
+              <div className="flex grow items-center gap-2 justify-between">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Chip size="sm" variant="flat" color="secondary">
+                    {playlist.audioCount} audio{playlist.audioCount !== 1 ? 's' : ''}
+                  </Chip>
+                  <div className="flex items-center" title={playlist.isPublic ? "Public" : "Private"}>
+                    {playlist.isPublic ? (
+                      <Globe size={16} className="text-success" />
+                    ) : (
+                      <Lock size={16} className="text-warning" />
+                    )}
+                  </div>
+                </div>
+                <PlaylistActionsDropdown
+                  playlistId={playlist.id}
+                  onEditClick={handleEditClick}
+                  onDeleteClick={handleDeleteClick}
+                  isDeleteDisabled={deletePlaylistMutation.isPending}
+                />
               </div>
-            </div>
-            <div>
-              <PlaylistActionsDropdown
-                playlistId={playlist.id}
-                onEditClick={handleEditClick}
-                onDeleteClick={handleDeleteClick}
-                isDeleteDisabled={deletePlaylistMutation.isPending}
-              />
             </div>
           </div>
           <div className="space-y-1 text-sm text-default-500">
