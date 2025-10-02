@@ -6,8 +6,7 @@ export default function ServiceWorkerRegistration() {
   useEffect(() => {
     if (
       typeof window !== 'undefined' &&
-      'serviceWorker' in navigator &&
-      process.env.NODE_ENV === 'production'
+      'serviceWorker' in navigator
     ) {
       // Register service worker
       navigator.serviceWorker
