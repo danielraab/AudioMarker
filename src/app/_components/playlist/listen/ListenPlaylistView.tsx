@@ -47,7 +47,7 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
         </Card>
 
         {/* Audio List */}
-        <section className="rounded-lg border border-default-200 bg-background p-6">
+        <section className="rounded-lg border border-default-200 bg-background p-3 sm:p-6">
           <header className="mb-4">
             <div className="flex flex-col">
               <p className="text-md font-semibold"><ListMusic className="inline" size={16} />Public Audios</p>

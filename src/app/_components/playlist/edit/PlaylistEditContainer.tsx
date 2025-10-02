@@ -86,29 +86,32 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="w-full max-w-4xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-6">
       {/* Audio Files */}
       <Card>
-        <CardHeader className="flex justify-between items-center gap-2">
-          <h2 className="text-lg font-semibold">Audio Files ({playlistAudios.length})</h2>
+        <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-2">
+          <h2 className="text-base sm:text-lg font-semibold">Audio Files ({playlistAudios.length})</h2>
           <Button
             color="primary"
             startContent={<Plus size={16} />}
             onPress={onOpen}
+            size="sm"
+            className="w-full sm:w-auto"
           >
             Add Audio
           </Button>
         </CardHeader>
-        <CardBody>
+        <CardBody className="px-3 sm:px-6">
           {playlistAudios.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-default-500">No audio files in this playlist yet.</p>
+            <div className="text-center py-6 sm:py-8">
+              <p className="text-sm sm:text-base text-default-500">No audio files in this playlist yet.</p>
               <Button
                 color="primary"
                 variant="light"
                 startContent={<Plus size={16} />}
                 onPress={onOpen}
-                className="mt-2"
+                size="sm"
+                className="mt-2 w-full sm:w-auto"
               >
                 Add your first audio file
               </Button>
@@ -120,7 +123,7 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="space-y-2"
+                    className="space-y-2 sm:space-y-3"
                   >
                     {playlistAudios.map((playlistAudio, index) => (
                       <Draggable

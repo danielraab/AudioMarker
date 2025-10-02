@@ -13,7 +13,7 @@ export default async function AudioFilesList() {
   const audios = await api.audio.getUserAudios();
 
   return (
-    <section className="max-w-4xl mx-auto rounded-lg border border-default-200 bg-background p-6">
+    <section className="max-w-4xl mx-auto rounded-lg border border-default-200 bg-background p-3 sm:p-6">
       <header className="mb-4">
         <div className="flex flex-col">
           <p className="text-md font-semibold"><Music4 className="inline" size={16} /> Your Audio Files</p>
