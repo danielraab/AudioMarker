@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.2] - 2025-10-02
 
+### Changed
+
+- double click on speed icon or text resets the playback rate to 1 (on audio player)
+
 ### Fixed
 
 - overview does not overflow on mobile anymore

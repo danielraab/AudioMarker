@@ -165,6 +165,11 @@ export default function AudioPlayer({
     }
   };
 
+  const handleSpeedDoubleClick = () => {
+    setPlaybackRate(1);
+    wavesurfer.current?.setPlaybackRate(1);
+  };
+
   const handlePlayPause = () => {
     if (!wavesurfer.current) return;
 
@@ -255,8 +260,21 @@ export default function AudioPlayer({
 
         {/* Playback Rate Control */}
         <div className="flex items-center gap-3 flex-1">
-          <Gauge size={16} className="text-default-500" />
-          <span className="text-sm text-default-500 min-w-12">Speed:</span>
+          <div
+            onDoubleClick={handleSpeedDoubleClick}
+            className="cursor-pointer select-none flex items-center gap-1"
+            title="Double-click to reset speed to 1x"
+          >
+            <Gauge
+              size={16}
+              className="text-default-500"
+            />
+            <span
+              className="text-sm text-default-500 min-w-12"
+            >
+              Speed:
+            </span>
+          </div>
           <Slider
             size="sm"
             step={0.05}
