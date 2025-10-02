@@ -16,11 +16,11 @@ echo "Database URL: $DATABASE_URL"
 
 # Run Prisma migrations
 echo "Running database migrations..."
-node_modules/.bin/prisma migrate deploy
+npx prisma migrate deploy
 
 # Generate Prisma client (in case it's needed)
 echo "Generating Prisma client..."
-node_modules/.bin/prisma generate
+npx prisma generate
 
 # Ensure uploads directory exists
 echo "Ensuring uploads directory exists..."

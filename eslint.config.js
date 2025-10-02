@@ -7,8 +7,8 @@ const compat = new FlatCompat({
 
 export default tseslint.config(
   {
-		ignores: ['.next']
-	},
+  ignores: ['.next', 'public/sw.js']
+ },
   ...compat.extends("next/core-web-vitals"),
   {
     files: ['**/*.ts', '**/*.tsx'],
