@@ -50,7 +50,7 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
         <section className="rounded-lg border border-default-200 bg-background p-3 sm:p-6">
           <header className="mb-4">
             <div className="flex flex-col">
-              <p className="text-md font-semibold"><ListMusic className="inline" size={16} />Public Audios</p>
+              <p className="text-md font-semibold"><ListMusic className="inline mr-2" size={16} />Public Audios</p>
               <p className="text-small text-default-500">Public audio files in this playlist</p>
             </div>
           </header>
