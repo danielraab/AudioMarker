@@ -32,7 +32,7 @@ export default function MarkerList({ markers, onMarkerClick, onRemoveMarker }: M
             style={{ backgroundColor: marker.color }}
           />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
+            <p className="text-sm font-medium">
               {marker.label}
             </p>
             <p className="text-xs text-default-500">

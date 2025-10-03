@@ -75,19 +75,21 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
   return (
     <Card>
       <CardHeader className="flex gap-3 justify-between">
-        <div className="flex flex-col">
-          <p className="text-md font-semibold">Playlist Settings - {playlist.name}</p>
-          <p className="text-small text-default-500">Update playlist details</p>
-        </div>
-        <Button
-          startContent={<Play size={16} />}
-          as={Link}
-          href={`/playlists/${playlistId}/listen`}
-          className="text-white"
-          color="success"
+        <div className="flex flex-row flex-wrap gap-2 justify-end">
+          <div className="grow" >
+            <p className="text-md font-semibold">Playlist Settings - {playlist.name}</p>
+            <p className="text-small text-default-500">Update playlist details</p>
+          </div>
+          <Button
+            startContent={<Play size={16} />}
+            as={Link}
+            href={`/playlists/${playlistId}/listen`}
+            className="text-white"
+            color="success"
           >
-          Listen
-        </Button>
+            Listen
+          </Button>
+        </div>
       </CardHeader>
       <CardBody>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
@@ -113,7 +115,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
           >
             Make playlist public
           </Switch>
-          
+
           {error && (
             <p className="text-danger text-sm">{error}</p>
           )}
