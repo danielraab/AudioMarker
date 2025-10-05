@@ -46,6 +46,32 @@ proxy_request_buffering off;
 proxy_buffering off;
 ```
 
+## Admin User Management
+
+Create or promote users to admin status using the CLI command:
+
+```bash
+# Development
+npm run admin:create <email>
+
+# Production (standalone)
+npx tsx scripts/create-admin.ts <email>
+
+# Production (Docker)
+docker exec -it <container-name> npm run admin:create <email>
+```
+
+Example:
+```bash
+# Development
+npm run admin:create admin@example.com
+
+# Docker
+docker exec -it audio-marker npm run admin:create admin@example.com
+```
+
+For more details, see [scripts/README.md](scripts/README.md).
+
 ## Development
 
 ```bash

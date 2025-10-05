@@ -106,6 +106,25 @@ Database migrations are automatically executed when the container starts. The st
 3. Generating Prisma client
 4. Starting the application
 
+## Admin User Management
+
+You can create or promote users to admin status directly in the Docker container:
+
+```bash
+# Using docker exec
+docker exec -it audio-marker npm run admin:create admin@example.com
+
+# Using docker-compose
+docker-compose -f docker/docker-compose.yml exec audio-marker npm run admin:create admin@example.com
+```
+
+This command will:
+- Create a new admin user if the email doesn't exist
+- Promote an existing user to admin if they already exist
+- Provide clear feedback about the operation
+
+For more details, see [scripts/README.md](../scripts/README.md).
+
 ## Data Persistence
 
 ### Audio Files

@@ -16,15 +16,23 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      isAdmin: boolean;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    isAdmin: boolean;
+    // ...other properties
+    // role: UserRole;
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    isAdmin: boolean;
+  }
 }
 
 /**
@@ -63,6 +71,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
+        isAdmin: user.isAdmin,
       },
     }),
   },
