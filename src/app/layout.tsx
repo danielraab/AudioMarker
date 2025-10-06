@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import Providers from "~/app/_components/Providers";
 import Navbar from "./_components/navbar/Navbar";
 import ServiceWorkerRegistration from "./_components/ServiceWorkerRegistration";
+import Footer from "./_components/Footer";
 
 export const metadata: Metadata = {
   title: "Audio Marker",
@@ -60,10 +61,11 @@ export default function RootLayout({
           <ServiceWorkerRegistration />
           <Navbar />
           <TRPCReactProvider>
-            <main className="flex flex-col items-center justify-center gap-8 px-4 py-4 w-full max-w-full overflow-x-hidden">
+            <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-4 w-full max-w-full overflow-x-hidden">
               {children}
             </main>
           </TRPCReactProvider>
+          <Footer />
         </Providers>
       </body>
     </html>

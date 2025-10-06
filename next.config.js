@@ -3,10 +3,24 @@
  * for Docker builds.
  */
 import "./src/env.js";
+import { execSync } from 'child_process';
+
+// Get git hash at build time
+const getGitHash = () => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch (error) {
+    return 'dev';
+  }
+};
 
 /** @type {import("next").NextConfig} */
 const config = {
   output: 'standalone',
+  
+  env: {
+    NEXT_PUBLIC_GIT_HASH: getGitHash(),
+  },
   
   // Ensure service worker and manifest are accessible
   async headers() {
