@@ -17,6 +17,7 @@ declare module "next-auth" {
     user: {
       id: string;
       isAdmin: boolean;
+      isDisabled: boolean;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -24,6 +25,7 @@ declare module "next-auth" {
 
   interface User {
     isAdmin: boolean;
+    isDisabled: boolean;
     // ...other properties
     // role: UserRole;
   }
@@ -32,6 +34,7 @@ declare module "next-auth" {
 declare module "@auth/core/adapters" {
   interface AdapterUser {
     isAdmin: boolean;
+    isDisabled: boolean;
   }
 }
 
@@ -66,13 +69,48 @@ export const authConfig = {
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-        isAdmin: user.isAdmin,
-      },
-    }),
+    session: ({ session, user }) => {
+      // Block disabled users from creating sessions
+      if (user.isDisabled) {
+        throw new Error("Your account has been disabled. Please contact an administrator.");
+      }
+      
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          isAdmin: user.isAdmin,
+          isDisabled: user.isDisabled,
+        },
+      };
+    },
+    signIn: async ({ user, account }) => {
+      // Prevent disabled users from signing in
+      if (user.isDisabled) {
+        console.log(`❌ Disabled user ${user.email} attempted to sign in.`);
+        return false;
+      }
+
+      console.log(`✅ User ${user.email} (${user.id}), ${user.isDisabled} signed in using ${account?.provider}.`, account);
+
+      // Check if registration is enabled for email provider (new users only)
+      if (account?.provider === "nodemailer") {
+        // Check if this is a new user (no existing user record)
+        const existingUser = await db.user.findUnique({
+          where: { email: user.email ?? undefined },
+        });
+
+        if (!existingUser) {
+          // This is a new registration attempt, check if registration is enabled
+          if (!env.MAIL_REGISTRATION_ENABLED) {
+            console.log(`❌ Registration attempt blocked for ${user.email} - registration is disabled.`);
+            return false;
+          }
+        }
+      }
+
+      return true;
+    },
   },
 } satisfies NextAuthConfig;

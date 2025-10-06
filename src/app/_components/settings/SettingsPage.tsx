@@ -2,6 +2,7 @@
 
 import { Tabs, Tab } from "@heroui/tabs";
 import UserListSection from "./UserListSection";
+import GeneralSettingsSection from "./GeneralSettingsSection";
 
 export default function SettingsPage() {
   return (
@@ -22,9 +23,9 @@ export default function SettingsPage() {
             <p className="text-default-500">System settings coming soon...</p>
           </div>
         </Tab>
-        <Tab key="general" title="General" isDisabled>
+        <Tab key="general" title="General">
           <div className="py-4">
-            <p className="text-default-500">General settings coming soon...</p>
+            <GeneralSettingsSection />
           </div>
         </Tab>
       </Tabs>

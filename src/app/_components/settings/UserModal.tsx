@@ -12,13 +12,14 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Switch } from "@heroui/switch";
 import { api } from "~/trpc/react";
-import { Shield } from "lucide-react";
+import { Shield, Ban } from "lucide-react";
 
 interface User {
   id: string;
   name: string | null;
   email: string | null;
   isAdmin: boolean;
+  isDisabled: boolean;
 }
 
 interface UserModalProps {
@@ -37,6 +38,7 @@ export default function UserModal({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -53,10 +55,12 @@ export default function UserModal({
         setName(user.name ?? "");
         setEmail(user.email ?? "");
         setIsAdmin(user.isAdmin);
+        setIsDisabled(user.isDisabled);
       } else {
         setName("");
         setEmail("");
         setIsAdmin(false);
+        setIsDisabled(false);
       }
       setErrors({});
     }
@@ -110,12 +114,14 @@ export default function UserModal({
         name,
         email,
         isAdmin,
+        isDisabled,
       });
     } else {
       createUserMutation.mutate({
         name,
         email,
         isAdmin,
+        isDisabled,
       });
     }
   };
@@ -172,6 +178,22 @@ export default function UserModal({
                 </p>
               </div>
               {isAdmin && <Shield className="h-4 w-4 text-warning" />}
+            </Switch>
+
+            <Switch
+              isSelected={isDisabled}
+              onValueChange={setIsDisabled}
+              classNames={{
+                base: "inline-flex flex-row-reverse w-full max-w-full bg-content1 hover:bg-content2 items-center justify-between cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent data-[selected=true]:border-danger",
+              }}
+            >
+              <div className="flex flex-col gap-1">
+                <p className="text-medium">Disable Account</p>
+                <p className="text-tiny text-default-400">
+                  Prevent this user from signing in
+                </p>
+              </div>
+              {isDisabled && <Ban className="h-4 w-4 text-danger" />}
             </Switch>
           </ModalBody>
           <ModalFooter>

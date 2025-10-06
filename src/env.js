@@ -21,6 +21,7 @@ export const env = createEnv({
     EMAIL_SERVER_USER: z.string().optional(),
     EMAIL_SERVER_PASSWORD: z.string().optional(),
     EMAIL_FROM: z.string().email().optional(),
+    MAIL_REGISTRATION_ENABLED: z.string().transform((val) => val !== "false").default("true"),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -51,6 +52,7 @@ export const env = createEnv({
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    MAIL_REGISTRATION_ENABLED: process.env.MAIL_REGISTRATION_ENABLED,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },

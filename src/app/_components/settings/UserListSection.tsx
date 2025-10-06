@@ -13,7 +13,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import { User, Shield, FileAudio, ListMusic, Plus, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { User, Shield, FileAudio, ListMusic, Plus, MoreVertical, Pencil, Trash2, Ban } from "lucide-react";
 import { api } from "~/trpc/react";
 import UserModal from "./UserModal";
 import { useDisclosure } from "@heroui/use-disclosure";
@@ -24,6 +24,7 @@ interface UserData {
   email: string | null;
   emailVerified: Date | null;
   isAdmin: boolean;
+  isDisabled: boolean;
   image: string | null;
   _count: {
     audios: number;
@@ -128,7 +129,7 @@ export default function UserListSection() {
               <TableColumn>USER</TableColumn>
               <TableColumn>EMAIL</TableColumn>
               <TableColumn>ROLE</TableColumn>
-              <TableColumn>VERIFIED</TableColumn>
+              <TableColumn>STATUS</TableColumn>
               <TableColumn>AUDIOS</TableColumn>
               <TableColumn>PLAYLISTS</TableColumn>
               <TableColumn>ACTIONS</TableColumn>
@@ -172,15 +173,26 @@ export default function UserListSection() {
                     )}
                   </TableCell>
                   <TableCell>
-                    {user.emailVerified ? (
-                      <Chip color="success" size="sm" variant="flat">
-                        Verified
-                      </Chip>
-                    ) : (
-                      <Chip color="default" size="sm" variant="flat">
-                        Not verified
-                      </Chip>
-                    )}
+                    <div className="flex flex-col gap-1">
+                      {user.isDisabled ? (
+                        <Chip
+                          startContent={<Ban className="h-3 w-3" />}
+                          color="danger"
+                          size="sm"
+                          variant="flat"
+                        >
+                          Disabled
+                        </Chip>
+                      ) : user.emailVerified ? (
+                        <Chip color="success" size="sm" variant="flat">
+                          Active
+                        </Chip>
+                      ) : (
+                        <Chip color="warning" size="sm" variant="flat">
+                          Unverified
+                        </Chip>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

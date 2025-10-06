@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { env } from "~/env";
 
 export const adminRouter = createTRPCRouter({
   getAllUsers: protectedProcedure.query(async ({ ctx }) => {
@@ -20,6 +21,7 @@ export const adminRouter = createTRPCRouter({
         email: true,
         emailVerified: true,
         isAdmin: true,
+        isDisabled: true,
         image: true,
         _count: {
           select: {
@@ -43,6 +45,7 @@ export const adminRouter = createTRPCRouter({
         name: z.string().min(1, "Name is required"),
         email: z.string().email("Invalid email address"),
         isAdmin: z.boolean().default(false),
+        isDisabled: z.boolean().default(false),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -72,6 +75,7 @@ export const adminRouter = createTRPCRouter({
           name: input.name,
           email: input.email,
           isAdmin: input.isAdmin,
+          isDisabled: input.isDisabled,
         },
       });
 
@@ -85,6 +89,7 @@ export const adminRouter = createTRPCRouter({
         name: z.string().min(1, "Name is required").optional(),
         email: z.string().email("Invalid email address").optional(),
         isAdmin: z.boolean().optional(),
+        isDisabled: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -182,4 +187,18 @@ export const adminRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  getRegistrationStatus: protectedProcedure.query(async ({ ctx }) => {
+    // Check if user is admin
+    if (!ctx.session.user.isAdmin) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only admins can access system settings",
+      });
+    }
+
+    return {
+      registrationEnabled: env.MAIL_REGISTRATION_ENABLED,
+    };
+  }),
 });
