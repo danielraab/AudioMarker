@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - 2025-10-06
+
+### Added
+
+- **User management**: Admin functionality for managing users
+  - View and manage all registered users
+  - Enable/disable user accounts
+  - Grant/revoke admin privileges
+  - User list with status indicators
+  - Settings page with user management section
+- **Footer component**: Added site-wide footer to all pages
+  - Displays author name "draab" with copyright year
+  - Shows current git commit hash for version tracking
+  - Includes cookie information notice
+  - Responsive design with dark mode support
+  - Automatic git hash injection at build time via Next.js config
+
 ## [0.2.2] - 2025-10-02
 
 ### Changed
