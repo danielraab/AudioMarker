@@ -58,6 +58,13 @@ The application uses two persistent volumes:
 
 ### Build the image
 ```bash
+# Build with current git version (tag or commit hash)
+docker build -f docker/Dockerfile -t audio-marker --build-arg GIT_VERSION_LABEL=$(git describe --tags --always) .
+
+# Build with specific version tag
+docker build -f docker/Dockerfile -t audio-marker --build-arg GIT_VERSION_LABEL=v0.2.3 .
+
+# Build without version label (will show 'dev' in footer)
 docker build -f docker/Dockerfile -t audio-marker .
 ```
 

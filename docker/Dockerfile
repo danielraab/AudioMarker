@@ -24,6 +24,7 @@ RUN \
 FROM --platform=linux/amd64 node:20-alpine AS builder
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_CLIENTVAR
+ARG GIT_VERSION_LABEL
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -31,9 +32,9 @@ COPY . .
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN \
-    if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
-    elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 npm run build; \
-    elif [ -f pnpm-lock.yaml ]; then npm install -g pnpm && SKIP_ENV_VALIDATION=1 pnpm run build; \
+    if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 NEXT_PUBLIC_GIT_VERSION_LABEL=${GIT_VERSION_LABEL} yarn build; \
+    elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 NEXT_PUBLIC_GIT_VERSION_LABEL=${GIT_VERSION_LABEL} npm run build; \
+    elif [ -f pnpm-lock.yaml ]; then npm install -g pnpm && SKIP_ENV_VALIDATION=1 NEXT_PUBLIC_GIT_VERSION_LABEL=${GIT_VERSION_LABEL} pnpm run build; \
     else echo "Lockfile not found." && exit 1; \
     fi
 

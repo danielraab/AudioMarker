@@ -3,7 +3,11 @@ version: '3.8'
 services:
   audio-marker:
     image: ghcr.io/danielraab/audiomarker:latest
-#    build: .
+#    build:
+#      context: ..
+#      dockerfile: docker/Dockerfile
+#      args:
+#        GIT_VERSION_LABEL: ${GIT_VERSION_LABEL:-unknown}
     ports:
       - "3000:3000"
     environment:

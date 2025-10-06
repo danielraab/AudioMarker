@@ -53,6 +53,18 @@ jobs:
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - name: Determine version string
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # If this is a tag push, use the tag name
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            # Otherwise use git describe or fall back to short SHA
+            VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "${{ github.sha }}")
+            echo "version=${VERSION:0:12}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v5
@@ -65,6 +77,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            GIT_VERSION_LABEL=${{ steps.version.outputs.version }}
 
       - name: Generate artifact attestation
         if: github.event_name != 'pull_request'
