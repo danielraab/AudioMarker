@@ -92,8 +92,6 @@ export const authConfig = {
         return false;
       }
 
-      console.log(`✅ User ${user.email} (${user.id}), ${user.isDisabled} signed in using ${account?.provider}.`, account);
-
       // Check if registration is enabled for email provider (new users only)
       if (account?.provider === "nodemailer") {
         // Check if this is a new user (no existing user record)
