@@ -7,6 +7,8 @@ export interface Playlist {
   createdAt: Date;
   updatedAt: Date;
   audioCount: number;
+  listenCounter?: number;
+  lastListenAt?: Date | null;
 }
 
 export interface PlaylistForAudio {
@@ -27,6 +29,8 @@ export interface PlaylistWithAudios {
   updatedAt: Date;
   createdBy: User;
   audios: PlaylistAudio[];
+  listenCounter?: number;
+  lastListenAt?: Date | null;
 }
 
 export interface PlaylistAudio {
@@ -40,6 +44,8 @@ export interface PlaylistAudio {
     filePath: string;
     createdAt: Date;
     markerCount: number;
+    listenCounter?: number;
+    lastListenAt?: Date | null;
   };
 }
 
@@ -50,6 +56,8 @@ export interface AudioForPlaylist {
   filePath: string;
   createdAt: Date;
   markerCount: number;
+  listenCounter?: number;
+  lastListenAt?: Date | null;
 }
 
 export interface AudioWithPlaylistInfo {
@@ -60,4 +68,6 @@ export interface AudioWithPlaylistInfo {
   createdAt: Date;
   markerCount: number;
   isInPlaylist: boolean;
+  listenCounter?: number;
+  lastListenAt?: Date | null;
 }

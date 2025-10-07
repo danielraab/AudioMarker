@@ -21,6 +21,8 @@ export const audioRouter = createTRPCRouter({
         filePath: true,
         createdAt: true,
         isPublic: true,
+        listenCounter: true,
+        lastListenAt: true,
         _count: {
           select: {
             markers: true,
@@ -206,5 +208,40 @@ export const audioRouter = createTRPCRouter({
         console.error('File upload error:', error);
         throw new Error('Upload failed');
       }
+    }),
+
+  incrementListenCount: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const audio = await ctx.db.audio.findUnique({
+        where: { id: input.id },
+        select: {
+          id: true,
+          isPublic: true,
+          deletedAt: true,
+          createdById: true
+        },
+      });
+
+      if (!audio || audio.deletedAt) {
+        throw new Error("Audio not found");
+      }
+
+      // Check if user has access (public or owner)
+      const hasAccess = audio.isPublic || (ctx.session?.user?.id === audio.createdById);
+      if (!hasAccess) {
+        throw new Error("Unauthorized");
+      }
+
+      // Increment the listen counter
+      await ctx.db.audio.update({
+        where: { id: input.id },
+        data: {
+          listenCounter: { increment: 1 },
+          lastListenAt: new Date(),
+        },
+      });
+
+      return { success: true };
     }),
 });

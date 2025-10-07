@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Card, CardBody, Chip } from "@heroui/react";
-import { Globe, Lock } from "lucide-react";
+import { Globe, Lock, Headphones } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { PlaylistActionsDropdown } from "./PlaylistActionsDropdown";
@@ -16,6 +16,8 @@ interface PlaylistListItemProps {
     createdAt: Date;
     updatedAt: Date;
     audioCount: number;
+    listenCounter?: number;
+    lastListenAt?: Date | null;
   };
 }
 
@@ -57,10 +59,15 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 flex-1">
               <h3 className="flex-shrink-0 text-lg font-semibold">{playlist.name}</h3>
               <div className="flex grow items-center gap-2 justify-between">
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                   <Chip size="sm" variant="flat" color="secondary">
                     {playlist.audioCount} audio{playlist.audioCount !== 1 ? 's' : ''}
                   </Chip>
+                  {playlist.listenCounter !== undefined && playlist.listenCounter > 0 && (
+                    <Chip size="sm" variant="flat" color="primary" startContent={<Headphones size={14} />}>
+                      {playlist.listenCounter} {playlist.listenCounter === 1 ? 'listen' : 'listens'}
+                    </Chip>
+                  )}
                   <div className="flex items-center" title={playlist.isPublic ? "Public" : "Private"}>
                     {playlist.isPublic ? (
                       <Globe size={16} className="text-success" />
@@ -81,6 +88,9 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
           <div className="space-y-1 text-sm text-default-500">
             <p><span className="font-medium">Created:</span> {formatTimeAgo(new Date(playlist.createdAt))}</p>
             <p><span className="font-medium">Last updated:</span> {formatTimeAgo(new Date(playlist.updatedAt))}</p>
+            {playlist.lastListenAt && (
+              <p><span className="font-medium">Last listened:</span> {formatTimeAgo(new Date(playlist.lastListenAt))}</p>
+            )}
           </div>
         </CardBody>
       </Card>

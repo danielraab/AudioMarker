@@ -6,12 +6,24 @@ import { Globe, User, ListMusic } from "lucide-react";
 import { formatTimeAgo } from "~/lib/time";
 import { notFound } from "next/navigation";
 import type { PlaylistWithAudios } from "~/types/Playlist";
+import { api } from "~/trpc/react";
+import { useIncrementListenCount } from "~/lib/hooks/useIncrementListenCount";
 
 interface ListenPlaylistViewProps {
   playlist: PlaylistWithAudios;
 }
 
 export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
+  // Mutation to increment listen count
+  const incrementListenCount = api.playlist.incrementListenCount.useMutation();
+
+  // Increment listen count (only once per 2 hours per browser/tab)
+  useIncrementListenCount({
+    id: playlist.id,
+    type: 'playlist',
+    incrementMutation: incrementListenCount,
+  });
+
   try {
 
     return (

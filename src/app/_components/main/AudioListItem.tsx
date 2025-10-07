@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Card, CardBody, Chip } from "@heroui/react";
-import { Globe, Lock } from "lucide-react";
+import { Globe, Lock, Headphones } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { AudioActionsDropdown } from "./AudioActionsDropdown";
+import { formatTimeAgo } from "~/lib/time";
 
 interface AudioListItemProps {
   audio: {
@@ -15,19 +16,10 @@ interface AudioListItemProps {
     createdAt: Date;
     markerCount: number;
     isPublic: boolean;
+    listenCounter?: number;
+    lastListenAt?: Date | null;
   };
 }
-
-const formatTimeAgo = (date: Date) => {
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (diffInSeconds < 60) return 'just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-  return date.toLocaleDateString();
-};
 
 export function AudioListItem({ audio }: AudioListItemProps) {
   const router = useRouter();
@@ -63,10 +55,15 @@ export function AudioListItem({ audio }: AudioListItemProps) {
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 flex-1 flex-wrap">
               <h3 className="flex-shrink-0 text-lg font-semibold">{audio.name}</h3>
               <div className="flex grow items-center gap-2 justify-between">
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                   <Chip size="sm" variant="flat" color="primary">
                     {audio.markerCount} markers
                   </Chip>
+                  {audio.listenCounter !== undefined && audio.listenCounter > 0 && (
+                    <Chip size="sm" variant="flat" color="secondary" startContent={<Headphones size={14} />}>
+                      {audio.listenCounter} {audio.listenCounter === 1 ? 'listen' : 'listens'}
+                    </Chip>
+                  )}
                   <div className="flex items-center" title={audio.isPublic ? "Public" : "Private"}>
                     {audio.isPublic ? (
                       <Globe size={16} className="text-success" />
@@ -86,6 +83,9 @@ export function AudioListItem({ audio }: AudioListItemProps) {
           <div className="space-y-1 text-sm text-default-500">
             <p className="break-words"><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
             <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
+            {audio.lastListenAt && (
+              <p><span className="font-medium">Last listened:</span> {formatTimeAgo(new Date(audio.lastListenAt))}</p>
+            )}
           </div>
         </CardBody>
       </Card>

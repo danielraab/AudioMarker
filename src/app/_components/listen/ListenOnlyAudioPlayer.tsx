@@ -6,6 +6,7 @@ import BrowserMarkerManager from './BrowserMarkerManager';
 import type { AudioMarker } from '~/types/Audio';
 import { api } from "~/trpc/react";
 import StoredMarkers from './StoredMarkers';
+import { useIncrementListenCount } from '~/lib/hooks/useIncrementListenCount';
 
 interface AudioPlayerWithMarkersProps {
   audioUrl: string;
@@ -27,6 +28,16 @@ export default function ListenOnlyAudioPlayer({
 
   // Use audioId or fallback to readonlyToken for unique identification
   const uniqueAudioId = audioId || audioReadOnlyToken;
+
+  // Mutation to increment listen count
+  const incrementListenCount = api.audio.incrementListenCount.useMutation();
+
+  // Increment listen count (only once per 2 hours per browser/tab)
+  useIncrementListenCount({
+    id: audioId,
+    type: 'audio',
+    incrementMutation: incrementListenCount,
+  });
 
   const handleMarkersChange = useCallback((newMarkers: AudioMarker[]) => {
     setMarkers(newMarkers);

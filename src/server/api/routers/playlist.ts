@@ -20,6 +20,8 @@ export const playlistRouter = createTRPCRouter({
         isPublic: true,
         createdAt: true,
         updatedAt: true,
+        listenCounter: true,
+        lastListenAt: true,
         _count: {
           select: {
             audios: true,
@@ -556,5 +558,40 @@ export const playlistRouter = createTRPCRouter({
       }));
 
       return audiosWithPlaylistInfo;
+    }),
+
+  incrementListenCount: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const playlist = await ctx.db.playlist.findUnique({
+        where: { id: input.id },
+        select: {
+          id: true,
+          isPublic: true,
+          deletedAt: true,
+          createdById: true
+        },
+      });
+
+      if (!playlist || playlist.deletedAt) {
+        throw new Error("Playlist not found");
+      }
+
+      // Check if user has access (public or owner)
+      const hasAccess = playlist.isPublic || (ctx.session?.user?.id === playlist.createdById);
+      if (!hasAccess) {
+        throw new Error("Unauthorized");
+      }
+
+      // Increment the listen counter
+      await ctx.db.playlist.update({
+        where: { id: input.id },
+        data: {
+          listenCounter: { increment: 1 },
+          lastListenAt: new Date(),
+        },
+      });
+
+      return { success: true };
     }),
 });
