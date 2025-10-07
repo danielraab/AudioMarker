@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Listen statistics for audios and playlists**
+  - Listen counter and last listened date are now tracked for each audio and playlist
+  - Display listen count and last listened date in audio and playlist lists
+  - Listen count increments only once per 2 hours per browser/tab
+  - API and database support for listen statistics
+  - UI updates to show listen stats
+- **Spacebar keyboard shortcut for audio player**
+  - Press spacebar to toggle play/pause in the audio player
+  - Smart filtering prevents interference with text input fields
+  - Prevents page scrolling when spacebar is pressed in audio player context
+
 ## [0.2.3] - 2025-10-06
 
 ### Added

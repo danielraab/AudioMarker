@@ -170,7 +170,7 @@ export default function AudioPlayer({
     wavesurfer.current?.setPlaybackRate(1);
   };
 
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback(() => {
     if (!wavesurfer.current) return;
 
     if (isPlaying) {
@@ -178,7 +178,7 @@ export default function AudioPlayer({
     } else {
       void wavesurfer.current.play();
     }
-  };
+  }, [isPlaying]);
 
   const handleStop = () => {
     if (!wavesurfer.current) return;
@@ -200,6 +200,32 @@ export default function AudioPlayer({
       onPlayFromFnReady(playFrom);
     }
   }, [isLoading, playFrom, onPlayFromFnReady]);
+
+  // Keyboard event listener for spacebar to toggle play/pause
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only handle spacebar when audio is loaded and not in an input field
+      if (
+        event.code === 'Space' && 
+        !isLoading && 
+        wavesurfer.current &&
+        !(event.target instanceof HTMLInputElement) &&
+        !(event.target instanceof HTMLTextAreaElement) &&
+        !(event.target as Element)?.getAttribute('contenteditable')
+      ) {
+        event.preventDefault(); // Prevent page scroll
+        handlePlayPause();
+      }
+    };
+
+    // Add global keyboard listener
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup listener on component unmount
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isLoading, handlePlayPause]);
 
 
   return (
