@@ -24,26 +24,24 @@ export default function GeneralSettingsSection() {
           <h3 className="text-lg font-semibold">Authentication Settings</h3>
         </CardHeader>
         <CardBody>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h4 className="text-sm font-medium">Email Registration</h4>
-                <p className="text-sm text-default-500">
-                  New user registration via email (Nodemailer) is currently{" "}
-                  {registrationEnabled ? "enabled" : "disabled"}.
-                </p>
-                <p className="text-xs text-default-400 mt-2">
-                  This setting is configured via the MAIL_REGISTRATION_ENABLED environment variable.
-                  Contact your system administrator to change this setting.
-                </p>
-              </div>
-              <Chip
-                color={registrationEnabled ? "success" : "default"}
-                variant="flat"
-              >
-                {registrationEnabled ? "Enabled" : "Disabled"}
-              </Chip>
+          <div className="flex flex-wrap gap-2 items-center justify-between">
+            <div className="flex-1">
+              <h4 className="text-sm font-medium">Email Registration</h4>
+              <p className="text-sm text-default-500">
+                New user registration via email (Nodemailer) is currently{" "}
+                {registrationEnabled ? "enabled" : "disabled"}.
+              </p>
+              <p className="text-xs text-default-400 mt-2">
+                This setting is configured via the MAIL_REGISTRATION_ENABLED environment variable.
+                Contact your system administrator to change this setting.
+              </p>
             </div>
+            <Chip
+              color={registrationEnabled ? "success" : "default"}
+              variant="flat"
+            >
+              {registrationEnabled ? "Enabled" : "Disabled"}
+            </Chip>
           </div>
         </CardBody>
       </Card>

@@ -9,7 +9,18 @@ export const softDeletedContentRouter = createTRPCRouter({
 
     return ctx.db.audio.findMany({
       where: { deletedAt: { not: null } },
-      include: { createdBy: true },
+      select: {
+        id: true,
+        name: true,
+        originalFileName: true,
+        filePath: true,
+        deletedAt: true,
+        createdBy: {
+          select: {
+            name: true,
+          },
+        },
+      },
       orderBy: { deletedAt: "desc" },
     });
   }),

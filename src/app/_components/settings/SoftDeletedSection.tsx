@@ -4,6 +4,8 @@ import { api } from "~/trpc/react";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Spinner } from "@heroui/spinner";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Info } from "lucide-react";
 
 export default function SoftDeletedSection() {
   const {
@@ -87,13 +89,39 @@ export default function SoftDeletedSection() {
             {audios.map((audio) => (
               <Card key={audio.id}>
                 <CardBody>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-medium">{audio.name}</h3>
-                      <p className="text-sm text-default-500">
-                        by {audio.createdBy?.name ?? "Unknown"} •{" "}
-                        Deleted on {audio.deletedAt ? new Date(audio.deletedAt).toLocaleDateString() : "Unknown"}
-                      </p>
+                  <div className="flex flex-wrap justify-center items-center gap-3">
+                    <div className="flex items-center gap-2 flex-1 min-w-50">
+                      <div className="flex-1">
+                        <h3 className="font-medium">{audio.name}</h3>
+                        <p className="text-sm text-default-500">
+                          by {audio.createdBy?.name ?? "Unknown"} •{" "}
+                          Deleted on {audio.deletedAt ? new Date(audio.deletedAt).toLocaleDateString() : "Unknown"}
+                        </p>
+                      </div>
+                      <Popover placement="top">
+                        <PopoverTrigger>
+                          <Button
+                            isIconOnly
+                            variant="light"
+                            size="sm"
+                            className="text-default-400 hover:text-default-600"
+                          >
+                            <Info className="w-4 h-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-3">
+                          <div className="space-y-2">
+                            <div>
+                              <p className="text-xs font-medium text-default-600">Original filename:</p>
+                              <p className="font-mono text-xs text-default-800">{audio.originalFileName}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-default-600">File path:</p>
+                              <p className="font-mono text-xs text-default-800">{audio.filePath}</p>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div className="flex gap-2">
                       <Button

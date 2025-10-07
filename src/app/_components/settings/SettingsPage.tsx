@@ -7,7 +7,7 @@ import SoftDeletedSection from "./SoftDeletedSection";
 
 export default function SettingsPage() {
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
+    <div className="container mx-auto max-w-7xl py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Admin Settings</h1>
         <p className="mt-2 text-default-500">Manage users and system settings</p>
