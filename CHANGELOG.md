@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Security
+
+## [0.2.4] - 2025-01-07
+
+### Added
+
 - **Listen statistics for audios and playlists**
   - Listen counter and last listened date are now tracked for each audio and playlist
   - Display listen count and last listened date in audio and playlist lists
@@ -19,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Press spacebar to toggle play/pause in the audio player
   - Smart filtering prevents interference with text input fields
   - Prevents page scrolling when spacebar is pressed in audio player context
+- **Admin permanent delete functionality**
+  - Enhanced `permanentlyDeleteAudio` to also delete physical audio files from the file system
+  - Added error handling to ensure database cleanup occurs even if file deletion fails
+  - Prevents orphaned files when permanently deleting audio records
 
 ## [0.2.3] - 2025-10-06
 
