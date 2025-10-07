@@ -47,7 +47,8 @@ export const audioRouter = createTRPCRouter({
       const audio = await ctx.db.audio.findUnique({
         where: {
           id: input.id,
-          createdById: ctx.session.user.id
+          createdById: ctx.session.user.id,
+          deletedAt: null,
         },
         select: {
           id: true,

@@ -3,6 +3,7 @@
 import { Tabs, Tab } from "@heroui/tabs";
 import UserListSection from "./UserListSection";
 import GeneralSettingsSection from "./GeneralSettingsSection";
+import SoftDeletedSection from "./SoftDeletedSection";
 
 export default function SettingsPage() {
   return (
@@ -16,6 +17,11 @@ export default function SettingsPage() {
         <Tab key="users" title="Users">
           <div className="py-4">
             <UserListSection />
+          </div>
+        </Tab>
+        <Tab key="softDeleted" title="Soft Deleted">
+          <div className="py-4">
+            <SoftDeletedSection />
           </div>
         </Tab>
         <Tab key="system" title="System" isDisabled>

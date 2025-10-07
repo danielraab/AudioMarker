@@ -24,7 +24,13 @@ export const playlistRouter = createTRPCRouter({
         lastListenAt: true,
         _count: {
           select: {
-            audios: true,
+            audios: {
+              where: {
+                audio: {
+                  deletedAt: null
+                }
+              }
+            },
           },
         },
       },
@@ -58,6 +64,11 @@ export const playlistRouter = createTRPCRouter({
           updatedAt: true,
           audios: {
             orderBy: { order: "asc" },
+            where: {
+              audio: {
+                deletedAt: null
+              }
+            },
             select: {
               id: true,
               order: true,
@@ -119,6 +130,11 @@ export const playlistRouter = createTRPCRouter({
           createdBy: true,
           audios: {
             orderBy: { order: "asc" },
+            where: {
+              audio: {
+                deletedAt: null
+              }
+            },
             select: {
               id: true,
               order: true,
@@ -131,6 +147,7 @@ export const playlistRouter = createTRPCRouter({
                   originalFileName: true,
                   filePath: true,
                   createdAt: true,
+                  deletedAt: true,
                   _count: {
                     select: {
                       markers: true,
@@ -476,7 +493,13 @@ export const playlistRouter = createTRPCRouter({
           updatedAt: true,
           _count: {
             select: {
-              audios: true,
+              audios: {
+                where: {
+                  audio: {
+                    deletedAt: null
+                  }
+                },
+              },
             },
           },
           audios: {
