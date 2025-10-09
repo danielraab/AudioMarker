@@ -147,7 +147,7 @@ export default function CreateAudioForm() {
 
           <div className="flex justify-between gap-2">
             <Button
-              onPress={() => setIsExpanded(false)}
+              onPress={() => {throw new Error("test")}}
               type="button"
                 variant="light"
               isDisabled={uploadAudioMutation.isPending}

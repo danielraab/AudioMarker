@@ -30,6 +30,7 @@
     "@heroui/navbar": "^2.2.24",
     "@heroui/react": "^2.8.4",
     "@prisma/client": "^6.5.0",
+    "@sentry/nextjs": "^10.19.0",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@tanstack/react-query": "^5.69.0",
     "@trpc/client": "^11.0.0",

@@ -3,6 +3,8 @@
  * for Docker builds.
  */
 import "./src/env.js";
+// Sentry wrapper (imported lazily to avoid build issues if not installed yet)
+import * as Sentry from '@sentry/nextjs';
 import { execSync } from 'child_process';
 
 // Get git version at build time
@@ -75,4 +77,12 @@ const config = {
   },
 };
 
-export default config;
+export default Sentry.withSentryConfig(config, {
+  org: "draab",
+  project: "Audio Marker",
+
+  tunnelRoute: "/api/tunnel",
+
+  silent: (process.env.SENTRY_ENVIRONMENT || process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT) === 'production',
+  disableLogger: true,
+});
