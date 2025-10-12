@@ -27,7 +27,6 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     SENTRY_DSN: z.string().url().optional(),
-    SENTRY_ENVIRONMENT: z.string().default(process.env.NODE_ENV || "development"),
     SENTRY_TRACES_SAMPLE_RATE: z.string().optional(),
     SENTRY_PROFILES_SAMPLE_RATE: z.string().optional(),
   },
@@ -38,9 +37,10 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_ENVIRONMENT: z
+    .enum(["development", "test", "production"])
+    .default("development"),
     NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
-    NEXT_PUBLIC_SENTRY_ENVIRONMENT: z.string().optional(),
   },
 
   /**
@@ -62,11 +62,10 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     SENTRY_DSN: process.env.SENTRY_DSN,
-    SENTRY_ENVIRONMENT: process.env.SENTRY_ENVIRONMENT,
     SENTRY_TRACES_SAMPLE_RATE: process.env.SENTRY_TRACES_SAMPLE_RATE,
     SENTRY_PROFILES_SAMPLE_RATE: process.env.SENTRY_PROFILES_SAMPLE_RATE,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN,
-    NEXT_PUBLIC_SENTRY_ENVIRONMENT: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.SENTRY_ENVIRONMENT,
+    NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT || process.env.NODE_ENV || "development",
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

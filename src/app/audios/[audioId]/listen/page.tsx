@@ -50,12 +50,12 @@ export async function generateMetadata({ params }: ListenPageProps) {
       await api.audio.getUserAudioById({ id: audioId }) :
       await api.audio.getPublicAudioById({ id: audioId });
     return {
-      title: `${audio.name} - Audio Player`,
+      title: `${audio.name} - Audio Marker`,
       description: `Listen to ${audio.name}`,
     };
   } catch {
     return {
-      title: "Audio Player",
+      title: "Audio Marker - Listen",
       description: "Listen to audio files",
     };
   }

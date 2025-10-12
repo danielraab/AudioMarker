@@ -80,9 +80,10 @@ const config = {
 export default Sentry.withSentryConfig(config, {
   org: "draab",
   project: "Audio Marker",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
   tunnelRoute: "/api/sentryTunnel",
 
-  silent: (process.env.SENTRY_ENVIRONMENT || process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT) === 'production',
+  silent: process.env.NODE_ENV === 'production',
   disableLogger: true,
 });

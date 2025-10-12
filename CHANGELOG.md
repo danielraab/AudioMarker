@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.2.5] - 2025-10-12
+
+### Added
+
+- Sentry error capture for tRPC now includes user context (id, email, username) and limited request metadata for better debugging while avoiding raw input/PII.
+
+### Changed
+
+- Renamed Sentry tunnel endpoint from `/api/tunnel` to `/api/sentryTunnel` and updated all references in client instrumentation and Next.js config.
+
 ## [0.2.4] - 2025-01-07
 
 ### Added
