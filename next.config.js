@@ -81,7 +81,7 @@ export default Sentry.withSentryConfig(config, {
   org: "draab",
   project: "Audio Marker",
 
-  tunnelRoute: "/api/tunnel",
+  tunnelRoute: "/api/sentryTunnel",
 
   silent: (process.env.SENTRY_ENVIRONMENT || process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT) === 'production',
   disableLogger: true,

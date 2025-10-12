@@ -11,7 +11,7 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 
-  tunnel: "/api/tunnel",
+  tunnel: "/api/sentryTunnel",
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
