@@ -8,6 +8,8 @@ import Providers from "~/app/_components/Providers";
 import Navbar from "./_components/navbar/Navbar";
 import ServiceWorkerRegistration from "./_components/ServiceWorkerRegistration";
 import Footer from "./_components/Footer";
+import { getLocale } from 'next-intl/server';
+import { NextIntlClientProvider } from "next-intl";
 
 export const metadata: Metadata = {
   title: "Audio Marker",
@@ -48,24 +50,28 @@ export const viewport = {
   userScalable: true,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang={locale} className={`${geist.variable}`}>
       <head>
         <link rel="apple-touch-icon" href="/audio-marker-logo.svg" />
       </head>
       <body>
         <Providers>
-          <ServiceWorkerRegistration />
-          <Navbar />
-          <TRPCReactProvider>
-            <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-4 w-full max-w-full overflow-x-hidden">
-              {children}
-            </main>
-          </TRPCReactProvider>
-          <Footer />
+          <NextIntlClientProvider>
+            <ServiceWorkerRegistration />
+            <Navbar />
+            <TRPCReactProvider>
+              <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-4 w-full max-w-full overflow-x-hidden">
+                {children}
+              </main>
+            </TRPCReactProvider>
+            <Footer />
+          </NextIntlClientProvider>
         </Providers>
       </body>
     </html>

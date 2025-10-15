@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
+import { useTranslations } from "next-intl";
 
 interface UnsavedChangesModalProps {
   isOpen: boolean;
@@ -15,12 +16,13 @@ export function UnsavedChangesModal({
   onDiscard,
   onSave
 }: UnsavedChangesModalProps) {
+  const t = useTranslations("UnsavedChangesModal");
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
-        <ModalHeader>Unsaved Changes</ModalHeader>
+        <ModalHeader>{t("title")}</ModalHeader>
         <ModalBody>
-          You have unsaved changes. Do you want to save them before leaving?
+          {t("body")}
         </ModalBody>
         <ModalFooter>
           <Button 
@@ -28,13 +30,13 @@ export function UnsavedChangesModal({
             variant="light" 
             onPress={onDiscard}
           >
-            Discard Changes
+            {t("discard")}
           </Button>
           <Button 
             color="primary" 
             onPress={onSave}
           >
-            Save Changes
+            {t("save")}
           </Button>
         </ModalFooter>
       </ModalContent>

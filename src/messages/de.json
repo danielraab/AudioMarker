@@ -1,0 +1,86 @@
+{
+  "Navbar": {
+    "applicationLogo": "Applikationsbild",
+    "UserMenu": {
+      "userMenuAriaLabel": "Benutzermenü",
+      "authMenuAriaLabel": "Anmeldemenü",
+      "signedInAs": "Angemeldet als",
+      "settings": "Einstellungen",
+      "signOut": "Abmelden",
+      "signIn": "Anmelden"
+    }
+  },
+  "PublicLanding": {
+    "title": "Audio Marker",
+    "logoAlt": "Audio Marker Logo",
+    "upload": {
+      "title": "Lade deine Audiodatei hoch",
+      "description": "Derzeit kannst du nur MP3-Dateien hochladen. Weitere Formate könnten in Zukunft hinzukommen."
+    },
+    "marker": {
+      "title": "Markierungen auf deiner Datei setzen",
+      "description": "Nach dem Upload kannst du Markierungen in deiner Audiodatei setzen, um wichtige Abschnitte hervorzuheben."
+    },
+    "share": {
+      "title": "Teile deine Markierungen",
+      "description": "Teile einen Nur-Lesen-Link, damit andere die von dir gesetzten Markierungen sehen können."
+    },
+    "browser": {
+      "title": "Markierungen im Browser",
+      "description": "Nutzer mit einem Nur-Lesen-Link können die Audiodatei anhören und die von dir gesetzten Markierungen sehen. Sie können außerdem eigene, nur im jeweiligen Browser gespeicherte Markierungen setzen."
+    },
+    "caution": {
+      "title": "Sei vorsichtig",
+      "description": "Lade nur Dateien hoch, an denen du die Rechte besitzt. Lade keine sensiblen oder privaten Informationen hoch. Der Nur-Lesen-Link kann von jedem genutzt werden, der ihn kennt – teile ihn nur mit Personen, denen du vertraust."
+    }
+  },
+  "PlaylistsList": {
+    "title": "Deine Playlists",
+    "description": "Organisiere deine Audiodateien in Playlists ({playlistCount})",
+    "empty": "Noch keine Playlists erstellt. Erstelle deine erste Playlist!"
+  },
+  "AudioFilesList": {
+    "title": "Deine Audiodateien",
+    "description": "Verwalte deine hochgeladenen Audiodateien ({audioCount})",
+    "empty": "Noch keine Audiodateien hochgeladen. Lade oben deine erste Audiodatei hoch!"
+  },
+  "VisibilityBanner": {
+    "public": "Dieses Element ist öffentlich und kann von jedem mit dem Link aufgerufen werden.",
+    "private": "Dieses Element ist privat und kann nur von dir aufgerufen werden."
+  },
+  "UnsavedChangesModal": {
+    "title": "Ungespeicherte Änderungen",
+    "body": "Du hast ungespeicherte Änderungen. Möchtest du sie vor dem Verlassen speichern?",
+    "discard": "Änderungen verwerfen",
+    "save": "Änderungen speichern"
+  },
+  "Footer": {
+    "versionTitle": "Version: {version}",
+    "cookiesNote": "Es werden nur notwendige Cookies verwendet."
+  },
+  "AudioPlayer": {
+    "subtitle": "Audioplayer",
+    "publicLinkTitle": "Link zum öffentlich verfügbaren Nur-Lesen-Player",
+    "status": {
+      "label": "Status:",
+      "loading": "Lädt",
+      "playing": "Wiedergabe",
+      "paused": "Pausiert"
+    },
+    "loadingLabel": "Audio wird geladen...",
+    "zoom": {
+      "label": "Zoom:",
+      "ariaLabel": "Zoomstufe der Wellenform"
+    },
+    "speed": {
+      "label": "Geschwindigkeit:",
+      "ariaLabel": "Wiedergabegeschwindigkeit",
+      "resetTitle": "Doppelklick, um die Geschwindigkeit auf 1x zurückzusetzen"
+    },
+    "controls": {
+      "play": "Abspielen",
+      "pause": "Pause",
+      "stop": "Stopp"
+    }
+  }
+}

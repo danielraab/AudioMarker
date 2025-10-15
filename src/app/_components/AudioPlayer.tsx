@@ -10,6 +10,7 @@ import LoadingOverlay from './LoadingOverlay';
 import Link from 'next/link';
 import type { AudioMarker } from '~/types/Audio';
 import { formatTime } from '~/lib/time';
+import { useTranslations } from 'next-intl';
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -28,6 +29,7 @@ export default function AudioPlayer({
   onTimeUpdate,
   onPlayFromFnReady,
 }: AudioPlayerProps) {
+  const t = useTranslations('AudioPlayer');
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const regionsPlugin = useRef<RegionsPlugin | null>(null);
@@ -38,7 +40,6 @@ export default function AudioPlayer({
   const [playbackRate, setPlaybackRate] = useState(1);
 
   useEffect(() => {
-    console.log('AudioPlayer: Initializing WaveSurfe', waveformRef.current);
     if (!waveformRef.current) return;
     
     regionsPlugin.current = RegionsPlugin.create();
@@ -71,7 +72,6 @@ export default function AudioPlayer({
   }, []);
 
   useEffect(() => {
-    console.log('AudioPlayer: Loading audio', audioUrl);
     if (!wavesurfer.current) return;
     // Load audio
     void wavesurfer.current.load(audioUrl);
@@ -83,12 +83,10 @@ export default function AudioPlayer({
 
 
   useEffect(() => {
-    console.log('AudioPlayer: Setting up ready event listener');
     if (!wavesurfer.current) return;
     
     // Event listeners
     const unsubscribe = wavesurfer.current.on('ready', () => {
-      console.log('AudioPlayer: Audio is ready');
       setIsLoading(false);
       wavesurfer.current?.zoom(0);  
 
@@ -103,7 +101,6 @@ export default function AudioPlayer({
 
 
   useEffect(() => {
-    console.log('AudioPlayer: Setting up time update event listener');
     if (!wavesurfer.current) return;
     wavesurfer.current.on('audioprocess', () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
@@ -235,20 +232,20 @@ export default function AudioPlayer({
           <p className="flex items-center gap-2 text-lg font-semibold">
             {audioName}
             <Link href={`/audios/${audioReadOnlyToken}/listen`}
-              title='Link to publicly available read only player'><SquareArrowOutUpRight size={16} /></Link>
+              title={t('publicLinkTitle')}><SquareArrowOutUpRight size={16} /></Link>
           </p>
-          <p className="text-small text-default-500">Audio Player</p>
+          <p className="text-small text-default-500">{t('subtitle')}</p>
         </div>
 
         {/* Audio Info */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-default-500">Status:</span>
+          <span className="text-default-500">{t('status.label')}</span>
           <Chip
             size="sm"
             color={isPlaying ? "success" : "default"}
             variant="flat"
           >
-            {isLoading ? "Loading" : isPlaying ? "Playing" : "Paused"}
+            {isLoading ? t('status.loading') : isPlaying ? t('status.playing') : t('status.paused')}
           </Chip>
         </div>
       </div>
@@ -261,14 +258,14 @@ export default function AudioPlayer({
       />
 
       {/* Loading Overlay */}
-      {isLoading && <LoadingOverlay label='Audio is loading...' />}
+  {isLoading && <LoadingOverlay label={t('loadingLabel')} />}
 
       {/* Zoom and Playback Rate Controls */}
       <div className="flex flex-col sm:flex-row gap-4 my-4">
         {/* Zoom Control */}
         <div className="flex items-center gap-3 flex-1">
           <ZoomIn size={16} className="text-default-500" />
-          <span className="text-sm text-default-500 min-w-12">Zoom:</span>
+          <span className="text-sm text-default-500 min-w-12">{t('zoom.label')}</span>
           <Slider
             size="sm"
             step={2}
@@ -279,7 +276,7 @@ export default function AudioPlayer({
             className="flex-1"
             color="primary"
             isDisabled={isLoading}
-            aria-label="Waveform zoom level"
+            aria-label={t('zoom.ariaLabel')}
           />
           <span className="text-xs text-default-500 min-w-8">{zoomLevel}</span>
         </div>
@@ -289,7 +286,7 @@ export default function AudioPlayer({
           <div
             onDoubleClick={handleSpeedDoubleClick}
             className="cursor-pointer select-none flex items-center gap-1"
-            title="Double-click to reset speed to 1x"
+            title={t('speed.resetTitle')}
           >
             <Gauge
               size={16}
@@ -298,7 +295,7 @@ export default function AudioPlayer({
             <span
               className="text-sm text-default-500 min-w-12"
             >
-              Speed:
+              {t('speed.label')}
             </span>
           </div>
           <Slider
@@ -311,7 +308,7 @@ export default function AudioPlayer({
             className="flex-1"
             color="primary"
             isDisabled={isLoading}
-            aria-label="Playback rate"
+            aria-label={t('speed.ariaLabel')}
           />
           <span className="text-xs text-default-500 min-w-8">{playbackRate.toFixed(2)}x</span>
         </div>
@@ -332,6 +329,7 @@ export default function AudioPlayer({
           variant="flat"
           onPress={handlePlayPause}
           isDisabled={isLoading}
+          aria-label={isPlaying ? t('controls.pause') : t('controls.play')}
           startContent={isPlaying ? <Pause size={24} /> : <Play size={24} />}
         >
         </Button>
@@ -343,6 +341,7 @@ export default function AudioPlayer({
           variant="flat"
           onPress={handleStop}
           isDisabled={isLoading}
+          aria-label={t('controls.stop')}
           startContent={<Square size={24} />}
         >
         </Button>

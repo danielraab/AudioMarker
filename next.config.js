@@ -6,6 +6,7 @@ import "./src/env.js";
 // Sentry wrapper (imported lazily to avoid build issues if not installed yet)
 import * as Sentry from '@sentry/nextjs';
 import { execSync } from 'child_process';
+import createNextIntlPlugin from 'next-intl/plugin';
 
 // Get git version at build time
 // Priority: environment variable (for Docker builds) > git tag > git hash > fallback
@@ -77,7 +78,10 @@ const config = {
   },
 };
 
-export default Sentry.withSentryConfig(config, {
+const withNextIntl = createNextIntlPlugin();
+const configWithIntl = withNextIntl(config);
+
+export default Sentry.withSentryConfig(configWithIntl, {
   org: "draab",
   project: "Audio Marker",
   authToken: process.env.SENTRY_AUTH_TOKEN,

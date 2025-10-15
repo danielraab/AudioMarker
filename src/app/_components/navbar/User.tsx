@@ -14,10 +14,12 @@ import {
 import { User, LogIn, LogOut, Settings } from "lucide-react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function UserMenu() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const t = useTranslations("Navbar.UserMenu");
 
   return (
     <NavbarContent as="div" justify="end" className="grow-0">
@@ -37,9 +39,9 @@ export default function UserMenu() {
                 fallback={<User className="h-4 w-4" />}
               />
             </DropdownTrigger>
-            <DropdownMenu aria-label="User menu" variant="flat">
+            <DropdownMenu aria-label={t("userMenuAriaLabel")} variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
+                <p className="font-semibold">{t("signedInAs")}</p>
                 <p className="font-semibold">{session.user.email}</p>
               </DropdownItem>
               {session.user.isAdmin ? (
@@ -48,7 +50,7 @@ export default function UserMenu() {
                   startContent={<Settings className="h-4 w-4" />}
                   onPress={() => router.push("/settings")}
                 >
-                  Settings
+                  {t("settings")}
                 </DropdownItem>
               ) : null}
               <DropdownItem
@@ -57,7 +59,7 @@ export default function UserMenu() {
                 startContent={<LogOut className="h-4 w-4" />}
                 onPress={() => signOut()}
               >
-                Sign Out
+                {t("signOut")}
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -72,13 +74,13 @@ export default function UserMenu() {
                 fallback={<User className="h-4 w-4" />}
               />
             </DropdownTrigger>
-            <DropdownMenu aria-label="Auth menu">
+            <DropdownMenu aria-label={t("authMenuAriaLabel")}>
               <DropdownItem
                 key="signin"
                 startContent={<LogIn className="h-4 w-4" />}
                 onPress={() => signIn()}
               >
-                Sign In
+                {t("signIn")}
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>

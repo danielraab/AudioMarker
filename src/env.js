@@ -7,6 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+  DEFAULT_LOCALE: z.enum(['en', 'de']).default("en"),
     AUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string()
@@ -48,6 +49,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    DEFAULT_LOCALE: process.env.DEFAULT_LOCALE,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_AUTHENTIK_LABEL: process.env.AUTH_AUTHENTIK_LABEL,
     AUTH_AUTHENTIK_ID: process.env.AUTH_AUTHENTIK_ID,

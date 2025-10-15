@@ -1,0 +1,86 @@
+{
+  "Navbar": {
+    "applicationLogo": "Application Logo",
+    "UserMenu": {
+      "userMenuAriaLabel": "User menu",
+      "authMenuAriaLabel": "Authentication menu",
+      "signedInAs": "Signed in as",
+      "settings": "Settings",
+      "signOut": "Sign Out",
+      "signIn": "Sign In"
+    }
+  },
+  "PublicLanding": {
+    "title": "Audio Marker",
+    "logoAlt": "Audio Marker Logo",
+    "upload": {
+      "title": "Upload your audio file",
+      "description": "Currently you can only upload MP3 files. More formats may come in the future."
+    },
+    "marker": {
+      "title": "Set marker on your file",
+      "description": "After uploading, you can set markers on your audio file to highlight important sections."
+    },
+    "share": {
+      "title": "Share your marker",
+      "description": "Share a read-only link with others so they can view the markers you set on your audio file."
+    },
+    "browser": {
+      "title": "Marker in Browser",
+      "description": "User with a read-only link can listen to the audio and see the markers you set, and they can set own marker which are available only in their browser."
+    },
+    "caution": {
+      "title": "Be careful",
+      "description": "Upload only files were you own the rights to. Do not upload sensitive or private information. Read-only link can be used by anyone who has it, so share it only with people you trust."
+    }
+  },
+  "PlaylistsList": {
+    "title": "Your Playlists",
+    "description": "Organize your audio files into playlists ({playlistCount})",
+    "empty": "No playlists created yet. Create your first playlist!"
+  },
+  "AudioFilesList": {
+    "title": "Your Audio Files",
+    "description": "Manage your uploaded audio files ({audioCount})",
+    "empty": "No audio files uploaded yet. Upload your first audio file above!"
+  },
+  "VisibilityBanner": {
+    "public": "This element is public and can be accessed by anyone with the link.",
+    "private": "This element is private and can only be accessed by you."
+  },
+  "UnsavedChangesModal": {
+    "title": "Unsaved Changes",
+    "body": "You have unsaved changes. Do you want to save them before leaving?",
+    "discard": "Discard Changes",
+    "save": "Save Changes"
+  },
+  "Footer": {
+    "versionTitle": "Version: {version}",
+    "cookiesNote": "Only necessary cookies are used."
+  },
+  "AudioPlayer": {
+    "subtitle": "Audio Player",
+    "publicLinkTitle": "Link to publicly available read-only player",
+    "status": {
+      "label": "Status:",
+      "loading": "Loading",
+      "playing": "Playing",
+      "paused": "Paused"
+    },
+    "loadingLabel": "Audio is loading...",
+    "zoom": {
+      "label": "Zoom:",
+      "ariaLabel": "Waveform zoom level"
+    },
+    "speed": {
+      "label": "Speed:",
+      "ariaLabel": "Playback rate",
+      "resetTitle": "Double-click to reset speed to 1x"
+    },
+    "controls": {
+      "play": "Play",
+      "pause": "Pause",
+      "stop": "Stop"
+    }
+  }
+}

@@ -7,6 +7,7 @@ import {
 import UserMenu from "./User";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface NavbarProps {
   title?: string;
@@ -14,6 +15,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ title = "Audio Marker", logoSrc }: NavbarProps) {
+  const t = useTranslations("Navbar");
 
   return (
     <HeroNavbar isBordered>
@@ -33,7 +35,7 @@ export default function Navbar({ title = "Audio Marker", logoSrc }: NavbarProps)
               height={32}
               width={32}
               src="/audio-marker-logo.svg"
-              alt="Audio Marker Logo"
+              alt={t("applicationLogo")}
               className="h-8 w-8 object-contain transition-transform hover:scale-105"
             />
           )}
