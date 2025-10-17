@@ -1,5 +1,5 @@
 import { auth } from "~/server/auth";
-import { AudioListItem } from "~/app/_components/main/AudioListItem";
+import { AudioListItem } from "~/app/_components/dashboard/audio/AudioListItem";
 import { api } from "~/trpc/server";
 import { Music4 } from "lucide-react";
 import { getTranslations } from "next-intl/server";

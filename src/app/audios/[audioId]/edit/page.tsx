@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
-import { EditPageContainer } from "~/app/_components/edit/EditPageContainer";
+import { EditPageContainer } from "~/app/_components/audio/edit/EditPageContainer";
 import { HydrateClient } from "~/trpc/server";
 import { Suspense } from "react";
-import { EditAudioForm } from "~/app/_components/edit/EditAudioForm";
+import { EditAudioForm } from "~/app/_components/audio/edit/EditAudioForm";
 
 interface EditAudioPageProps {
   params: Promise<{ audioId: string }>;

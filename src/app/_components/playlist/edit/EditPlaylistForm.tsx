@@ -4,7 +4,7 @@ import { Button, Card, CardBody, CardHeader, Input, Switch } from "@heroui/react
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { api } from "~/trpc/react";
-import { UnsavedChangesModal } from "../../UnsavedChangesModal";
+import { UnsavedChangesModal } from "../../global/UnsavedChangesModal";
 import { Play, Save } from "lucide-react";
 import Link from "next/link";
 

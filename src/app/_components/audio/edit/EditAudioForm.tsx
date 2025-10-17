@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { Button, Input, Card, CardBody, CardHeader, Switch } from "@heroui/react";
 import { api } from "~/trpc/react";
 import { Play, Save } from "lucide-react";
-import { UnsavedChangesModal } from "../UnsavedChangesModal";
+import { UnsavedChangesModal } from "../../global/UnsavedChangesModal";
 
 interface EditAudioFormProps {
   audioId: string;

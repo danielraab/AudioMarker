@@ -1,5 +1,5 @@
 import { auth } from "~/server/auth";
-import { PlaylistListItem } from "~/app/_components/playlist/PlaylistListItem";
+import { PlaylistListItem } from "~/app/_components/dashboard/playlist/PlaylistListItem";
 import { api } from "~/trpc/server";
 import { ListMusic } from "lucide-react";
 import { getTranslations } from "next-intl/server";

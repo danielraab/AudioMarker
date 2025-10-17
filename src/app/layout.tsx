@@ -5,9 +5,9 @@ import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Providers from "~/app/_components/Providers";
-import Navbar from "./_components/navbar/Navbar";
+import Navbar from "./_components/global/layout/navbar/Navbar";
 import ServiceWorkerRegistration from "./_components/ServiceWorkerRegistration";
-import Footer from "./_components/Footer";
+import Footer from "./_components/global/layout/Footer";
 import { getLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from "next-intl";
 

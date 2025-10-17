@@ -3,7 +3,7 @@ import { HydrateClient } from "~/trpc/server";
 import { ListenPlaylistView } from "~/app/_components/playlist/listen/ListenPlaylistView";
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
-import { VisibilityBanner } from "~/app/_components/VisibilityBanner";
+import { VisibilityBanner } from "~/app/_components/global/VisibilityBanner";
 
 interface ListenPlaylistPageProps {
   params: Promise<{

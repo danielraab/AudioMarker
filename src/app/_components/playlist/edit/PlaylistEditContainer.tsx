@@ -5,8 +5,8 @@ import { Button, Card, CardBody, CardHeader, useDisclosure } from "@heroui/react
 import { Plus } from "lucide-react";
 import { api } from "~/trpc/react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
-import { PlaylistAudioItem } from "../PlaylistAudioItem";
-import { AddAudioModal } from "../AddAudioModal";
+import { PlaylistAudioItem } from "./PlaylistAudioItem";
+import { AddAudioModal } from "./AddAudioModal";
 import type { PlaylistWithAudios } from "~/types/Playlist";
 
 interface PlaylistEditContainerProps {

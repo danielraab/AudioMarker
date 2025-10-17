@@ -1,8 +1,8 @@
 import { api } from "~/trpc/server";
-import ListenOnlyAudioPlayer from "~/app/_components/listen/ListenOnlyAudioPlayer";
+import ListenOnlyAudioPlayer from "~/app/_components/audio/listen/ListenOnlyAudioPlayer";
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
-import { VisibilityBanner } from "~/app/_components/VisibilityBanner";
+import { VisibilityBanner } from "~/app/_components/global/VisibilityBanner";
 
 interface ListenPageProps {
   params: Promise<{ audioId: string }>;

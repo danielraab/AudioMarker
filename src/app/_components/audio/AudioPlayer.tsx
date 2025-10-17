@@ -6,7 +6,7 @@ import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { Button, Chip, Slider } from '@heroui/react';
 import { Play, Pause, Square, ZoomIn, Gauge, SquareArrowOutUpRight } from 'lucide-react';
-import LoadingOverlay from './LoadingOverlay';
+import LoadingOverlay from '../global/LoadingOverlay';
 import Link from 'next/link';
 import type { AudioMarker } from '~/types/Audio';
 import { formatTime } from '~/lib/time';
