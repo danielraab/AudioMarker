@@ -8,6 +8,7 @@ import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-p
 import { PlaylistAudioItem } from "./PlaylistAudioItem";
 import { AddAudioModal } from "./AddAudioModal";
 import type { PlaylistWithAudios } from "~/types/Playlist";
+import { useTranslations } from "next-intl";
 
 interface PlaylistEditContainerProps {
   playlistId: string;
@@ -17,6 +18,7 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [playlistAudios, setPlaylistAudios] = useState<PlaylistWithAudios['audios']>([]);
   const utils = api.useUtils();
+  const t = useTranslations('PlaylistEditContainer');
 
   // Fetch playlist data
   const [ playlist ] = api.playlist.getUserPlaylistById.useSuspenseQuery({
@@ -90,7 +92,7 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
       {/* Audio Files */}
       <Card>
         <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-2">
-          <h2 className="text-base sm:text-lg font-semibold">Audio Files ({playlistAudios.length})</h2>
+          <h2 className="text-base sm:text-lg font-semibold">{t('title', { count: playlistAudios.length })}</h2>
           <Button
             color="primary"
             startContent={<Plus size={16} />}
@@ -98,13 +100,13 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
             size="sm"
             className="w-full sm:w-auto"
           >
-            Add Audio
+            {t('addAudio')}
           </Button>
         </CardHeader>
         <CardBody className="px-3 sm:px-6">
           {playlistAudios.length === 0 ? (
             <div className="text-center py-6 sm:py-8">
-              <p className="text-sm sm:text-base text-default-500">No audio files in this playlist yet.</p>
+              <p className="text-sm sm:text-base text-default-500">{t('empty.noAudios')}</p>
               <Button
                 color="primary"
                 variant="light"
@@ -113,7 +115,7 @@ export function PlaylistEditContainer({ playlistId }: PlaylistEditContainerProps
                 size="sm"
                 className="mt-2 w-full sm:w-auto"
               >
-                Add your first audio file
+                {t('empty.addFirst')}
               </Button>
             </div>
           ) : (

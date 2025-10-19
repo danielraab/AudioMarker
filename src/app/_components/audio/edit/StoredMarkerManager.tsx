@@ -7,6 +7,7 @@ import { Bookmark } from 'lucide-react';
 import AddMarker from '../marker/AddMarker';
 import MarkerList from '../marker/MarkerList';
 import EmptyMarkerList from '../marker/EmptyMarkerList';
+import { useTranslations } from 'next-intl';
 
 interface MarkerManagerProps {
   audioId: string;
@@ -17,6 +18,7 @@ interface MarkerManagerProps {
 
 export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerClick }: MarkerManagerProps) {
   const utils = api.useUtils();
+  const t = useTranslations('StoredMarkers');
 
   const createMarker = api.marker.createMarker.useMutation({
     onSuccess: () => {
@@ -28,7 +30,7 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
     createMarker.mutate({
       audioId,
       timestamp: currentTime,
-      label: label.trim() || `Stored Marker ${markers.length + 1}`,
+      label: label.trim() || t('defaultLabel', { index: markers.length + 1 }),
       color: `hsl(${Math.random() * 360}, 70%, 50%)`
     });
   };
@@ -48,12 +50,12 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
       <CardHeader className='flex flex-col items-start'>
         <div className='flex flex-row items-center gap-2 pb-2'>
           <Bookmark size={20} className="text-primary" />
-          <h3 className="text-lg font-semibold">Stored Audio Markers</h3>
+          <h3 className="text-lg font-semibold">{t('title')}</h3>
           <Chip size="sm" variant="flat" color="primary">
             {markers.length}
           </Chip>
         </div>
-        <p className="text-small text-default-500">This Markers are stored in the database and are also available on the listening page.</p>
+        <p className="text-small text-default-500">{t('subtitle')}</p>
       </CardHeader>
       <CardBody className="space-y-4">
 
@@ -67,7 +69,7 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
         {markers.length > 0 && (
           <div className="space-y-2 max-h-96 overflow-y-auto">
             <h4 className="text-sm font-medium text-default-600">
-              Saved Markers:
+              {t('listTitle')}
             </h4>
             <MarkerList markers={markers}
               onMarkerClick={onMarkerClick}

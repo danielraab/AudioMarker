@@ -17,6 +17,7 @@ import {
 import { Plus, Search, Check } from "lucide-react";
 import { api } from "~/trpc/react";
 import { formatTimeAgo } from "~/lib/time";
+import { useTranslations } from "next-intl";
 
 interface AddAudioModalProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ interface AddAudioModalProps {
 export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: AddAudioModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const utils = api.useUtils();
+  const t = useTranslations('AddAudioModal');
+  const tAudio = useTranslations('AudioListItem');
 
   const { data: allAudios, isLoading } = api.playlist.getUserAudiosForPlaylist.useQuery(
     { playlistId },
@@ -65,7 +68,7 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
-          Add Audio to Playlist
+          {t('title')}
         </ModalHeader>
         <ModalBody>
           {isLoading ? (
@@ -76,7 +79,7 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
             <>
               {/* Search */}
               <Input
-                placeholder="Search audio files..."
+                placeholder={t('searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 startContent={<Search size={16} />}
@@ -87,11 +90,11 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
               {filteredAudios.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-default-500">
-                    {searchTerm ? 'No audio files match your search.' : 'No audio files found.'}
+                    {searchTerm ? t('empty.noMatches') : t('empty.noneFound')}
                   </p>
                   {!searchTerm && (
                     <p className="text-small text-default-400 mt-2">
-                      Create your first audio file to add to playlists.
+                      {t('empty.suggestion')}
                     </p>
                   )}
                 </div>
@@ -104,7 +107,7 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
                           <div className="grow flex items-center gap-2">
                             <h4 className="text-md font-semibold truncate">{audio.name}</h4>
                             <Chip size="sm" variant="flat" color="primary">
-                              {audio.markerCount} markers
+                              {tAudio('markers', { count: audio.markerCount })}
                             </Chip>
                           </div>
                           {audio.isInPlaylist ? (
@@ -115,7 +118,7 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
                               isDisabled
                               variant="flat"
                             >
-                              In Playlist
+                              {t('button.added')}
                             </Button>
                           ) : (
                             <Button
@@ -125,13 +128,13 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
                               onPress={() => handleAddAudio(audio.id)}
                               isLoading={addAudioMutation.isPending}
                             >
-                              Add
+                              {t('button.add')}
                             </Button>
                           )}
                         </div>
                         <div className="space-y-1 text-sm text-default-500">
-                          <p><span className="font-medium">Original file:</span> {audio.originalFileName}</p>
-                          <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
+                          <p><span className="font-medium">{t('labels.originalFile')}</span> {audio.originalFileName}</p>
+                          <p><span className="font-medium">{t('labels.uploaded')}</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
                         </div>
                       </CardBody>
                     </Card>
@@ -143,7 +146,7 @@ export function AddAudioModal({ isOpen, onClose, playlistId, onAudioAdded }: Add
         </ModalBody>
         <ModalFooter>
           <Button color="default" variant="light" onPress={onClose}>
-            Close
+            {t('close')}
           </Button>
         </ModalFooter>
       </ModalContent>

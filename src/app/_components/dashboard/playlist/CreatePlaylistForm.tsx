@@ -5,12 +5,14 @@ import { Button, Input, Switch, Card, CardBody, CardHeader } from "@heroui/react
 import { ListMusic, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { useTranslations } from "next-intl";
 
 export function CreatePlaylistForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const t = useTranslations('CreatePlaylistForm');
 
   const createPlaylistMutation = api.playlist.createPlaylist.useMutation({
     onSuccess: () => {
@@ -48,7 +50,7 @@ export function CreatePlaylistForm() {
           startContent={<Plus size={16} />}
           onPress={() => setIsExpanded(true)}
         >
-          Create New Playlist <ListMusic />
+          {t('cta')} <ListMusic />
         </Button>
       </div>
     );
@@ -58,18 +60,18 @@ export function CreatePlaylistForm() {
     <div className="max-w-4xl mx-auto">
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold">Create New Playlist</h3>
+          <h3 className="text-lg font-semibold">{t('title')}</h3>
         </CardHeader>
         <CardBody>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Playlist Name"
-              placeholder="Enter playlist name"
+              label={t('name.label')}
+              placeholder={t('name.placeholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               isRequired
               maxLength={100}
-              description="Give your playlist a descriptive name"
+              description={t('name.description')}
               autoFocus
             />
             
@@ -79,7 +81,7 @@ export function CreatePlaylistForm() {
                 onValueChange={setIsPublic}
                 size="sm"
               >
-                Make playlist public
+                {t('visibility.makePublic')}
               </Switch>
             </div>
             
@@ -90,7 +92,7 @@ export function CreatePlaylistForm() {
                 onPress={handleCancel}
                 isDisabled={createPlaylistMutation.isPending}
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 type="submit"
@@ -98,7 +100,7 @@ export function CreatePlaylistForm() {
                 isLoading={createPlaylistMutation.isPending}
                 isDisabled={!name.trim()}
               >
-                Create Playlist
+                {t('submit')}
               </Button>
             </div>
           </form>

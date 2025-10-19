@@ -7,6 +7,7 @@ import { api } from "~/trpc/react";
 import { UnsavedChangesModal } from "../../global/UnsavedChangesModal";
 import { Play, Save } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 
 interface EditPlaylistFormProps {
@@ -21,6 +22,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
   const [showModal, setShowModal] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const utils = api.useUtils();
+  const t = useTranslations('EditPlaylistForm');
 
   const [playlist] = api.playlist.getUserPlaylistById.useSuspenseQuery({
     id: playlistId,
@@ -49,7 +51,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
     const isPublic = formData.get('isPublic') !== null;
 
     if (!name) {
-      setError("Name is required");
+      setError(t('errors.nameRequired'));
       return;
     }
 
@@ -77,8 +79,8 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
       <CardHeader className="flex gap-3 justify-between">
         <div className="flex flex-row flex-wrap gap-2 justify-end">
           <div className="grow" >
-            <p className="text-md font-semibold">Playlist Settings - {playlist.name}</p>
-            <p className="text-small text-default-500">Update playlist details</p>
+            <p className="text-md font-semibold">{t('title', { name: playlist.name })}</p>
+            <p className="text-small text-default-500">{t('subtitle')}</p>
           </div>
           <Button
             startContent={<Play size={16} />}
@@ -87,7 +89,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
             className="text-white"
             color="success"
           >
-            Listen
+            {t('listen')}
           </Button>
         </div>
       </CardHeader>
@@ -96,8 +98,8 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
           <Input
             name="name"
             type="text"
-            label="Playlist Name"
-            placeholder="Enter playlist name"
+            label={t('fields.name.label')}
+            placeholder={t('fields.name.placeholder')}
             defaultValue={playlist.name}
             onChange={handleFormChange}
             isRequired
@@ -113,7 +115,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
             color="primary"
             onChange={handleFormChange}
           >
-            Make playlist public
+            {t('fields.isPublic.label')}
           </Switch>
 
           {error && (
@@ -128,7 +130,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
                 handleNavigationAttempt('/');
               }}
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -136,7 +138,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
               startContent={<Save size={16} />}
               isLoading={updatePlaylistMutation.isPending}
             >
-              Save Changes
+              {t('actions.save')}
             </Button>
           </div>
         </form>

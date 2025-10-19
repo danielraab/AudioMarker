@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { PlaylistActionsDropdown } from "./PlaylistActionsDropdown";
 import { formatTimeAgo } from "~/lib/time";
+import { useTranslations } from "next-intl";
 
 interface PlaylistListItemProps {
   playlist: {
@@ -25,6 +26,7 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string>("");
+  const t = useTranslations('PlaylistListItem');
 
   const deletePlaylistMutation = api.playlist.deletePlaylist.useMutation({
     onSuccess: () => {
@@ -61,14 +63,14 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
               <div className="flex grow items-center gap-2 justify-between">
                 <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                   <Chip size="sm" variant="flat" color="secondary">
-                    {playlist.audioCount} audio{playlist.audioCount !== 1 ? 's' : ''}
+                    {t('audioCount', { count: playlist.audioCount })}
                   </Chip>
                   {playlist.listenCounter !== undefined && playlist.listenCounter > 0 && (
                     <Chip size="sm" variant="flat" color="primary" startContent={<Headphones size={14} />}>
-                      {playlist.listenCounter} {playlist.listenCounter === 1 ? 'listen' : 'listens'}
+                      {t('listens', { count: playlist.listenCounter })}
                     </Chip>
                   )}
-                  <div className="flex items-center" title={playlist.isPublic ? "Public" : "Private"}>
+                  <div className="flex items-center" title={playlist.isPublic ? t('visibility.public') : t('visibility.private')}>
                     {playlist.isPublic ? (
                       <Globe size={16} className="text-success" />
                     ) : (
@@ -86,10 +88,10 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
             </div>
           </div>
           <div className="space-y-1 text-sm text-default-500">
-            <p><span className="font-medium">Created:</span> {formatTimeAgo(new Date(playlist.createdAt))}</p>
-            <p><span className="font-medium">Last updated:</span> {formatTimeAgo(new Date(playlist.updatedAt))}</p>
+            <p><span className="font-medium">{t('labels.created')}</span> {formatTimeAgo(new Date(playlist.createdAt))}</p>
+            <p><span className="font-medium">{t('labels.lastUpdated')}</span> {formatTimeAgo(new Date(playlist.updatedAt))}</p>
             {playlist.lastListenAt && (
-              <p><span className="font-medium">Last listened:</span> {formatTimeAgo(new Date(playlist.lastListenAt))}</p>
+              <p><span className="font-medium">{t('labels.lastListened')}</span> {formatTimeAgo(new Date(playlist.lastListenAt))}</p>
             )}
           </div>
         </CardBody>
@@ -97,20 +99,20 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
       
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">Delete Playlist</ModalHeader>
+          <ModalHeader className="flex flex-col gap-1">{t('DeleteModal.title')}</ModalHeader>
           <ModalBody>
-            <p>Are you sure you want to delete this playlist? This will not delete the audio files, only the playlist. This action cannot be undone.</p>
+            <p>{t('DeleteModal.body')}</p>
           </ModalBody>
           <ModalFooter>
             <Button color="default" variant="light" onPress={onClose}>
-              Cancel
+              {t('DeleteModal.cancel')}
             </Button>
             <Button
               color="danger"
               onPress={handleConfirmDelete}
               isLoading={deletePlaylistMutation.isPending}
             >
-              Delete
+              {t('DeleteModal.delete')}
             </Button>
           </ModalFooter>
         </ModalContent>

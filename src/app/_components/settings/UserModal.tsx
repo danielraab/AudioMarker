@@ -13,6 +13,7 @@ import { Input } from "@heroui/input";
 import { Switch } from "@heroui/switch";
 import { api } from "~/trpc/react";
 import { Shield, Ban } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface User {
   id: string;
@@ -35,6 +36,7 @@ export default function UserModal({
   user,
   onSuccess,
 }: UserModalProps) {
+  const t = useTranslations('UserModal');
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
@@ -95,12 +97,12 @@ export default function UserModal({
     // Validation
     const newErrors: { name?: string; email?: string } = {};
     if (!name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t('errors.nameRequired');
     }
     if (!email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t('errors.emailRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Invalid email address";
+      newErrors.email = t('errors.emailInvalid');
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -133,7 +135,7 @@ export default function UserModal({
       <ModalContent>
         <form onSubmit={handleSubmit}>
           <ModalHeader className="flex flex-col gap-1">
-            {isEditMode ? "Edit User" : "Add New User"}
+            {isEditMode ? t('title.edit') : t('title.add')}
           </ModalHeader>
           <ModalBody>
             {errors.general && (
@@ -143,8 +145,8 @@ export default function UserModal({
             )}
 
             <Input
-              label="Name"
-              placeholder="Enter user name"
+              label={t('fields.name.label')}
+              placeholder={t('fields.name.placeholder')}
               value={name}
               onValueChange={setName}
               isInvalid={!!errors.name}
@@ -154,8 +156,8 @@ export default function UserModal({
             />
 
             <Input
-              label="Email"
-              placeholder="Enter email address"
+              label={t('fields.email.label')}
+              placeholder={t('fields.email.placeholder')}
               type="email"
               value={email}
               onValueChange={setEmail}
@@ -172,10 +174,8 @@ export default function UserModal({
               }}
             >
               <div className="flex flex-col gap-1">
-                <p className="text-medium">Admin Access</p>
-                <p className="text-tiny text-default-400">
-                  Grant administrative privileges to this user
-                </p>
+                <p className="text-medium">{t('fields.isAdmin.label')}</p>
+                <p className="text-tiny text-default-400">{t('fields.isAdmin.description')}</p>
               </div>
               {isAdmin && <Shield className="h-4 w-4 text-warning" />}
             </Switch>
@@ -188,10 +188,8 @@ export default function UserModal({
               }}
             >
               <div className="flex flex-col gap-1">
-                <p className="text-medium">Disable Account</p>
-                <p className="text-tiny text-default-400">
-                  Prevent this user from signing in
-                </p>
+                <p className="text-medium">{t('fields.isDisabled.label')}</p>
+                <p className="text-tiny text-default-400">{t('fields.isDisabled.description')}</p>
               </div>
               {isDisabled && <Ban className="h-4 w-4 text-danger" />}
             </Switch>
@@ -203,14 +201,14 @@ export default function UserModal({
               onPress={onClose}
               isDisabled={isLoading}
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               color="primary"
               type="submit"
               isLoading={isLoading}
             >
-              {isEditMode ? "Update User" : "Create User"}
+              {isEditMode ? t('actions.update') : t('actions.create')}
             </Button>
           </ModalFooter>
         </form>

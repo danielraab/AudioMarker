@@ -2,6 +2,7 @@ import { Button, Input } from "@heroui/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { formatTime } from "~/lib/time";
+import { useTranslations } from "next-intl";
 
 interface AddMarkerProps {
   currentTime: number;
@@ -10,11 +11,12 @@ interface AddMarkerProps {
 
 export default function AddMarker({ currentTime, onAddMarker }: AddMarkerProps) {
   const [newMarkerLabel, setNewMarkerLabel] = useState('');
+  const t = useTranslations('AddMarker');
 
   return (<>
     <Input
       size="sm"
-      placeholder="Marker label (optional)"
+      placeholder={t('labelPlaceholder')}
       value={newMarkerLabel}
       onValueChange={setNewMarkerLabel}
       className="flex-1"
@@ -35,7 +37,7 @@ export default function AddMarker({ currentTime, onAddMarker }: AddMarkerProps) 
         startContent={<Plus size={16} />}
         className="flex-shrink-0"
       >
-        Add at {formatTime(currentTime)}
+        {t('addAt', { time: formatTime(currentTime) })}
       </Button>
     </div>
   </>);

@@ -3,6 +3,7 @@
 import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { MoreVertical, Edit, Trash2, Play, Check, Link2 } from "lucide-react";
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface PlaylistActionsDropdownProps {
   playlistId: string;
@@ -18,6 +19,7 @@ export function PlaylistActionsDropdown({
   isDeleteDisabled = false
 }: PlaylistActionsDropdownProps) {
   const [copySuccess, setCopySuccess] = useState(false);
+  const t = useTranslations('PlaylistActionsDropdown');
 
   const handleCopyLink = useCallback(async () => {
     const listenUrl = `${window.location.origin}/playlists/${playlistId}/listen`;
@@ -37,12 +39,12 @@ export function PlaylistActionsDropdown({
           isIconOnly
           size="sm"
           variant="light"
-          aria-label="Actions"
+          aria-label={t('aria.actions')}
         >
           <MoreVertical size={16} />
         </Button>
       </DropdownTrigger>
-      <DropdownMenu aria-label="Playlist actions">
+      <DropdownMenu aria-label={t('aria.menu')}>
         <DropdownItem
           key="listen"
           startContent={<Play size={16} />}
@@ -50,7 +52,7 @@ export function PlaylistActionsDropdown({
           className="text-success"
           color="success"
         >
-          Listen
+          {t('listen')}
         </DropdownItem>
         <DropdownItem
           key="copy"
@@ -58,7 +60,7 @@ export function PlaylistActionsDropdown({
           onPress={handleCopyLink}
           className={copySuccess ? "text-success" : ""}
         >
-          {copySuccess ? "Copied!" : "Copy Listen Link"}
+          {copySuccess ? t('copied') : t('copyListenLink')}
         </DropdownItem>
         <DropdownItem
           key="edit"
@@ -67,7 +69,7 @@ export function PlaylistActionsDropdown({
           className="text-primary"
           color="primary"
         >
-          Edit
+          {t('edit')}
         </DropdownItem>
         <DropdownItem
           key="delete"
@@ -77,7 +79,7 @@ export function PlaylistActionsDropdown({
           onPress={onDeleteClick}
           isDisabled={isDeleteDisabled}
         >
-          Delete
+          {t('delete')}
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

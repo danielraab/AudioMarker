@@ -5,8 +5,10 @@ import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner } from "@herou
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { Music4, Plus } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function CreateAudioForm() {
+  const t = useTranslations('CreateAudioForm');
   const [audioName, setAudioName] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -17,7 +19,7 @@ export default function CreateAudioForm() {
   const uploadAudioMutation = api.audio.uploadAudio.useMutation({
     onSuccess: () => {
       setStatus("success");
-      setMessage("Upload successful!");
+      setMessage(t('uploadSuccess'));
       router.refresh(); // Refresh to show the new audio file in the list
       setAudioName("");
       setFile(null);
@@ -25,7 +27,7 @@ export default function CreateAudioForm() {
     onError: (error) => {
       console.error("Upload error:", error);
       setStatus("error");
-      setMessage(error.message || "Upload failed.");
+      setMessage(error.message || t('uploadError'));
     },
   });
 
@@ -35,7 +37,7 @@ export default function CreateAudioForm() {
 
       // Validate file type on the frontend
       if (!selectedFile.type.includes('audio/mpeg') && !selectedFile.type.includes('audio/mp3')) {
-        setMessage("Please select an MP3 file.");
+        setMessage(t('fileInvalidType'));
         setFile(null);
         return;
       }
@@ -43,7 +45,7 @@ export default function CreateAudioForm() {
       // Validate file extension
       const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
       if (fileExtension !== 'mp3') {
-        setMessage("Please select a file with .mp3 extension.");
+        setMessage(t('fileInvalidExtension'));
         setFile(null);
         return;
       }
@@ -71,12 +73,12 @@ export default function CreateAudioForm() {
     e.preventDefault();
     if (!file || !audioName) {
       setStatus("error");
-      setMessage("Please provide an audio name and select a file.");
+      setMessage(t('uploadInputError'));
       return;
     }
 
     setStatus("uploading");
-    setMessage("Uploading...");
+    setMessage(t('uploading'));
 
     try {
       const fileData = await convertFileToBase64(file);
@@ -102,7 +104,7 @@ export default function CreateAudioForm() {
           startContent={<Plus size={16} />}
           onPress={() => setIsExpanded(true)}
         >
-          Upload New Audio <Music4 />
+          {t('title')} <Music4 />
         </Button>
       </div>
     );
@@ -112,16 +114,16 @@ export default function CreateAudioForm() {
     <Card className="max-w-xl mx-auto">
       <CardHeader className="flex gap-3">
         <div className="flex flex-col">
-          <p className="text-md font-semibold">New Audio Upload</p>
-          <p className="text-small text-default-500">Upload your MP3 audio file</p>
+          <p className="text-md font-semibold">{t('title')}</p>
+          <p className="text-small text-default-500">{t('subtitle')}</p>
         </div>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input
             type="text"
-            label="Audio Name"
-            placeholder="Enter a name for your audio"
+            label={t('namePlaceholder')}
+            placeholder={t('namePlaceholder')}
             value={audioName}
             onValueChange={setAudioName}
             isRequired
@@ -134,11 +136,11 @@ export default function CreateAudioForm() {
             type="file"
             accept="audio/mpeg,audio/mp3,.mp3"
             onChange={handleFileChange}
-            label="MP3 File"
+            label={t('fileLabel')}
             labelPlacement="outside"
             variant="bordered"
             isRequired
-            description={file ? `Selected: ${file.name}` : "Choose an MP3 audio file"}
+            description={file ? t('selectedFile', { fileName: file.name }) : t('selectFile')}
             classNames={{
               input: "file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer",
               inputWrapper: "hover:border-primary-300"
@@ -153,7 +155,7 @@ export default function CreateAudioForm() {
               isDisabled={uploadAudioMutation.isPending}
               startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
@@ -161,7 +163,7 @@ export default function CreateAudioForm() {
               isDisabled={uploadAudioMutation.isPending}
               startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
             >
-              {uploadAudioMutation.isPending ? "Uploading..." : "Upload Audio"}
+              {uploadAudioMutation.isPending ? t('uploading') : t('uploadButton')}
             </Button>
           </div>
           {status && (

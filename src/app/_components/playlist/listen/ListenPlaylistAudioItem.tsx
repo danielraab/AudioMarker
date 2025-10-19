@@ -4,6 +4,7 @@ import { Button, Card, CardBody, Chip } from "@heroui/react";
 import { Play } from "lucide-react";
 import { formatTimeAgo } from "~/lib/time";
 import type { PlaylistAudio } from "~/types/Playlist";
+import { useTranslations } from "next-intl";
 
 interface ListenPlaylistAudioItemProps {
   playlistAudio: PlaylistAudio;
@@ -11,6 +12,8 @@ interface ListenPlaylistAudioItemProps {
 
 export function ListenPlaylistAudioItem({ playlistAudio }: ListenPlaylistAudioItemProps) {
   const { audio } = playlistAudio;
+  const t = useTranslations("PlaylistAudioItem");
+  const tGlobal = useTranslations();
 
   return (
     <Card className="shadow-sm">
@@ -21,7 +24,7 @@ export function ListenPlaylistAudioItem({ playlistAudio }: ListenPlaylistAudioIt
 
           <div className="grow flex justify-between items-center gap-2">
             <Chip size="sm" variant="flat" color="primary">
-              {audio.markerCount} markers
+              {tGlobal("AudioListItem.markers", { count: audio.markerCount })}
             </Chip>
             {/* Actions */}
               <Button
@@ -32,7 +35,7 @@ export function ListenPlaylistAudioItem({ playlistAudio }: ListenPlaylistAudioIt
                 as="a"
                 href={`/audios/${audio.id}/listen`}
                 target="_blank"
-                title="Play audio"
+                title={t("actions.play")}
               >
                 <Play size={16} />
               </Button>
@@ -40,8 +43,8 @@ export function ListenPlaylistAudioItem({ playlistAudio }: ListenPlaylistAudioIt
         </div>
 
         <div className="space-y-1 text-xs sm:text-sm text-default-500">
-          <p><span className="font-medium">Original file:</span> {audio.originalFileName}</p>
-          <p><span className="font-medium">Added to playlist:</span> {formatTimeAgo(new Date(playlistAudio.addedAt))}</p>
+          <p><span className="font-medium">{t("labels.originalFile")}</span> {audio.originalFileName}</p>
+          <p><span className="font-medium">{t("labels.addedToPlaylist")}</span> {formatTimeAgo(new Date(playlistAudio.addedAt))}</p>
         </div>
       </CardBody>
     </Card>

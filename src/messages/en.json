@@ -82,5 +82,367 @@
       "pause": "Pause",
       "stop": "Stop"
     }
+  },
+  "CreateAudioForm": {
+    "title": "New Audio Upload",
+    "subtitle": "Upload your MP3 audio file",
+    "uploadButton": "Upload Audio",
+    "uploading": "Uploading...",
+    "uploadSuccess": "Upload successful!",
+    "uploadError": "Upload failed.",
+    "uploadInputError": "Please provide an audio name and select a file.",
+    "cancel": "Cancel",
+    "fileInvalidType": "Please select an MP3 file.",
+    "fileInvalidExtension": "Please select a file with .mp3 extension.",
+    "namePlaceholder": "Enter a name for your audio",
+    "fileLabel": "MP3 File",
+    "selectedFile": "Selected: {fileName}",
+    "selectFile": "Choose an MP3 audio file"
+  },
+  "AudioListItem": {
+    "markers": "{count} {count, plural, one {marker} other {markers}}",
+    "listens": "{count} {count, plural, one {listen} other {listens}}",
+    "visibility": {
+      "public": "Public",
+      "private": "Private"
+    },
+    "labels": {
+      "originalFileName": "Original file name:",
+      "uploaded": "Uploaded:",
+      "lastListened": "Last listened:"
+    },
+    "DeleteModal": {
+      "title": "Delete Audio File",
+      "body": "Are you sure you want to delete this audio file? This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
+  "AudioActionsDropdown": {
+    "aria": {
+      "actions": "Audio actions",
+      "menu": "Audio actions menu"
+    },
+    "play": "Play",
+    "copyPlayLink": "Copy play link",
+    "copied": "Copied",
+    "edit": "Edit",
+    "addToPlaylist": "Add to playlist",
+    "delete": "Delete"
+  },
+  "AddToPlaylistModal": {
+    "title": "Add to Playlist",
+    "searchPlaceholder": "Search playlists...",
+    "empty": {
+      "noMatches": "No playlists match your search.",
+      "noneFound": "No playlists found.",
+      "suggestion": "Create your first playlist to organize your audio files."
+    },
+    "chipAudioCount": "{count} {count, plural, one {audio} other {audios}}",
+    "button": {
+      "added": "Added",
+      "add": "Add"
+    },
+    "labels": {
+      "created": "Created:",
+      "visibility": "Visibility:"
+    },
+    "visibility": {
+      "public": "Public",
+      "private": "Private"
+    },
+    "close": "Close"
+  },
+  "EmptyMarkerList": {
+    "description": "No markers added yet. Use the buttons above to add markers at specific timestamps."
+  },
+  "AddMarker": {
+    "labelPlaceholder": "Marker label (optional)",
+    "addAt": "Add at {time}"
+  },
+  "StoredMarkers": {
+    "title": "Stored Audio Markers",
+    "subtitle": "These markers are stored in the database and are also available on the listening page.",
+    "listTitle": "Saved Markers:",
+    "defaultLabel": "Stored Marker {index}"
+  },
+  "EditAudioForm": {
+    "title": "Audio Settings - {name}",
+    "subtitle": "Update audio details",
+    "preview": "Preview",
+    "fields": {
+      "name": {
+        "label": "Audio Name",
+        "placeholder": "Enter a name for your audio"
+      },
+      "isPublic": {
+        "label": "Make audio public"
+      }
+    },
+    "meta": {
+      "originalFile": "Original File:",
+      "uploaded": "Uploaded:",
+      "updated": "Updated:"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "errors": {
+      "nameRequired": "Name is required"
+    }
+  },
+  "AddAudioModal": {
+    "title": "Add Audio to Playlist",
+    "searchPlaceholder": "Search audio files...",
+    "empty": {
+      "noMatches": "No audio files match your search.",
+      "noneFound": "No audio files found.",
+      "suggestion": "Create your first audio file to add to playlists."
+    },
+    "button": {
+      "added": "In Playlist",
+      "add": "Add"
+    },
+    "labels": {
+      "originalFile": "Original file:",
+      "uploaded": "Uploaded:"
+    },
+    "close": "Close"
+  },
+  "EditPlaylistForm": {
+    "title": "Playlist Settings - {name}",
+    "subtitle": "Update playlist details",
+    "listen": "Listen",
+    "fields": {
+      "name": {
+        "label": "Playlist Name",
+        "placeholder": "Enter playlist name"
+      },
+      "isPublic": {
+        "label": "Make playlist public"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "errors": {
+      "nameRequired": "Name is required"
+    }
+  },
+  "PlaylistAudioItem": {
+    "actions": {
+      "play": "Play audio",
+      "edit": "Edit audio",
+      "remove": "Remove from playlist"
+    },
+    "labels": {
+      "originalFile": "Original file:",
+      "addedToPlaylist": "Added to playlist:"
+    }
+  },
+  "PlaylistEditContainer": {
+    "title": "Audio Files ({count})",
+    "addAudio": "Add Audio",
+    "empty": {
+      "noAudios": "No audio files in this playlist yet.",
+      "addFirst": "Add your first audio file"
+    }
+  },
+  "ListenPlaylistView": {
+    "visibility": {
+      "publicPlaylist": "Public playlist"
+    },
+    "labels": {
+      "createdBy": "Created by:",
+      "anonymous": "Anonymous"
+    },
+    "section": {
+      "title": "Public Audios",
+      "description": "Public audio files in this playlist"
+    },
+    "empty": {
+      "noPublicAudios": "No public audios in this playlist."
+    }
+  },
+  "PlaylistListItem": {
+    "audioCount": "{count} {count, plural, one {audio} other {audios}}",
+    "listens": "{count} {count, plural, one {listen} other {listens}}",
+    "visibility": {
+      "public": "Public",
+      "private": "Private"
+    },
+    "labels": {
+      "created": "Created:",
+      "lastUpdated": "Last updated:",
+      "lastListened": "Last listened:"
+    },
+    "DeleteModal": {
+      "title": "Delete Playlist",
+      "body": "Are you sure you want to delete this playlist? This will not delete the audio files, only the playlist. This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
+  "PlaylistActionsDropdown": {
+    "aria": {
+      "actions": "Playlist actions",
+      "menu": "Playlist actions menu"
+    },
+    "listen": "Listen",
+    "copyListenLink": "Copy listen link",
+    "copied": "Copied",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "CreatePlaylistForm": {
+    "cta": "Create New Playlist",
+    "title": "Create New Playlist",
+    "name": {
+      "label": "Playlist Name",
+      "placeholder": "Enter playlist name",
+      "description": "Give your playlist a descriptive name"
+    },
+    "visibility": {
+      "makePublic": "Make playlist public"
+    },
+    "cancel": "Cancel",
+    "submit": "Create Playlist"
+  }
+  ,
+  "SettingsPage": {
+    "title": "Admin Settings",
+    "description": "Manage users and system settings",
+    "tabs": {
+      "ariaLabel": "Settings sections",
+      "users": "Users",
+      "softDeleted": "Deleted",
+      "system": "System",
+      "general": "General"
+    },
+    "comingSoon": "System settings coming soon..."
+  },
+  "GeneralSettings": {
+    "loading": "Loading settings...",
+    "title": "Authentication Settings",
+    "emailRegistration": {
+      "title": "Email Registration",
+      "description": "New user registration via email (Nodemailer) is currently {status}.",
+      "note": "This setting is configured via the MAIL_REGISTRATION_ENABLED environment variable. Contact your system administrator to change this setting."
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
+  },
+  "SoftDeletedSection": {
+    "loading": "Loading...",
+    "by": "by",
+    "unknown": "Unknown",
+    "deletedOn": "Deleted on",
+    "actions": {
+      "recover": "Recover",
+      "deletePermanently": "Delete Permanently"
+    },
+    "confirm": {
+      "deleteAudio": "Are you sure you want to permanently delete this audio? This action cannot be undone.",
+      "deletePlaylist": "Are you sure you want to permanently delete this playlist? This action cannot be undone."
+    },
+    "audios": {
+      "title": "Soft Deleted Audios",
+      "empty": "No soft deleted audios found.",
+      "originalFilename": "Original filename:",
+      "filePath": "File path:"
+    },
+    "playlists": {
+      "title": "Soft Deleted Playlists",
+      "empty": "No soft deleted playlists found."
+    }
+  },
+  "UserList": {
+    "title": "Registered Users",
+    "loading": "Loading users...",
+    "errors": {
+      "loadingUsers": "Error loading users: {message}"
+    },
+    "messages": {
+      "userDeleted": "User deleted successfully",
+      "deleteError": "Error deleting user: {message}",
+      "userUpdated": "User updated successfully",
+      "userCreated": "User created successfully"
+    },
+    "confirm": {
+      "deleteUser": "Are you sure you want to delete this user? This action cannot be undone."
+    },
+    "total": "Total users: {count}",
+    "actions": {
+      "ariaLabel": "User actions",
+      "addUser": "Add User",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "table": {
+      "ariaLabel": "Users table",
+      "empty": "No users found",
+      "columns": {
+        "user": "USER",
+        "email": "EMAIL",
+        "role": "ROLE",
+        "status": "STATUS",
+        "audios": "AUDIOS",
+        "playlists": "PLAYLISTS",
+        "actions": "ACTIONS"
+      }
+    },
+    "labels": {
+      "user": "User",
+      "noName": "No name",
+      "noEmail": "No email"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "User"
+    },
+    "status": {
+      "disabled": "Disabled",
+      "active": "Active",
+      "unverified": "Unverified"
+    }
+  },
+  "UserModal": {
+    "title": {
+      "edit": "Edit User",
+      "add": "Add New User"
+    },
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter user name"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email address"
+      },
+      "isAdmin": {
+        "label": "Admin Access",
+        "description": "Grant administrative privileges to this user"
+      },
+      "isDisabled": {
+        "label": "Disable Account",
+        "description": "Prevent this user from signing in"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "update": "Update User",
+      "create": "Create User"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address"
+    }
   }
 }
+

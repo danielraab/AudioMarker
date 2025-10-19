@@ -6,6 +6,7 @@ import { Button, Input, Card, CardBody, CardHeader, Switch } from "@heroui/react
 import { api } from "~/trpc/react";
 import { Play, Save } from "lucide-react";
 import { UnsavedChangesModal } from "../../global/UnsavedChangesModal";
+import { useTranslations } from "next-intl";
 
 interface EditAudioFormProps {
   audioId: string;
@@ -22,6 +23,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
 
   // Use suspense query to fetch audio details
   const [audio] = api.audio.getUserAudioById.useSuspenseQuery({ id: audioId });
+  const t = useTranslations('EditAudioForm');
 
   // Setup mutation for updating audio
   const updateAudio = api.audio.updateAudio.useMutation({
@@ -45,7 +47,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
     const isPublic = formData.get('isPublic') !== null;
 
     if (!name) {
-      setError("Name is required");
+      setError(t('errors.nameRequired'));
       return;
     }
 
@@ -72,8 +74,8 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
     <Card className="mx-auto">
       <CardHeader className="flex gap-3 justify-between">
         <div className="flex flex-col">
-          <p className="text-md font-semibold">Audio Settings - {audio.name}</p>
-          <p className="text-small text-default-500">Update audio details</p>
+          <p className="text-md font-semibold">{t('title', { name: audio.name })}</p>
+          <p className="text-small text-default-500">{t('subtitle')}</p>
         </div>
         <Button
           color="success"
@@ -81,7 +83,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
           onPress={() => {
             handleNavigationAttempt(`/audios/${audio.id}/listen`);
           }}>
-          Preview
+          {t('preview')}
         </Button>
       </CardHeader>
       <CardBody>
@@ -89,8 +91,8 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
           <Input
             name="name"
             type="text"
-            label="Audio Name"
-            placeholder="Enter a name for your audio"
+            label={t('fields.name.label')}
+            placeholder={t('fields.name.placeholder')}
             defaultValue={audio.name}
             isRequired
             variant="bordered"
@@ -106,13 +108,13 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
             color="primary"
             onChange={handleFormChange}
           >
-            Make audio public
+            {t('fields.isPublic.label')}
           </Switch>
           
           <div className="text-xs text-default-500">
-            <p><strong>Original File:</strong> {audio.originalFileName}</p>
-            <p suppressHydrationWarning={true}><strong>Uploaded:</strong> {new Date(audio.createdAt).toLocaleString()}</p>
-            <p suppressHydrationWarning={true}><strong>Updated:</strong> {new Date(audio.updatedAt).toLocaleString()}</p>
+            <p><strong>{t('meta.originalFile')}</strong> {audio.originalFileName}</p>
+            <p suppressHydrationWarning={true}><strong>{t('meta.uploaded')}</strong> {new Date(audio.createdAt).toLocaleString()}</p>
+            <p suppressHydrationWarning={true}><strong>{t('meta.updated')}</strong> {new Date(audio.updatedAt).toLocaleString()}</p>
           </div>
 
           {error && (
@@ -127,7 +129,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
                 handleNavigationAttempt('/');
               }}
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -135,7 +137,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
               startContent={<Save size={16} />}
               isLoading={updateAudio.isPending}
             >
-              Save Changes
+              {t('actions.save')}
             </Button>
           </div>
         </form>

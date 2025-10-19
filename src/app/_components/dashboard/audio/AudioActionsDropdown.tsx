@@ -4,6 +4,7 @@ import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, useDiscl
 import { MoreVertical, Play, Edit, Trash2, Link2, Check, ListMusic } from "lucide-react";
 import { useState, useCallback } from "react";
 import { AddToPlaylistModal } from "./AddToPlaylistModal";
+import { useTranslations } from "next-intl";
 
 interface AudioActionsDropdownProps {
   audioId: string;
@@ -18,6 +19,7 @@ export function AudioActionsDropdown({
 }: AudioActionsDropdownProps) {
   const [copySuccess, setCopySuccess] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const t = useTranslations("AudioActionsDropdown");
 
   const handleCopyLink = useCallback(async () => {
     const listenUrl = `${window.location.origin}/audios/${audioId}/listen`;
@@ -38,12 +40,12 @@ export function AudioActionsDropdown({
           isIconOnly
           size="sm"
           variant="light"
-          aria-label="Actions"
+          aria-label={t('aria.actions')}
         >
           <MoreVertical size={16} />
         </Button>
       </DropdownTrigger>
-      <DropdownMenu aria-label="Audio actions">
+      <DropdownMenu aria-label={t('aria.menu')}>
         <DropdownItem
           key="play"
           startContent={<Play size={16} />}
@@ -51,7 +53,7 @@ export function AudioActionsDropdown({
           className="text-success"
           color="success"
         >
-          Play
+          {t('play')}
         </DropdownItem>
         <DropdownItem
           key="copy"
@@ -59,7 +61,7 @@ export function AudioActionsDropdown({
           onPress={handleCopyLink}
           className={copySuccess ? "text-success" : ""}
         >
-          {copySuccess ? "Copied!" : "Copy Play Link"}
+          {copySuccess ? t('copied') : t('copyPlayLink')}
         </DropdownItem>
         <DropdownItem
           key="edit"
@@ -68,7 +70,7 @@ export function AudioActionsDropdown({
           className="text-primary"
           color="primary"
         >
-          Edit
+          {t('edit')}
         </DropdownItem>
         <DropdownItem
           key="add-to-playlist"
@@ -77,7 +79,7 @@ export function AudioActionsDropdown({
           className="text-secondary"
           color="secondary"
         >
-          Add to Playlist
+          {t('addToPlaylist')}
         </DropdownItem>
         <DropdownItem
           key="delete"
@@ -87,7 +89,7 @@ export function AudioActionsDropdown({
           onPress={onDeleteClick}
           isDisabled={isDeleteDisabled}
         >
-          Delete
+          {t('delete')}
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

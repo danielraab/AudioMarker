@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { AudioActionsDropdown } from "./AudioActionsDropdown";
 import { formatTimeAgo } from "~/lib/time";
+import { useTranslations } from "next-intl";
 
 interface AudioListItemProps {
   audio: {
@@ -25,6 +26,7 @@ export function AudioListItem({ audio }: AudioListItemProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedAudioId, setSelectedAudioId] = useState<string>("");
+  const t = useTranslations("AudioListItem");
 
   const deleteAudioMutation = api.audio.deleteAudio.useMutation({
     onSuccess: () => {
@@ -57,14 +59,14 @@ export function AudioListItem({ audio }: AudioListItemProps) {
               <div className="flex grow items-center gap-2 justify-between">
                 <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                   <Chip size="sm" variant="flat" color="primary">
-                    {audio.markerCount} markers
+                    {t('markers', { count: audio.markerCount })}
                   </Chip>
                   {audio.listenCounter !== undefined && audio.listenCounter > 0 && (
                     <Chip size="sm" variant="flat" color="secondary" startContent={<Headphones size={14} />}>
-                      {audio.listenCounter} {audio.listenCounter === 1 ? 'listen' : 'listens'}
+                      {t('listens', { count: audio.listenCounter })}
                     </Chip>
                   )}
-                  <div className="flex items-center" title={audio.isPublic ? "Public" : "Private"}>
+                  <div className="flex items-center" title={audio.isPublic ? t('visibility.public') : t('visibility.private')}>
                     {audio.isPublic ? (
                       <Globe size={16} className="text-success" />
                     ) : (
@@ -81,10 +83,10 @@ export function AudioListItem({ audio }: AudioListItemProps) {
             </div>
           </div>
           <div className="space-y-1 text-sm text-default-500">
-            <p className="break-words"><span className="font-medium">Original file name:</span> {audio.originalFileName}</p>
-            <p><span className="font-medium">Uploaded:</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
+            <p className="break-words"><span className="font-medium">{t('labels.originalFileName')}</span> {audio.originalFileName}</p>
+            <p><span className="font-medium">{t('labels.uploaded')}</span> {formatTimeAgo(new Date(audio.createdAt))}</p>
             {audio.lastListenAt && (
-              <p><span className="font-medium">Last listened:</span> {formatTimeAgo(new Date(audio.lastListenAt))}</p>
+              <p><span className="font-medium">{t('labels.lastListened')}</span> {formatTimeAgo(new Date(audio.lastListenAt))}</p>
             )}
           </div>
         </CardBody>
@@ -92,20 +94,20 @@ export function AudioListItem({ audio }: AudioListItemProps) {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">Delete Audio File</ModalHeader>
+          <ModalHeader className="flex flex-col gap-1">{t('DeleteModal.title')}</ModalHeader>
           <ModalBody>
-            <p>Are you sure you want to delete this audio file? This action cannot be undone.</p>
+            <p>{t('DeleteModal.body')}</p>
           </ModalBody>
           <ModalFooter>
             <Button color="default" variant="light" onPress={onClose}>
-              Cancel
+              {t('DeleteModal.cancel')}
             </Button>
             <Button
               color="danger"
               onPress={handleConfirmDelete}
               isLoading={deleteAudioMutation.isPending}
             >
-              Delete
+              {t('DeleteModal.delete')}
             </Button>
           </ModalFooter>
         </ModalContent>

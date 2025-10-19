@@ -82,5 +82,366 @@
       "pause": "Pause",
       "stop": "Stopp"
     }
+  },
+  "CreateAudioForm": {
+    "title": "Neuer Audio-Upload",
+    "subtitle": "Lade deine MP3-Audiodatei hoch",
+    "uploadButton": "Audio hochladen",
+    "uploading": "Wird hochgeladen...",
+    "uploadSuccess": "Upload erfolgreich!",
+    "uploadError": "Upload fehlgeschlagen.",
+    "uploadInputError": "Bitte gib einen Audio-Namen an und wähle eine Datei aus.",
+    "cancel": "Abbrechen",
+    "fileInvalidType": "Bitte wähle eine MP3-Datei aus.",
+    "fileInvalidExtension": "Bitte wähle eine Datei mit der Endung .mp3.",
+    "namePlaceholder": "Gib einen Namen für deine Audiodatei ein",
+    "fileLabel": "MP3-Datei",
+    "selectedFile": "Ausgewählt: {fileName}",
+    "selectFile": "Wähle eine MP3-Audiodatei"
+  },
+  "AudioListItem": {
+    "markers": "{count} {count, plural, one {Markierung} other {Markierungen}}",
+    "listens": "{count} {count, plural, one {Wiedergabe} other {Wiedergaben}}",
+    "visibility": {
+      "public": "Öffentlich",
+      "private": "Privat"
+    },
+    "labels": {
+      "originalFileName": "Ursprünglicher Dateiname:",
+      "uploaded": "Hochgeladen:",
+      "lastListened": "Zuletzt angehört:"
+    },
+    "DeleteModal": {
+      "title": "Audiodatei löschen",
+      "body": "Bist du sicher, dass du diese Audiodatei löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "cancel": "Abbrechen",
+      "delete": "Löschen"
+    }
+  },
+  "AudioActionsDropdown": {
+    "aria": {
+      "actions": "Aktionen",
+      "menu": "Audio-Aktionen"
+    },
+    "play": "Abspielen",
+    "copyPlayLink": "Wiedergabe-Link kopieren",
+    "copied": "Kopiert!",
+    "edit": "Bearbeiten",
+    "addToPlaylist": "Zur Playlist hinzufügen",
+    "delete": "Löschen"
+  },
+  "AddToPlaylistModal": {
+    "title": "Zur Playlist hinzufügen",
+    "searchPlaceholder": "Playlists durchsuchen...",
+    "empty": {
+      "noMatches": "Keine Playlists stimmen mit deiner Suche überein.",
+      "noneFound": "Keine Playlists gefunden.",
+      "suggestion": "Erstelle deine erste Playlist, um deine Audiodateien zu organisieren."
+    },
+    "chipAudioCount": "{count} {count, plural, one {Audio} other {Audios}}",
+    "button": {
+      "added": "Hinzugefügt",
+      "add": "Hinzufügen"
+    },
+    "labels": {
+      "created": "Erstellt:",
+      "visibility": "Sichtbarkeit:"
+    },
+    "visibility": {
+      "public": "Öffentlich",
+      "private": "Privat"
+    },
+    "close": "Schließen"
+  },
+  "PlaylistActionsDropdown": {
+    "aria": {
+      "actions": "Playlist-Aktionen",
+      "menu": "Menü für Playlist-Aktionen"
+    },
+    "listen": "Anhören",
+    "copyListenLink": "Anhören-Link kopieren",
+    "copied": "Kopiert",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "PlaylistListItem": {
+    "audioCount": "{count} {count, plural, one {Audio} other {Audios}}",
+    "listens": "{count} {count, plural, one {Wiedergabe} other {Wiedergaben}}",
+    "visibility": {
+      "public": "Öffentlich",
+      "private": "Privat"
+    },
+    "labels": {
+      "created": "Erstellt:",
+      "lastUpdated": "Zuletzt aktualisiert:",
+      "lastListened": "Zuletzt angehört:"
+    },
+    "DeleteModal": {
+      "title": "Playlist löschen",
+      "body": "Möchtest du diese Playlist wirklich löschen? Die Audiodateien bleiben erhalten, es wird nur die Playlist gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "cancel": "Abbrechen",
+      "delete": "Löschen"
+    }
+  },
+  "EmptyMarkerList": {
+    "description": "Noch keine Markierungen hinzugefügt. Verwende die obenstehenden Schaltflächen, um Markierungen an bestimmten Zeitstempeln hinzuzufügen."
+  },
+  "AddMarker": {
+    "labelPlaceholder": "Marker-Beschriftung (optional)",
+    "addAt": "Hinzufügen bei {time}"
+  },
+  "StoredMarkers": {
+    "title": "Gespeicherte Audio-Markierungen",
+    "subtitle": "Diese Markierungen sind in der Datenbank gespeichert und auch auf der Anhörseite verfügbar.",
+    "listTitle": "Gespeicherte Markierungen:",
+    "defaultLabel": "Gespeicherte Markierung {index}"
+  },
+  "EditAudioForm": {
+    "title": "Audioeinstellungen - {name}",
+    "subtitle": "Audiodetails aktualisieren",
+    "preview": "Vorschau",
+    "fields": {
+      "name": {
+        "label": "Audioname",
+        "placeholder": "Gib einen Namen für dein Audio ein"
+      },
+      "isPublic": {
+        "label": "Audio öffentlich machen"
+      }
+    },
+    "meta": {
+      "originalFile": "Originaldatei:",
+      "uploaded": "Hochgeladen:",
+      "updated": "Aktualisiert:"
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "save": "Änderungen speichern"
+    },
+    "errors": {
+      "nameRequired": "Name ist erforderlich"
+    }
+  },
+  "AddAudioModal": {
+    "title": "Audio zur Playlist hinzufügen",
+    "searchPlaceholder": "Audiodateien durchsuchen...",
+    "empty": {
+      "noMatches": "Keine Audiodateien entsprechen deiner Suche.",
+      "noneFound": "Keine Audiodateien gefunden.",
+      "suggestion": "Erstelle deine erste Audiodatei, um sie Playlists hinzuzufügen."
+    },
+    "button": {
+      "added": "In Playlist",
+      "add": "Hinzufügen"
+    },
+    "labels": {
+      "originalFile": "Originaldatei:",
+      "uploaded": "Hochgeladen:"
+    },
+    "close": "Schließen"
+  },
+  "EditPlaylistForm": {
+    "title": "Playlisteinstellungen - {name}",
+    "subtitle": "Playlistdetails aktualisieren",
+    "listen": "Anhören",
+    "fields": {
+      "name": {
+        "label": "Playlist-Name",
+        "placeholder": "Playlist-Namen eingeben"
+      },
+      "isPublic": {
+        "label": "Playlist öffentlich machen"
+      }
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "save": "Änderungen speichern"
+    },
+    "errors": {
+      "nameRequired": "Name ist erforderlich"
+    }
+  },
+  "PlaylistAudioItem": {
+    "actions": {
+      "play": "Audio abspielen",
+      "edit": "Audio bearbeiten",
+      "remove": "Aus Playlist entfernen"
+    },
+    "labels": {
+      "originalFile": "Originaldatei:",
+      "addedToPlaylist": "Zur Playlist hinzugefügt:"
+    }
+  },
+  "PlaylistEditContainer": {
+    "title": "Audiodateien ({count})",
+    "addAudio": "Audio hinzufügen",
+    "empty": {
+      "noAudios": "Noch keine Audiodateien in dieser Playlist.",
+      "addFirst": "Füge deine erste Audiodatei hinzu"
+    }
+  },
+  "ListenPlaylistView": {
+    "visibility": {
+      "publicPlaylist": "Öffentliche Playlist"
+    },
+    "labels": {
+      "createdBy": "Erstellt von:",
+      "anonymous": "Anonym"
+    },
+    "section": {
+      "title": "Öffentliche Audios",
+      "description": "Öffentliche Audiodateien in dieser Playlist"
+    },
+    "empty": {
+      "noPublicAudios": "Keine öffentlichen Audios in dieser Playlist."
+    }
+  },
+  "CreatePlaylistForm": {
+    "cta": "Neue Playlist erstellen",
+    "title": "Neue Playlist erstellen",
+    "name": {
+      "label": "Playlist-Name",
+      "placeholder": "Playlist-Namen eingeben",
+      "description": "Gib deiner Playlist einen aussagekräftigen Namen"
+    },
+    "visibility": {
+      "makePublic": "Playlist öffentlich machen"
+    },
+    "cancel": "Abbrechen",
+    "submit": "Playlist erstellen"
+  }
+  ,
+  "SettingsPage": {
+    "title": "Admin-Einstellungen",
+    "description": "Verwalte Benutzer und Systemeinstellungen",
+    "tabs": {
+      "ariaLabel": "Einstellungsbereiche",
+      "users": "Benutzer",
+      "softDeleted": "Gelöschte Elemente",
+      "system": "System",
+      "general": "Allgemein"
+    },
+    "comingSoon": "Systemeinstellungen folgen in Kürze..."
+  },
+  "GeneralSettings": {
+    "loading": "Einstellungen werden geladen...",
+    "title": "Authentifizierungs-Einstellungen",
+    "emailRegistration": {
+      "title": "E-Mail-Registrierung",
+      "description": "Die Registrierung neuer Benutzer per E-Mail (Nodemailer) ist derzeit {status}.",
+      "note": "Diese Einstellung wird über die Umgebungsvariable MAIL_REGISTRATION_ENABLED konfiguriert. Wende dich an den Systemadministrator, um diese Einstellung zu ändern."
+    },
+    "status": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    }
+  },
+  "SoftDeletedSection": {
+    "loading": "Lädt...",
+    "by": "von",
+    "unknown": "Unbekannt",
+    "deletedOn": "Gelöscht am",
+    "actions": {
+      "recover": "Wiederherstellen",
+      "deletePermanently": "Endgültig löschen"
+    },
+    "confirm": {
+      "deleteAudio": "Möchtest du dieses Audio dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deletePlaylist": "Möchtest du diese Playlist dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "audios": {
+      "title": "Soft gelöschte Audios",
+      "empty": "Keine soft gelöschten Audios gefunden.",
+      "originalFilename": "Originaldateiname:",
+      "filePath": "Dateipfad:"
+    },
+    "playlists": {
+      "title": "Soft gelöschte Playlists",
+      "empty": "Keine soft gelöschten Playlists gefunden."
+    }
+  },
+  "UserList": {
+    "title": "Registrierte Benutzer",
+    "loading": "Benutzer werden geladen...",
+    "errors": {
+      "loadingUsers": "Fehler beim Laden der Benutzer: {message}"
+    },
+    "messages": {
+      "userDeleted": "Benutzer erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen des Benutzers: {message}",
+      "userUpdated": "Benutzer erfolgreich aktualisiert",
+      "userCreated": "Benutzer erfolgreich erstellt"
+    },
+    "confirm": {
+      "deleteUser": "Möchtest du diesen Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "total": "Gesamtanzahl Benutzer: {count}",
+    "actions": {
+      "ariaLabel": "Benutzeraktionen",
+      "addUser": "Benutzer hinzufügen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "table": {
+      "ariaLabel": "Benutzertabelle",
+      "empty": "Keine Benutzer gefunden",
+      "columns": {
+        "user": "BENUTZER",
+        "email": "E-MAIL",
+        "role": "ROLLE",
+        "status": "STATUS",
+        "audios": "AUDIOS",
+        "playlists": "PLAYLISTS",
+        "actions": "AKTIONEN"
+      }
+    },
+    "labels": {
+      "user": "Benutzer",
+      "noName": "Kein Name",
+      "noEmail": "Keine E-Mail"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "Benutzer"
+    },
+    "status": {
+      "disabled": "Deaktiviert",
+      "active": "Aktiv",
+      "unverified": "Unbestätigt"
+    }
+  },
+  "UserModal": {
+    "title": {
+      "edit": "Benutzer bearbeiten",
+      "add": "Neuen Benutzer hinzufügen"
+    },
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Benutzernamen eingeben"
+      },
+      "email": {
+        "label": "E-Mail",
+        "placeholder": "E-Mail-Adresse eingeben"
+      },
+      "isAdmin": {
+        "label": "Admin-Zugriff",
+        "description": "Diesem Benutzer administrative Rechte gewähren"
+      },
+      "isDisabled": {
+        "label": "Konto deaktivieren",
+        "description": "Diesen Benutzer an der Anmeldung hindern"
+      }
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "update": "Benutzer aktualisieren",
+      "create": "Benutzer erstellen"
+    },
+    "errors": {
+      "nameRequired": "Name ist erforderlich",
+      "emailRequired": "E-Mail ist erforderlich",
+      "emailInvalid": "Ungültige E-Mail-Adresse"
+    }
   }
 }

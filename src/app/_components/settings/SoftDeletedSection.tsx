@@ -6,8 +6,10 @@ import { Card, CardBody } from "@heroui/card";
 import { Spinner } from "@heroui/spinner";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Info } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function SoftDeletedSection() {
+  const t = useTranslations('SoftDeletedSection');
   const {
     data: audios,
     isLoading: audiosLoading,
@@ -49,7 +51,7 @@ export default function SoftDeletedSection() {
   };
 
   const handleDeleteAudio = (id: string) => {
-    if (confirm("Are you sure you want to permanently delete this audio? This action cannot be undone.")) {
+    if (confirm(t('confirm.deleteAudio'))) {
       deleteAudioMutation.mutate({ id });
     }
   };
@@ -59,7 +61,7 @@ export default function SoftDeletedSection() {
   };
 
   const handleDeletePlaylist = (id: string) => {
-    if (confirm("Are you sure you want to permanently delete this playlist? This action cannot be undone.")) {
+    if (confirm(t('confirm.deletePlaylist'))) {
       deletePlaylistMutation.mutate({ id });
     }
   };
@@ -69,7 +71,7 @@ export default function SoftDeletedSection() {
   if (isLoading) {
     return (
       <div className="flex justify-center p-8">
-        <Spinner size="lg" />
+        <Spinner size="lg" label={t('loading')} />
       </div>
     );
   }
@@ -77,11 +79,11 @@ export default function SoftDeletedSection() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-4">Soft Deleted Audios</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('audios.title')}</h2>
         {!audios || audios.length === 0 ? (
           <Card>
             <CardBody>
-              <p className="text-default-500">No soft deleted audios found.</p>
+              <p className="text-default-500">{t('audios.empty')}</p>
             </CardBody>
           </Card>
         ) : (
@@ -94,8 +96,7 @@ export default function SoftDeletedSection() {
                       <div className="flex-1">
                         <h3 className="font-medium">{audio.name}</h3>
                         <p className="text-sm text-default-500">
-                          by {audio.createdBy?.name ?? "Unknown"} •{" "}
-                          Deleted on {audio.deletedAt ? new Date(audio.deletedAt).toLocaleDateString() : "Unknown"}
+                          {t('by')} {audio.createdBy?.name ?? t('unknown')} • {t('deletedOn')} {audio.deletedAt ? new Date(audio.deletedAt).toLocaleDateString() : t('unknown')}
                         </p>
                       </div>
                       <Popover placement="top">
@@ -112,11 +113,11 @@ export default function SoftDeletedSection() {
                         <PopoverContent className="p-3">
                           <div className="space-y-2">
                             <div>
-                              <p className="text-xs font-medium text-default-600">Original filename:</p>
+                              <p className="text-xs font-medium text-default-600">{t('audios.originalFilename')}</p>
                               <p className="font-mono text-xs text-default-800">{audio.originalFileName}</p>
                             </div>
                             <div>
-                              <p className="text-xs font-medium text-default-600">File path:</p>
+                              <p className="text-xs font-medium text-default-600">{t('audios.filePath')}</p>
                               <p className="font-mono text-xs text-default-800">{audio.filePath}</p>
                             </div>
                           </div>
@@ -131,7 +132,7 @@ export default function SoftDeletedSection() {
                         isLoading={recoverAudioMutation.isPending}
                         onClick={() => handleRecoverAudio(audio.id)}
                       >
-                        Recover
+                        {t('actions.recover')}
                       </Button>
                       <Button
                         color="danger"
@@ -140,7 +141,7 @@ export default function SoftDeletedSection() {
                         isLoading={deleteAudioMutation.isPending}
                         onClick={() => handleDeleteAudio(audio.id)}
                       >
-                        Delete Permanently
+                        {t('actions.deletePermanently')}
                       </Button>
                     </div>
                   </div>
@@ -152,11 +153,11 @@ export default function SoftDeletedSection() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold mb-4">Soft Deleted Playlists</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('playlists.title')}</h2>
         {!playlists || playlists.length === 0 ? (
           <Card>
             <CardBody>
-              <p className="text-default-500">No soft deleted playlists found.</p>
+              <p className="text-default-500">{t('playlists.empty')}</p>
             </CardBody>
           </Card>
         ) : (
@@ -168,8 +169,7 @@ export default function SoftDeletedSection() {
                     <div>
                       <h3 className="font-medium">{playlist.name}</h3>
                       <p className="text-sm text-default-500">
-                        by {playlist.createdBy?.name ?? "Unknown"} •{" "}
-                        Deleted on {playlist.deletedAt ? new Date(playlist.deletedAt).toLocaleDateString() : "Unknown"}
+                        {t('by')} {playlist.createdBy?.name ?? t('unknown')} • {t('deletedOn')} {playlist.deletedAt ? new Date(playlist.deletedAt).toLocaleDateString() : t('unknown')}
                       </p>
                     </div>
                     <div className="flex gap-2">
@@ -180,7 +180,7 @@ export default function SoftDeletedSection() {
                         isLoading={recoverPlaylistMutation.isPending}
                         onClick={() => handleRecoverPlaylist(playlist.id)}
                       >
-                        Recover
+                        {t('actions.recover')}
                       </Button>
                       <Button
                         color="danger"
@@ -189,7 +189,7 @@ export default function SoftDeletedSection() {
                         isLoading={deletePlaylistMutation.isPending}
                         onClick={() => handleDeletePlaylist(playlist.id)}
                       >
-                        Delete Permanently
+                        {t('actions.deletePermanently')}
                       </Button>
                     </div>
                   </div>
