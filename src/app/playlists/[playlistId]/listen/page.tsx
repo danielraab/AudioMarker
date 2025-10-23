@@ -4,6 +4,7 @@ import { ListenPlaylistView } from "~/app/_components/playlist/listen/ListenPlay
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
 import { VisibilityBanner } from "~/app/_components/global/VisibilityBanner";
+import { env } from "~/env";
 
 interface ListenPlaylistPageProps {
   params: Promise<{
@@ -14,6 +15,11 @@ interface ListenPlaylistPageProps {
 export default async function ListenPlaylistPage({ params }: ListenPlaylistPageProps) {
   const { playlistId } = await params;
   const session = await auth();
+
+  // If authentication is required for public content and user is not logged in, redirect to not found
+  if (env.REQUIRE_AUTH_FOR_PUBLIC_CONTENT && !session) {
+    notFound();
+  }
 
   try {
     const playlist = session ?

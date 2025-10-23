@@ -3,6 +3,7 @@ import ListenOnlyAudioPlayer from "~/app/_components/audio/listen/ListenOnlyAudi
 import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
 import { VisibilityBanner } from "~/app/_components/global/VisibilityBanner";
+import { env } from "~/env";
 
 interface ListenPageProps {
   params: Promise<{ audioId: string }>;
@@ -12,6 +13,11 @@ interface ListenPageProps {
 export default async function ListenPage({ params }: ListenPageProps) {
   const { audioId } = await params;
   const session = await auth();
+
+  // If authentication is required for public content and user is not logged in, redirect to not found
+  if (env.REQUIRE_AUTH_FOR_PUBLIC_CONTENT && !session) {
+    notFound();
+  }
 
   try {
     const audio = session ?
