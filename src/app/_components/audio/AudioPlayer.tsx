@@ -12,6 +12,8 @@ import type { AudioMarker } from '~/types/Audio';
 import { formatTime } from '~/lib/time';
 import { useTranslations } from 'next-intl';
 
+const initialZoomLevel = 20;
+
 interface AudioPlayerProps {
   audioUrl: string;
   audioName: string;
@@ -36,7 +38,7 @@ export default function AudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-  const [zoomLevel, setZoomLevel] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(initialZoomLevel);
   const [playbackRate, setPlaybackRate] = useState(1);
 
   useEffect(() => {
@@ -55,9 +57,9 @@ export default function AudioPlayer({
       waveColor: '#0070f0',
       progressColor: '#0052cc',
       cursorColor: '#0070f0',
-      barWidth: 2,
+      barWidth: 1,
       barRadius: 3,
-      height: 100,
+      height: 150,
       normalize: true,
       mediaControls: false,
       plugins: [
@@ -88,7 +90,7 @@ export default function AudioPlayer({
     // Event listeners
     const unsubscribe = wavesurfer.current.on('ready', () => {
       setIsLoading(false);
-      wavesurfer.current?.zoom(0);  
+      wavesurfer.current?.zoom(initialZoomLevel);  
 
       // Create regions from markers
       createRegionsFromMarkers(markers);
