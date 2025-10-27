@@ -15,6 +15,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.3.0] - 2025-10-27
+
+### Added
+
+- **Internationalization (i18n) support**: Full internationalization implementation
+  - Multi-language support with next-intl
+  - English and German translations
+  - Language detection and selection
+  - Translated UI components throughout the application
+- **Volume control for audio player**: Added volume slider
+  - Adjustable volume control in the audio player UI
+  - Persistent volume settings across sessions
+- **Access control for public content**: New environment variable for restricting public audio/playlist access
+  - `NEXT_PUBLIC_REQUIRE_LOGIN_FOR_PUBLIC_CONTENT` flag to require authentication for viewing public content
+  - Enhanced privacy controls for shared content
+
+### Changed
+
+- Updated README with screenshots and improved documentation
+- Adjusted initial zoom level for better default viewing experience
+- Reorganized component file structure for better maintainability
+
 ## [0.2.5] - 2025-10-12
 
 ### Added
