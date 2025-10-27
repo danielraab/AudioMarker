@@ -77,6 +77,10 @@
       "ariaLabel": "Wiedergabegeschwindigkeit",
       "resetTitle": "Doppelklick, um die Geschwindigkeit auf 1x zurückzusetzen"
     },
+    "volume": {
+      "ariaLabel": "Lautstärkepegel",
+      "toggleLabel": "Lautstärkeregler ein-/ausblenden"
+    },
     "controls": {
       "play": "Abspielen",
       "pause": "Pause",

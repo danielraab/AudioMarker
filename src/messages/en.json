@@ -77,6 +77,10 @@
       "ariaLabel": "Playback rate",
       "resetTitle": "Double-click to reset speed to 1x"
     },
+    "volume": {
+      "ariaLabel": "Volume level",
+      "toggleLabel": "Toggle volume slider"
+    },
     "controls": {
       "play": "Play",
       "pause": "Pause",

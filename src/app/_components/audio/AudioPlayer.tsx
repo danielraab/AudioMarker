@@ -5,7 +5,7 @@ import WaveSurfer from 'wavesurfer.js';
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { Button, Chip, Slider } from '@heroui/react';
-import { Play, Pause, Square, ZoomIn, Gauge, SquareArrowOutUpRight } from 'lucide-react';
+import { Play, Pause, Square, ZoomIn, Gauge, SquareArrowOutUpRight, Volume2 } from 'lucide-react';
 import LoadingOverlay from '../global/LoadingOverlay';
 import Link from 'next/link';
 import type { AudioMarker } from '~/types/Audio';
@@ -35,11 +35,14 @@ export default function AudioPlayer({
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const regionsPlugin = useRef<RegionsPlugin | null>(null);
+  const volumeControlRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(initialZoomLevel);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [volume, setVolume] = useState(100);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
   useEffect(() => {
     if (!waveformRef.current) return;
@@ -57,7 +60,7 @@ export default function AudioPlayer({
       waveColor: '#0070f0',
       progressColor: '#0052cc',
       cursorColor: '#0070f0',
-      barWidth: 1,
+      barWidth: 2,
       barRadius: 3,
       height: 150,
       normalize: true,
@@ -169,6 +172,20 @@ export default function AudioPlayer({
     wavesurfer.current?.setPlaybackRate(1);
   };
 
+  const handleVolumeChange = (value: number | number[]) => {
+    const vol = Array.isArray(value) ? value[0] : value;
+    if (typeof vol === 'number') {
+      setVolume(vol);
+      if (wavesurfer.current) {
+        wavesurfer.current.setVolume(vol / 100);
+      }
+    }
+  };
+
+  const toggleVolumeSlider = () => {
+    setShowVolumeSlider(!showVolumeSlider);
+  };
+
   const handlePlayPause = useCallback(() => {
     if (!wavesurfer.current) return;
 
@@ -225,6 +242,29 @@ export default function AudioPlayer({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isLoading, handlePlayPause]);
+
+  // Click outside to close volume slider
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showVolumeSlider &&
+        volumeControlRef.current &&
+        !volumeControlRef.current.contains(event.target as Node)
+      ) {
+        setShowVolumeSlider(false);
+      }
+    };
+
+    // Add listener when volume slider is shown
+    if (showVolumeSlider) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    // Cleanup listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showVolumeSlider]);
 
 
   return (
@@ -347,6 +387,42 @@ export default function AudioPlayer({
           startContent={<Square size={24} />}
         >
         </Button>
+
+        {/* Volume Control with Overlay */}
+        <div className="relative" ref={volumeControlRef}>
+          <Button
+            isIconOnly
+            size="lg"
+            color="default"
+            variant="flat"
+            onPress={toggleVolumeSlider}
+            isDisabled={isLoading}
+            aria-label={t('volume.toggleLabel')}
+            startContent={<Volume2 size={24} />}
+          >
+          </Button>
+
+          {/* Volume Slider Overlay */}
+          {showVolumeSlider && (
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-default-100 border border-default-200 rounded-lg shadow-lg p-3 min-w-[200px]">
+              <div className="flex items-center gap-3">
+                <Slider
+                  size="sm"
+                  step={1}
+                  minValue={0}
+                  maxValue={100}
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="flex-1"
+                  color="primary"
+                  isDisabled={isLoading}
+                  aria-label={t('volume.ariaLabel')}
+                />
+                <span className="text-xs text-default-500 min-w-12">{volume}%</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
