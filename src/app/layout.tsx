@@ -8,6 +8,7 @@ import Providers from "~/app/_components/Providers";
 import Navbar from "./_components/global/layout/navbar/Navbar";
 import ServiceWorkerRegistration from "./_components/ServiceWorkerRegistration";
 import Footer from "./_components/global/layout/Footer";
+import { CookieConsent } from "./_components/global/CookieConsent";
 import { getLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from "next-intl";
 
@@ -71,6 +72,7 @@ export default async function RootLayout({
               </main>
             </TRPCReactProvider>
             <Footer />
+            <CookieConsent />
           </NextIntlClientProvider>
         </Providers>
       </body>

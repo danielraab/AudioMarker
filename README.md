@@ -72,6 +72,12 @@ Built with the [T3 Stack](https://create.t3.gg/), it combines type-safety, moder
 - **User Management**: Admins can manage users, enable/disable accounts
 - **Privacy Controls**: Set audio files and playlists as public or private
 
+### ⚖️ Legal & Compliance
+- **Privacy Policy**: Comprehensive privacy policy covering GDPR and CCPA requirements
+- **Terms of Service**: Clear terms outlining user responsibilities and acceptable use
+- **DMCA Compliance**: Built-in DMCA takedown process for copyright protection
+- **Cookie Consent**: GDPR-compliant cookie consent banner
+- **Data Rights**: User rights management (access, deletion, data portability)
 
 ### 🌐 Sharing & Collaboration
 - **Public/Private Toggle**: Share audio files and playlists publicly or keep them private

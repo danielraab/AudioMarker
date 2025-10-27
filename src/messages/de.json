@@ -55,8 +55,7 @@
     "save": "Änderungen speichern"
   },
   "Footer": {
-    "versionTitle": "Version: {version}",
-    "cookiesNote": "Es werden nur notwendige Cookies verwendet."
+    "versionTitle": "Version: {version}"
   },
   "AudioPlayer": {
     "subtitle": "Audioplayer",
