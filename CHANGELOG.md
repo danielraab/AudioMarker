@@ -20,9 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Legal Compliance Pages**: Comprehensive legal documentation for GDPR, CCPA, and copyright compliance
-  - Privacy Policy page (`/privacy`) with GDPR & CCPA requirements coverage
-  - Terms of Service page (`/terms`) with user responsibilities and copyright compliance
-  - `CONTACT_EMAIL` environment variable for centralized legal contact email configuration
+  - legal page (`/legal`) can be managed within the admin section.
+  - defaults for imprint, GDPR, Terms of Service with user responsibilities and copyright compliance
 - **Cookie Consent Banner**: GDPR-compliant cookie consent component
   - "Essential Only" option info
   - Consent stored in localStorage

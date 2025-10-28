@@ -24,7 +24,6 @@ export const env = createEnv({
     EMAIL_FROM: z.string().email().optional(),
     MAIL_REGISTRATION_ENABLED: z.string().transform((val) => val !== "false").default("true"),
     REQUIRE_AUTH_FOR_PUBLIC_CONTENT: z.string().transform((val) => val === "true").default("false"),
-    CONTACT_EMAIL: z.string().email(),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -64,7 +63,6 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     MAIL_REGISTRATION_ENABLED: process.env.MAIL_REGISTRATION_ENABLED,
     REQUIRE_AUTH_FOR_PUBLIC_CONTENT: process.env.REQUIRE_AUTH_FOR_PUBLIC_CONTENT,
-    CONTACT_EMAIL: process.env.CONTACT_EMAIL,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     SENTRY_DSN: process.env.SENTRY_DSN,
