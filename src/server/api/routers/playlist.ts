@@ -20,7 +20,6 @@ export const playlistRouter = createTRPCRouter({
         isPublic: true,
         createdAt: true,
         updatedAt: true,
-        listenCounter: true,
         listenRecords: {
           orderBy: { listenedAt: "desc" },
           take: 1,

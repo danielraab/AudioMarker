@@ -21,7 +21,6 @@ export const audioRouter = createTRPCRouter({
         filePath: true,
         createdAt: true,
         isPublic: true,
-        listenCounter: true,
         listenRecords: {
           orderBy: { listenedAt: "desc" },
           take: 1,
