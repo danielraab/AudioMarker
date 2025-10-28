@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Security
+
+## [0.4.0] - 2025-10-28
+
+### Added
+
 - **Legal Compliance Pages**: Comprehensive legal documentation for GDPR, CCPA, and copyright compliance
   - Privacy Policy page (`/privacy`) with GDPR & CCPA requirements coverage
   - Terms of Service page (`/terms`) with user responsibilities and copyright compliance
@@ -18,8 +28,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Consent stored in localStorage
   - Link to Privacy Policy for more information
 - **Footer Legal Links**: Added Privacy Policy and Terms of Service links to application footer
+- **Rich Text Editor**: New RichTextEditor component using Tiptap for enhanced text editing capabilities
+  - Support for formatting (bold, italic, underline)
+  - Link insertion and editing
+  - Text alignment options
+  - Clean and intuitive interface
 
 ### Changed
+
+- **Listen Statistics**: Migrated from counter-based tracking to record-based system
+  - Removed `listenCounter` and `lastListenAt` fields from Audio and Playlist models
+  - Implemented `ListenRecord` table for detailed tracking of each listen event
+  - Improved data accuracy and enables future analytics features
 
 ### Fixed
 
