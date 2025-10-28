@@ -80,6 +80,7 @@ model Audio {
     lastListenAt     DateTime?
     markers          Marker[]
     playlistAudios   PlaylistAudio[]
+    listenRecords    AudioListenRecord[]
 }
 
 model Marker {
@@ -107,6 +108,7 @@ model Playlist {
     listenCounter Int             @default(0)
     lastListenAt  DateTime?
     audios        PlaylistAudio[]
+    listenRecords PlaylistListenRecord[]
 }
 
 model PlaylistAudio {
@@ -119,4 +121,20 @@ model PlaylistAudio {
     addedAt     DateTime @default(now())
 
     @@unique([playlistId, audioId])
+}
+
+model AudioListenRecord {
+    audio       Audio    @relation(fields: [audioId], references: [id], onDelete: Cascade)
+    audioId     String
+    listenedAt  DateTime @default(now())
+
+    @@id([audioId, listenedAt])
+}
+
+model PlaylistListenRecord {
+    playlist    Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+    playlistId  String
+    listenedAt  DateTime @default(now())
+
+    @@id([playlistId, listenedAt])
 }

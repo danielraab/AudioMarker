@@ -21,7 +21,11 @@ export const playlistRouter = createTRPCRouter({
         createdAt: true,
         updatedAt: true,
         listenCounter: true,
-        lastListenAt: true,
+        listenRecords: {
+          orderBy: { listenedAt: "desc" },
+          take: 1,
+          select: { listenedAt: true },
+        },
         _count: {
           select: {
             audios: {
@@ -31,15 +35,19 @@ export const playlistRouter = createTRPCRouter({
                 }
               }
             },
+            listenRecords: true,
           },
         },
       },
     });
 
-    // Transform the result to include audioCount at the top level
+    // Transform the result to include audioCount, listenCounter, and lastListenAt
     const playlistsWithAudioCount = playlists.map(playlist => ({
       ...playlist,
       audioCount: playlist._count.audios,
+      listenCounter: playlist._count.listenRecords,
+      lastListenAt: playlist.listenRecords[0]?.listenedAt ?? null,
+      listenRecords: undefined,
       _count: undefined,
     }));
 
@@ -606,12 +614,11 @@ export const playlistRouter = createTRPCRouter({
         throw new Error("Unauthorized");
       }
 
-      // Increment the listen counter
-      await ctx.db.playlist.update({
-        where: { id: input.id },
+      // Create a listen record
+      await ctx.db.playlistListenRecord.create({
         data: {
-          listenCounter: { increment: 1 },
-          lastListenAt: new Date(),
+          playlistId: input.id,
+          listenedAt: new Date(),
         },
       });
 
