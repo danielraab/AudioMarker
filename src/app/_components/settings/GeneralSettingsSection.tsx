@@ -2,18 +2,23 @@
 
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { Spinner } from "@heroui/spinner";
 import { api } from "~/trpc/react";
 import { useTranslations } from "next-intl";
 
 export default function GeneralSettingsSection() {
   const t = useTranslations('GeneralSettings');
-  const { data: settings, isLoading } = api.admin.getRegistrationStatus.useQuery();
+  const { data: settings, isLoading } = api.admin.systemSettings.getRegistrationStatus.useQuery();
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-default-500">{t('loading')}</div>
-      </div>
+      <Card>
+        <CardBody>
+          <div className="flex min-h-[400px] items-center justify-center">
+            <Spinner size="lg" label={t('loading')} />
+          </div>
+        </CardBody>
+      </Card>
     );
   }
 

@@ -14,33 +14,33 @@ export default function SoftDeletedSection() {
     data: audios,
     isLoading: audiosLoading,
     refetch: refetchAudios,
-  } = api.admin.getSoftDeletedAudios.useQuery();
+  } = api.admin.softDeletedContent.getSoftDeletedAudios.useQuery();
 
   const {
     data: playlists,
     isLoading: playlistsLoading,
     refetch: refetchPlaylists,
-  } = api.admin.getSoftDeletedPlaylists.useQuery();
+  } = api.admin.softDeletedContent.getSoftDeletedPlaylists.useQuery();
 
-  const recoverAudioMutation = api.admin.recoverAudio.useMutation({
+  const recoverAudioMutation = api.admin.softDeletedContent.recoverAudio.useMutation({
     onSuccess: () => {
       void refetchAudios();
     },
   });
 
-  const deleteAudioMutation = api.admin.permanentlyDeleteAudio.useMutation({
+  const deleteAudioMutation = api.admin.softDeletedContent.permanentlyDeleteAudio.useMutation({
     onSuccess: () => {
       void refetchAudios();
     },
   });
 
-  const recoverPlaylistMutation = api.admin.recoverPlaylist.useMutation({
+  const recoverPlaylistMutation = api.admin.softDeletedContent.recoverPlaylist.useMutation({
     onSuccess: () => {
       void refetchPlaylists();
     },
   });
 
-  const deletePlaylistMutation = api.admin.permanentlyDeletePlaylist.useMutation({
+  const deletePlaylistMutation = api.admin.softDeletedContent.permanentlyDeletePlaylist.useMutation({
     onSuccess: () => {
       void refetchPlaylists();
     },
@@ -70,9 +70,13 @@ export default function SoftDeletedSection() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center p-8">
-        <Spinner size="lg" label={t('loading')} />
-      </div>
+      <Card>
+        <CardBody>
+          <div className="flex min-h-[400px] items-center justify-center">
+            <Spinner size="lg" label={t('loading')} />
+          </div>
+        </CardBody>
+      </Card>
     );
   }
 

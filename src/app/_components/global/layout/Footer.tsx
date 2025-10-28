@@ -19,12 +19,8 @@ export default async function Footer() {
         </span>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs">
-        <Link href="/privacy" size="sm" className="text-gray-600 dark:text-gray-400">
-          Privacy Policy
-        </Link>
-        <span className="hidden sm:inline">•</span>
-        <Link href="/terms" size="sm" className="text-gray-600 dark:text-gray-400">
-          Terms of Service
+        <Link href="/legal" size="sm" className="text-gray-600 dark:text-gray-400">
+          Legal Information
         </Link>
       </div>
     </footer>

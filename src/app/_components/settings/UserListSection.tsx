@@ -36,16 +36,16 @@ interface UserData {
 
 export default function UserListSection() {
   const t = useTranslations('UserList');
-  const { data: users, isLoading, error } = api.admin.getAllUsers.useQuery();
+  const { data: users, isLoading, error } = api.admin.userManagement.getAllUsers.useQuery();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const utils = api.useUtils();
 
-  const deleteUserMutation = api.admin.deleteUser.useMutation({
+  const deleteUserMutation = api.admin.userManagement.deleteUser.useMutation({
     onSuccess: () => {
-      void utils.admin.getAllUsers.invalidate();
+      void utils.admin.userManagement.getAllUsers.invalidate();
       setSuccessMessage(t('messages.userDeleted'));
       setTimeout(() => setSuccessMessage(null), 3000);
     },

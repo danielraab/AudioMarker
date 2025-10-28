@@ -68,9 +68,9 @@ export default function UserModal({
     }
   }, [isOpen, user]);
 
-  const createUserMutation = api.admin.createUser.useMutation({
+  const createUserMutation = api.admin.userManagement.createUser.useMutation({
     onSuccess: () => {
-      void utils.admin.getAllUsers.invalidate();
+      void utils.admin.userManagement.getAllUsers.invalidate();
       onSuccess();
       onClose();
     },
@@ -79,9 +79,9 @@ export default function UserModal({
     },
   });
 
-  const updateUserMutation = api.admin.updateUser.useMutation({
+  const updateUserMutation = api.admin.userManagement.updateUser.useMutation({
     onSuccess: () => {
-      void utils.admin.getAllUsers.invalidate();
+      void utils.admin.userManagement.getAllUsers.invalidate();
       onSuccess();
       onClose();
     },

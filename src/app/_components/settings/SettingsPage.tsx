@@ -4,6 +4,7 @@ import { Tabs, Tab } from "@heroui/tabs";
 import UserListSection from "./UserListSection";
 import GeneralSettingsSection from "./GeneralSettingsSection";
 import SoftDeletedSection from "./SoftDeletedSection";
+import LegalInformationSection from "./LegalInformationSection";
 import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
@@ -24,6 +25,11 @@ export default function SettingsPage() {
         <Tab key="softDeleted" title={t('tabs.softDeleted')}>
           <div className="py-4">
             <SoftDeletedSection />
+          </div>
+        </Tab>
+        <Tab key="legal" title="Legal Pages">
+          <div className="py-4">
+            <LegalInformationSection />
           </div>
         </Tab>
         <Tab key="system" title={t('tabs.system')} isDisabled>

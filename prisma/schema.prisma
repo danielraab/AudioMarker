@@ -55,6 +55,7 @@ model User {
     sessions      Session[]
     audios        Audio[]
     playlists     Playlist[]
+    legalInformations LegalInformation[]
 }
 
 model VerificationToken {
@@ -137,4 +138,16 @@ model PlaylistListenRecord {
     listenedAt  DateTime @default(now())
 
     @@id([playlistId, listenedAt])
+}
+
+model LegalInformation {
+    id         String   @id @default(cuid())
+    enabled    Boolean  @default(true)
+    label      String
+    content    String
+    sortOrder  Int      @default(0)
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    updatedBy  User?    @relation(fields: [updatedById], references: [id])
+    updatedById String?
 }
