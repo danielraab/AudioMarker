@@ -121,19 +121,17 @@ model PlaylistAudio {
 }
 
 model AudioListenRecord {
+    id          String   @id @default(cuid())
     audio       Audio    @relation(fields: [audioId], references: [id], onDelete: Cascade)
     audioId     String
     listenedAt  DateTime @default(now())
-
-    @@id([audioId, listenedAt])
 }
 
 model PlaylistListenRecord {
+    id          String   @id @default(cuid())
     playlist    Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
     playlistId  String
     listenedAt  DateTime @default(now())
-
-    @@id([playlistId, listenedAt])
 }
 
 model LegalInformation {

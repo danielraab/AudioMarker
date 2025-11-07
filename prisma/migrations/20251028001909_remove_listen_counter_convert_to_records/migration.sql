@@ -1,30 +1,31 @@
 -- Step 1: Create listen records for each audio based on their listenCounter
 -- We'll create records distributed over the past, with the most recent one at lastListenAt if it exists
-INSERT INTO AudioListenRecord (audioId, listenedAt)
+INSERT INTO AudioListenRecord (id, audioId, listenedAt)
 SELECT 
+    lower(hex(randomblob(16))) as id,
     id as audioId,
-    CASE 
-        -- If lastListenAt exists, use it for the most recent record
-        WHEN lastListenAt IS NOT NULL THEN lastListenAt
-        -- Otherwise use current timestamp
-        ELSE CURRENT_TIMESTAMP
-    END as listenedAt
+    COALESCE(datetime(lastListenAt), CURRENT_TIMESTAMP, '2024-01-01 00:00:00') as listenedAt
 FROM Audio
 WHERE listenCounter > 0 AND deletedAt IS NULL;
 
 -- For audios with listenCounter > 1, create additional historical records
 -- These will be spread out over the past (rough approximation)
-INSERT INTO AudioListenRecord (audioId, listenedAt)
+INSERT INTO AudioListenRecord (id, audioId, listenedAt)
 WITH RECURSIVE counter(n) AS (
     SELECT 1
     UNION ALL
     SELECT n + 1 FROM counter WHERE n < (SELECT MAX(listenCounter) FROM Audio)
 )
 SELECT 
+    lower(hex(randomblob(16))) as id,
     a.id as audioId,
-    datetime(
-        COALESCE(a.lastListenAt, CURRENT_TIMESTAMP),
-        '-' || (c.n * 3) || ' hours'
+    COALESCE(
+        datetime(
+            COALESCE(a.lastListenAt, CURRENT_TIMESTAMP, '2024-01-01 00:00:00'),
+            '-' || (c.n * 3) || ' hours'
+        ),
+        datetime('now', '-' || (c.n * 3) || ' hours'),
+        '2024-01-01 00:00:00'
     ) as listenedAt
 FROM Audio a
 CROSS JOIN counter c
@@ -33,30 +34,31 @@ WHERE c.n <= a.listenCounter - 1
     AND a.deletedAt IS NULL;
 
 -- Step 2: Create listen records for each playlist based on their listenCounter
-INSERT INTO PlaylistListenRecord (playlistId, listenedAt)
+INSERT INTO PlaylistListenRecord (id, playlistId, listenedAt)
 SELECT 
+    lower(hex(randomblob(16))) as id,
     id as playlistId,
-    CASE 
-        -- If lastListenAt exists, use it for the most recent record
-        WHEN lastListenAt IS NOT NULL THEN lastListenAt
-        -- Otherwise use current timestamp
-        ELSE CURRENT_TIMESTAMP
-    END as listenedAt
+    COALESCE(datetime(lastListenAt), CURRENT_TIMESTAMP, '2024-01-01 00:00:00') as listenedAt
 FROM Playlist
 WHERE listenCounter > 0 AND deletedAt IS NULL;
 
 -- For playlists with listenCounter > 1, create additional historical records
-INSERT INTO PlaylistListenRecord (playlistId, listenedAt)
+INSERT INTO PlaylistListenRecord (id, playlistId, listenedAt)
 WITH RECURSIVE counter(n) AS (
     SELECT 1
     UNION ALL
     SELECT n + 1 FROM counter WHERE n < (SELECT MAX(listenCounter) FROM Playlist)
 )
 SELECT 
+    lower(hex(randomblob(16))) as id,
     p.id as playlistId,
-    datetime(
-        COALESCE(p.lastListenAt, CURRENT_TIMESTAMP),
-        '-' || (c.n * 3) || ' hours'
+    COALESCE(
+        datetime(
+            COALESCE(p.lastListenAt, CURRENT_TIMESTAMP, '2024-01-01 00:00:00'),
+            '-' || (c.n * 3) || ' hours'
+        ),
+        datetime('now', '-' || (c.n * 3) || ' hours'),
+        '2024-01-01 00:00:00'
     ) as listenedAt
 FROM Playlist p
 CROSS JOIN counter c

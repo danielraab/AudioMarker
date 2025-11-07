@@ -15,6 +15,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.5.0] - 2025-11-07
+
+### Changed
+
+- **Database Schema Improvements**: Enhanced listen record tracking system
+  - Added unique `id` field as primary key to `AudioListenRecord` and `PlaylistListenRecord` tables
+  - Migrated from composite primary key `(audioId, listenedAt)` to single `id` primary key
+  - Improved data migration logic with better NULL handling and fallback dates
+  - Enhanced robustness of historical listen record generation
+
+### Fixed
+
+- Fixed potential database migration issues with NULL datetime values in listen records
+- Improved data consistency during listen counter to record migration process
+
 ## [0.4.0] - 2025-10-28
 
 ### Added
