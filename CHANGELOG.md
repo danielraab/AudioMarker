@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Security
+
+## [0.4.2] - 2025-11-17
+
+### Added
+
 - **Section Markers**: Create markers with both start and end times to define audio sections
   - Visual distinction: sections display with transparent regions, point markers with solid colors
   - Drag to select regions in waveform to automatically set section boundaries
@@ -20,11 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Drag on waveform to create selection regions
   - Auto-populate section start/end times from selected regions
 
-### Changed
-
-### Fixed
-
-### Security
 
 ## [0.4.1] - 2025-11-07
 
