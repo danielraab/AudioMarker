@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Section Markers**: Create markers with both start and end times to define audio sections
+  - Visual distinction: sections display with transparent regions, point markers with solid colors
+  - Drag to select regions in waveform to automatically set section boundaries
+  - Automatic looping: sections loop continuously when clicked
+- **Browser Markers**: Listen-only users can create markers stored locally in their browser
+  - Compatible with both point markers and sections
+  - Persistent across browser sessions via localStorage
+- **Region Selection**: Interactive waveform region selection for precise section creation
+  - Drag on waveform to create selection regions
+  - Auto-populate section start/end times from selected regions
+
 ### Changed
 
 ### Fixed

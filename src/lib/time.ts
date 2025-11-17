@@ -5,6 +5,11 @@ export const formatTime = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
+export const roundTime = (seconds: number, decimals = 2): number => {
+  const factor = Math.pow(10, decimals);
+  return Math.round(seconds * factor) / factor;
+};
+
 export const formatTimeAgo = (date: Date) => {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);

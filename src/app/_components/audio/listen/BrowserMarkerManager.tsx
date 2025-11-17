@@ -13,13 +13,17 @@ interface MarkerManagerProps {
   currentTime: number;
   onMarkersChange: (markers: AudioMarker[]) => void;
   onMarkerClick?: (timestamp: number) => void;
+  selectedRegion?: { start: number; end: number } | null;
+  onClearRegion?: () => void;
 }
 
 export default function BrowserMarkerManager({
   audioId,
   currentTime,
   onMarkersChange,
-  onMarkerClick
+  onMarkerClick,
+  selectedRegion,
+  onClearRegion
 }: MarkerManagerProps) {
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
 
@@ -48,12 +52,13 @@ export default function BrowserMarkerManager({
     setMarkers(prev => prev.filter(marker => marker.id !== markerId));
   };
 
-  const addMarkerAtCurrentTime = (label: string) => {
+  const addMarkerAtCurrentTime = (label: string, startTime: number, endTime?: number | null) => {
     const newMarker: AudioMarker = {
       id: `marker_${Date.now()}`,
-      timestamp: currentTime,
+      timestamp: startTime,
       label: label.trim() || `Browser Marker ${markers.length + 1}`,
-      color: `hsl(${Math.random() * 360}, 70%, 50%)`
+      color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+      endTimestamp: endTime
     };
 
     setMarkers(prev => [...prev, newMarker].sort((a, b) => a.timestamp - b.timestamp));
@@ -75,7 +80,12 @@ export default function BrowserMarkerManager({
 
         {/* Add Custom Marker */}
         <div className="flex gap-2">
-          <AddMarker currentTime={currentTime} onAddMarker={addMarkerAtCurrentTime} />
+          <AddMarker 
+            currentTime={currentTime} 
+            onAddMarker={addMarkerAtCurrentTime}
+            selectedRegion={selectedRegion ?? undefined}
+            onClearRegion={onClearRegion}
+          />
         </div>
 
         {/* Markers List */}

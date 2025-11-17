@@ -49,9 +49,13 @@ Built with the [T3 Stack](https://create.t3.gg/), it combines type-safety, moder
 
 ### 📍 Time-Based Markers
 - **Precision Marking**: Add markers at specific timestamps in your audio files
+- **Section Support**: Create sections with start and end times, or point markers for single moments
+- **Region Selection**: Drag on waveform to select regions and automatically create sections
+- **Auto-Loop Sections**: Sections automatically loop when clicked for focused listening
 - **Custom Labels**: Give each marker a descriptive label for easy reference
 - **Color Coding**: Organize markers with customizable colors for visual categorization
 - **Visual Timeline**: Interactive waveform visualization powered by [WaveSurfer.js](https://wavesurfer.xyz/)
+- **Browser Markers**: Listeners can create local markers without an account
 - **Marker Management**: Edit, delete, and reorder markers with ease
 
 ![Audio Listen View](./docs/screenshots/audioListenView.png)

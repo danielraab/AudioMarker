@@ -25,6 +25,7 @@ export const markerRouter = createTRPCRouter({
       audioId: z.string(),
       label: z.string().min(1),
       timestamp: z.number().min(0),
+      endTimestamp: z.number().min(0).optional().nullable(),
       color: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -47,6 +48,7 @@ export const markerRouter = createTRPCRouter({
           audioId: input.audioId,
           label: input.label,
           timestamp: input.timestamp,
+          endTimestamp: input.endTimestamp,
           color: input.color,
         },
       });

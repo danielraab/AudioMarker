@@ -161,7 +161,9 @@
   },
   "AddMarker": {
     "labelPlaceholder": "Marker label (optional)",
-    "addAt": "Add at {time}"
+    "addAt": "Add at {time}",
+    "createSection": "Create section",
+    "endTime": "End time (seconds)"
   },
   "StoredMarkers": {
     "title": "Stored Audio Markers",

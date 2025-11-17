@@ -83,14 +83,15 @@ model Audio {
 }
 
 model Marker {
-    id          String    @id @default(cuid())
-    label       String
-    timestamp   Float
-    color       String    @default("#3b82f6") // default blue color
-    audio       Audio     @relation(fields: [audioId], references: [id], onDelete: Cascade)
-    audioId     String
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    id           String    @id @default(cuid())
+    label        String
+    timestamp    Float     // start time (for both markers and sections)
+    endTimestamp Float?    // end time (only for sections, null for point markers)
+    color        String    @default("#3b82f6") // default blue color
+    audio        Audio     @relation(fields: [audioId], references: [id], onDelete: Cascade)
+    audioId      String
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
 
     @@unique([audioId, timestamp])
 }

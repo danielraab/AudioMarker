@@ -10,8 +10,10 @@ import LoadingOverlay from '../global/LoadingOverlay';
 import Link from 'next/link';
 import type { AudioMarker } from '~/types/Audio';
 import { formatTime } from '~/lib/time';
+import { isSection } from '~/lib/marker';
 import { useTranslations } from 'next-intl';
 
+const markerIdPrefix = 'app-marker-';
 const initialZoomLevel = 20;
 
 interface AudioPlayerProps {
@@ -21,6 +23,8 @@ interface AudioPlayerProps {
   markers?: AudioMarker[];
   onTimeUpdate?: (time: number) => void;
   onPlayFromFnReady?: (playFrom: (time: number) => void) => void;
+  onRegionUpdate?: (start: number | null, end: number | null) => void;
+  onClearRegionReady?: (clearRegion: () => void) => void;
 }
 
 export default function AudioPlayer({
@@ -30,6 +34,8 @@ export default function AudioPlayer({
   markers = [],
   onTimeUpdate,
   onPlayFromFnReady,
+  onRegionUpdate,
+  onClearRegionReady,
 }: AudioPlayerProps) {
   const t = useTranslations('AudioPlayer');
   const waveformRef = useRef<HTMLDivElement>(null);
@@ -43,6 +49,8 @@ export default function AudioPlayer({
   const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(100);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const selectionRegionId = useRef<string | null>(null);
+  const activeRegionId = useRef<string | null>(null);
 
   useEffect(() => {
     if (!waveformRef.current) return;
@@ -50,8 +58,51 @@ export default function AudioPlayer({
     regionsPlugin.current = RegionsPlugin.create();
     regionsPlugin.current.on('region-clicked', (region, e) => {
       e.stopPropagation() // prevent triggering a click on the waveform
-      region.play(true)
+      region.play()
     })
+
+    regionsPlugin.current.on('region-in', (region) => {
+      activeRegionId.current = region.id;
+    })
+    
+    regionsPlugin.current.on('region-out', (region) => {
+      console.log('region-out', region.id);
+      if (activeRegionId.current === region.id && wavesurfer.current?.isPlaying()) {
+          region.play();
+      }
+    });
+    
+    // Listen for region updates (drag/resize)
+    regionsPlugin.current.on('region-updated', (region) => {
+      // Only track selection region updates
+      if (region.id === selectionRegionId.current && onRegionUpdate) {
+        onRegionUpdate(region.start, region.end);
+      }
+    })
+    
+    // Ensure only one manual selection region exists
+    regionsPlugin.current.on('region-created', (region) => {
+      if(region.id.startsWith(markerIdPrefix)) {
+        // It's a marker region, ignore
+        return;
+      }
+      // If there's already a selection region, this might be a new one
+      // Remove the old selection region if it exists
+      if (selectionRegionId.current) {
+        const existingRegion = regionsPlugin.current?.getRegions().find(r => r.id === selectionRegionId.current);
+        if (existingRegion && existingRegion.id !== region.id) {
+          existingRegion.remove();
+        }
+      }
+      
+      // Store the new selection region ID
+      selectionRegionId.current = region.id;
+      
+      // Notify about the new region
+      if (onRegionUpdate) {
+        onRegionUpdate(region.start, region.end);
+      }
+    });
 
 
     // Initialize WaveSurfer
@@ -70,11 +121,16 @@ export default function AudioPlayer({
         regionsPlugin.current
       ],
     });
+    
+    // Enable drag selection for creating selection region
+    regionsPlugin.current.enableDragSelection({
+      color: 'rgba(0, 112, 240, 0.2)',
+    });
 
     wavesurfer.current.on('play', () => setIsPlaying(true));
     wavesurfer.current.on('pause', () => setIsPlaying(false));
     wavesurfer.current.on('finish', () => setIsPlaying(false));
-  }, []);
+  }, [onRegionUpdate]);
 
   useEffect(() => {
     if (!wavesurfer.current) return;
@@ -125,14 +181,28 @@ export default function AudioPlayer({
   const createRegionsFromMarkers = (markers: AudioMarker[]) => {
     if (!regionsPlugin.current || !wavesurfer.current) return;
 
-    // Clear existing regions
-    regionsPlugin.current.clearRegions();
+    // Clear all regions except the selection region
+    const existingRegions = regionsPlugin.current.getRegions();
+    existingRegions.forEach((region) => {
+      if (region.id !== selectionRegionId.current) {
+        region.remove();
+      }
+    });
 
     // Create regions from markers
     markers.forEach((marker) => {
+      const markerIsSection = isSection(marker);
+      
+      // For sections, make color transparent by converting to hsla with low opacity
+      const regionColor = markerIsSection && marker.color
+        ? marker.color.replace('hsl(', 'hsla(').replace(')', ', 0.15)')
+        : marker.color;
+      
       regionsPlugin.current?.addRegion({
+        id: markerIdPrefix + marker.id,
         start: marker.timestamp,
-        color: marker.color,
+        end: markerIsSection ? marker.endTimestamp! : undefined,
+        color: regionColor,
         content: marker.label,
         drag: false,
         resize: false,
@@ -199,6 +269,7 @@ export default function AudioPlayer({
   const handleStop = () => {
     if (!wavesurfer.current) return;
     wavesurfer.current.stop();
+    activeRegionId.current = null;
     setIsPlaying(false);
     setCurrentTime(0);
   };
@@ -209,6 +280,17 @@ export default function AudioPlayer({
       void wavesurfer.current.play();
     }
   }, []);
+  
+  const clearSelectionRegion = useCallback(() => {
+    if (regionsPlugin.current && selectionRegionId.current) {
+      const region = regionsPlugin.current.getRegions().find(r => r.id === selectionRegionId.current);
+      if (region) {
+        region.remove();
+      }
+      selectionRegionId.current = null;
+      onRegionUpdate?.(null, null);
+    }
+  }, [onRegionUpdate]);
 
   // Expose playFrom function to parent component when ready
   useEffect(() => {
@@ -216,6 +298,13 @@ export default function AudioPlayer({
       onPlayFromFnReady(playFrom);
     }
   }, [isLoading, playFrom, onPlayFromFnReady]);
+  
+  // Expose clearSelectionRegion function to parent component when ready
+  useEffect(() => {
+    if (!isLoading && onClearRegionReady) {
+      onClearRegionReady(clearSelectionRegion);
+    }
+  }, [isLoading, clearSelectionRegion, onClearRegionReady]);
 
   // Keyboard event listener for spacebar to toggle play/pause
   useEffect(() => {

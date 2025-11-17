@@ -25,6 +25,8 @@ export default function ListenOnlyAudioPlayer({
   const [ storedMarkers ] = api.marker.getMarkers.useSuspenseQuery({ audioId });
   const [currentTime, setCurrentTime] = useState(0);
   const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<{start: number, end: number} | null>(null);
+  const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
 
   // Use audioId or fallback to readonlyToken for unique identification
   const uniqueAudioId = audioId || audioReadOnlyToken;
@@ -57,6 +59,23 @@ export default function ListenOnlyAudioPlayer({
     }
   }, [playFromFunction]);
 
+  const handleRegionUpdate = useCallback((start: number | null, end: number | null) => {
+    if (start !== null && end !== null) {
+      setSelectedRegion({ start, end });
+    }
+  }, []);
+
+  const handleClearRegionReady = useCallback((clearRegion: () => void) => {
+    setClearRegionFunction(() => clearRegion);
+  }, []);
+
+  const handleClearRegion = useCallback(() => {
+    if (clearRegionFunction) {
+      clearRegionFunction();
+    }
+    setSelectedRegion(null);
+  }, [clearRegionFunction]);
+
 
   return (
     <div className="w-full flex flex-col items-center space-y-6">
@@ -68,6 +87,8 @@ export default function ListenOnlyAudioPlayer({
         markers={[...markers, ...storedMarkers]}
         onTimeUpdate={handleTimeUpdate}
         onPlayFromFnReady={handlePlayFromFnReady}
+        onRegionUpdate={handleRegionUpdate}
+        onClearRegionReady={handleClearRegionReady}
       />
 
       <div className='flex flex-col items-center space-y-6'>
@@ -84,6 +105,8 @@ export default function ListenOnlyAudioPlayer({
           currentTime={currentTime}
           onMarkersChange={handleMarkersChange}
           onMarkerClick={handleMarkerClick}
+          selectedRegion={selectedRegion}
+          onClearRegion={handleClearRegion}
         />
       </div>
     </div>

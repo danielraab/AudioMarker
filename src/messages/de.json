@@ -191,7 +191,9 @@
   },
   "AddMarker": {
     "labelPlaceholder": "Marker-Beschriftung (optional)",
-    "addAt": "Hinzufügen bei {time}"
+    "addAt": "Hinzufügen bei {time}",
+    "createSection": "Abschnitt erstellen",
+    "endTime": "Endzeit (Sekunden)"
   },
   "StoredMarkers": {
     "title": "Gespeicherte Audio-Markierungen",

@@ -12,6 +12,8 @@ interface EditPageContainerProps {
 export function EditPageContainer({ audioId }: EditPageContainerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
+  const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<{ start: number | null; end: number | null }>({ start: null, end: null });
 
   const [audio] = api.audio.getUserAudioById.useSuspenseQuery({ id: audioId });
   const [markers] = api.marker.getMarkers.useSuspenseQuery({ audioId });
@@ -19,6 +21,14 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
   //for player -> marker manager
   const handleTimeUpdate = useCallback((time: number) => {
     setCurrentTime(time);
+  }, []);
+  
+  const handleRegionUpdate = useCallback((start: number | null, end: number | null) => {
+    setSelectedRegion({ start, end });
+  }, []);
+  
+  const handleClearRegionReady = useCallback((clearRegion: () => void) => {
+    setClearRegionFunction(() => clearRegion);
   }, []);
 
   const handlePlayFromFnReady = useCallback((seekTo: (time: number) => void) => {
@@ -42,6 +52,8 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
         markers={markers}
         onTimeUpdate={handleTimeUpdate}
         onPlayFromFnReady={handlePlayFromFnReady}
+        onRegionUpdate={handleRegionUpdate}
+        onClearRegionReady={handleClearRegionReady}
       />
 
       <StoredMarkerManager
@@ -49,6 +61,8 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
         currentTime={currentTime}
         markers={markers}
         onMarkerClick={handleMarkerClick}
+        selectedRegion={selectedRegion}
+        onClearRegion={clearRegionFunction}
       />
     </div>
   );

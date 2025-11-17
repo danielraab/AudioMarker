@@ -14,9 +14,11 @@ interface MarkerManagerProps {
   currentTime: number;
   markers: AudioMarker[];
   onMarkerClick?: (timestamp: number) => void;
+  selectedRegion?: { start: number | null; end: number | null };
+  onClearRegion?: (() => void) | null;
 }
 
-export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerClick }: MarkerManagerProps) {
+export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerClick, selectedRegion, onClearRegion }: MarkerManagerProps) {
   const utils = api.useUtils();
   const t = useTranslations('StoredMarkers');
 
@@ -26,10 +28,11 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
     },
   });
 
-  const addMarkerAtCurrentTime = (label: string) => {
+  const addMarkerAtCurrentTime = (label: string, startTime: number, endTime?: number | null) => {
     createMarker.mutate({
       audioId,
-      timestamp: currentTime,
+      timestamp: startTime,
+      endTimestamp: endTime,
       label: label.trim() || t('defaultLabel', { index: markers.length + 1 }),
       color: `hsl(${Math.random() * 360}, 70%, 50%)`
     });
@@ -62,7 +65,7 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
 
         {/* Add Stored Marker */}
         <div className="flex gap-2">
-          <AddMarker currentTime={currentTime} onAddMarker={addMarkerAtCurrentTime} />
+          <AddMarker currentTime={currentTime} onAddMarker={addMarkerAtCurrentTime} selectedRegion={selectedRegion} onClearRegion={onClearRegion} />
         </div>
         
         {/* Markers List */}
