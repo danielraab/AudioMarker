@@ -13,7 +13,7 @@ interface MarkerManagerProps {
   audioId: string;
   currentTime: number;
   markers: AudioMarker[];
-  onMarkerClick?: (timestamp: number) => void;
+  onMarkerClick?: (marker: AudioMarker) => void;
   selectedRegion?: { start: number | null; end: number | null };
   onClearRegion?: (() => void) | null;
 }

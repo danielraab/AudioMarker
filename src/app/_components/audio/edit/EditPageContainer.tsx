@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { api } from "~/trpc/react";
 import { StoredMarkerManager } from './StoredMarkerManager';
 import AudioPlayer from '../AudioPlayer';
+import type { AudioMarker } from '~/types/Audio';
 
 interface EditPageContainerProps {
   audioId: string;
@@ -11,7 +12,7 @@ interface EditPageContainerProps {
 
 export function EditPageContainer({ audioId }: EditPageContainerProps) {
   const [currentTime, setCurrentTime] = useState(0);
-  const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
+  const [playFromFunction, setPlayFromFunction] = useState<((marker: AudioMarker) => void) | null>(null);
   const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<{ start: number | null; end: number | null }>({ start: null, end: null });
 
@@ -31,14 +32,14 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
     setClearRegionFunction(() => clearRegion);
   }, []);
 
-  const handlePlayFromFnReady = useCallback((seekTo: (time: number) => void) => {
+  const handlePlayFromFnReady = useCallback((seekTo: (marker: AudioMarker) => void) => {
     setPlayFromFunction(() => seekTo);
   }, []);
 
   // from marker manager -> player
-  const handleMarkerClick = useCallback((timestamp: number) => {
+  const handleMarkerClick = useCallback((marker: AudioMarker) => {
     if (playFromFunction) {
-      playFromFunction(timestamp);
+      playFromFunction(marker);
     }
   }, [playFromFunction]);
 

@@ -5,8 +5,8 @@ import MarkerList from "../marker/MarkerList";
 import { useTranslations } from "next-intl";
 
 interface StoredMarksProps {
-  markers: AudioMarker[],
-  onMarkerClick?: (timestamp: number) => void;
+  markers: AudioMarker[];
+  onMarkerClick?: (marker: AudioMarker) => void;
 }
 
 export default function StoredMarkers({ markers, onMarkerClick }: StoredMarksProps) {

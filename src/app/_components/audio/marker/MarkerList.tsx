@@ -6,7 +6,7 @@ import type { AudioMarker } from "~/types/Audio";
 
 interface MarkerListProps {
   markers: AudioMarker[];
-  onMarkerClick?: (timestamp: number) => void;
+  onMarkerClick?: (marker: AudioMarker) => void;
   onRemoveMarker?: (markerId: string) => void;
 }
 
@@ -21,12 +21,12 @@ export default function MarkerList({ markers, onMarkerClick, onRemoveMarker }: M
         >
           <div
             className="flex items-center gap-2 flex-1 cursor-pointer hover:bg-default-200 -m-2 p-2 py-1 rounded-lg transition-colors"
-            onClick={() => onMarkerClick?.(marker.timestamp)}
+            onClick={() => onMarkerClick?.(marker)}
             role="button"
             tabIndex={0}
             onKeyPress={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                onMarkerClick?.(marker.timestamp);
+                onMarkerClick?.(marker);
               }
             }}
           >

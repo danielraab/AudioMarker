@@ -24,7 +24,7 @@ export default function ListenOnlyAudioPlayer({
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
   const [ storedMarkers ] = api.marker.getMarkers.useSuspenseQuery({ audioId });
   const [currentTime, setCurrentTime] = useState(0);
-  const [playFromFunction, setPlayFromFunction] = useState<((time: number) => void) | null>(null);
+  const [playFromFunction, setPlayFromFunction] = useState<((marker: AudioMarker) => void) | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<{start: number, end: number} | null>(null);
   const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
 
@@ -49,13 +49,13 @@ export default function ListenOnlyAudioPlayer({
     setCurrentTime(time);
   }, []);
 
-  const handlePlayFromFnReady = useCallback((seekTo: (time: number) => void) => {
+  const handlePlayFromFnReady = useCallback((seekTo: (marker: AudioMarker) => void) => {
     setPlayFromFunction(() => seekTo);
   }, []);
 
-  const handleMarkerClick = useCallback((timestamp: number) => {
+  const handleMarkerClick = useCallback((marker: AudioMarker) => {
     if (playFromFunction) {
-      playFromFunction(timestamp);
+      playFromFunction(marker);
     }
   }, [playFromFunction]);
 

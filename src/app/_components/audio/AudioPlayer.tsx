@@ -22,7 +22,7 @@ interface AudioPlayerProps {
   audioReadOnlyToken: string;
   markers?: AudioMarker[];
   onTimeUpdate?: (time: number) => void;
-  onPlayFromFnReady?: (playFrom: (time: number) => void) => void;
+  onPlayFromFnReady?: (playFrom: (marker: AudioMarker) => void) => void;
   onRegionUpdate?: (start: number | null, end: number | null) => void;
   onClearRegionReady?: (clearRegion: () => void) => void;
 }
@@ -54,24 +54,21 @@ export default function AudioPlayer({
 
   useEffect(() => {
     if (!waveformRef.current) return;
-    
+
     regionsPlugin.current = RegionsPlugin.create();
-    regionsPlugin.current.on('region-clicked', (region, e) => {
+    regionsPlugin.current.on('region-double-clicked', (region, e) => {
       e.stopPropagation() // prevent triggering a click on the waveform
+      activeRegionId.current = region.id;
       region.play()
     })
 
-    regionsPlugin.current.on('region-in', (region) => {
-      activeRegionId.current = region.id;
-    })
-    
     regionsPlugin.current.on('region-out', (region) => {
       console.log('region-out', region.id);
       if (activeRegionId.current === region.id && wavesurfer.current?.isPlaying()) {
           region.play();
       }
     });
-    
+
     // Listen for region updates (drag/resize)
     regionsPlugin.current.on('region-updated', (region) => {
       // Only track selection region updates
@@ -79,7 +76,7 @@ export default function AudioPlayer({
         onRegionUpdate(region.start, region.end);
       }
     })
-    
+
     // Ensure only one manual selection region exists
     regionsPlugin.current.on('region-created', (region) => {
       if(region.id.startsWith(markerIdPrefix)) {
@@ -94,10 +91,10 @@ export default function AudioPlayer({
           existingRegion.remove();
         }
       }
-      
+
       // Store the new selection region ID
       selectionRegionId.current = region.id;
-      
+
       // Notify about the new region
       if (onRegionUpdate) {
         onRegionUpdate(region.start, region.end);
@@ -121,7 +118,7 @@ export default function AudioPlayer({
         regionsPlugin.current
       ],
     });
-    
+
     // Enable drag selection for creating selection region
     regionsPlugin.current.enableDragSelection({
       color: 'rgba(0, 112, 240, 0.2)',
@@ -145,11 +142,11 @@ export default function AudioPlayer({
 
   useEffect(() => {
     if (!wavesurfer.current) return;
-    
+
     // Event listeners
     const unsubscribe = wavesurfer.current.on('ready', () => {
       setIsLoading(false);
-      wavesurfer.current?.zoom(initialZoomLevel);  
+      wavesurfer.current?.zoom(initialZoomLevel);
 
       // Create regions from markers
       createRegionsFromMarkers(markers);
@@ -172,6 +169,7 @@ export default function AudioPlayer({
     wavesurfer.current.on('interaction', () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
+      activeRegionId.current = null;
       onTimeUpdate?.(time);
     });
 
@@ -192,12 +190,12 @@ export default function AudioPlayer({
     // Create regions from markers
     markers.forEach((marker) => {
       const markerIsSection = isSection(marker);
-      
+
       // For sections, make color transparent by converting to hsla with low opacity
       const regionColor = markerIsSection && marker.color
         ? marker.color.replace('hsl(', 'hsla(').replace(')', ', 0.15)')
         : marker.color;
-      
+
       regionsPlugin.current?.addRegion({
         id: markerIdPrefix + marker.id,
         start: marker.timestamp,
@@ -274,13 +272,22 @@ export default function AudioPlayer({
     setCurrentTime(0);
   };
 
-  const playFrom = useCallback((time: number) => {
+  const playFrom = useCallback((marker: AudioMarker) => {
     if (wavesurfer.current) {
-      wavesurfer.current.seekTo(time / wavesurfer.current.getDuration());
+      if(regionsPlugin.current) {
+        const region = regionsPlugin.current.getRegions().find(r => r.id === markerIdPrefix + marker.id);
+        if(region) {
+          activeRegionId.current = region.id;
+          region.play();
+          return;
+        }
+      }
+      wavesurfer.current.seekTo(marker.timestamp / wavesurfer.current.getDuration());
+
       void wavesurfer.current.play();
     }
   }, []);
-  
+
   const clearSelectionRegion = useCallback(() => {
     if (regionsPlugin.current && selectionRegionId.current) {
       const region = regionsPlugin.current.getRegions().find(r => r.id === selectionRegionId.current);
@@ -298,7 +305,7 @@ export default function AudioPlayer({
       onPlayFromFnReady(playFrom);
     }
   }, [isLoading, playFrom, onPlayFromFnReady]);
-  
+
   // Expose clearSelectionRegion function to parent component when ready
   useEffect(() => {
     if (!isLoading && onClearRegionReady) {
@@ -311,8 +318,8 @@ export default function AudioPlayer({
     const handleKeyDown = (event: KeyboardEvent) => {
       // Only handle spacebar when audio is loaded and not in an input field
       if (
-        event.code === 'Space' && 
-        !isLoading && 
+        event.code === 'Space' &&
+        !isLoading &&
         wavesurfer.current &&
         !(event.target instanceof HTMLInputElement) &&
         !(event.target instanceof HTMLTextAreaElement) &&

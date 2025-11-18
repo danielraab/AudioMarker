@@ -12,8 +12,8 @@ interface MarkerManagerProps {
   audioId: string;
   currentTime: number;
   onMarkersChange: (markers: AudioMarker[]) => void;
-  onMarkerClick?: (timestamp: number) => void;
-  selectedRegion?: { start: number; end: number } | null;
+  onMarkerClick?: (marker: AudioMarker) => void;
+  selectedRegion?: {start: number, end: number} | null;
   onClearRegion?: () => void;
 }
 
