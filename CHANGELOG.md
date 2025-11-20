@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.4.3] - 2025-11-20
+
+### Changed
+
+- **Audio Player Refactoring**: Reworked audio player component to improve code organization
+  - Combined useEffect logic for better maintainability
+  - Audio player now receives AudioMarker type instead of timestamp for improved type safety
+
+### Fixed
+
+- **Section Loop Behavior**: Fixed automatic looping for section markers
+  - Clear active region when interacting with the waveform
+  - Improved section marker interaction and playback behavior
+
 ## [0.4.2] - 2025-11-17
 
 ### Added
