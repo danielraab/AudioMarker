@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import AudioPlayer from '../AudioPlayer';
 import BrowserMarkerManager from './BrowserMarkerManager';
 import type { AudioMarker } from '~/types/Audio';
@@ -27,6 +27,10 @@ export default function ListenOnlyAudioPlayer({
   const [playFromFunction, setPlayFromFunction] = useState<((marker: AudioMarker) => void) | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<{start: number, end: number} | null>(null);
   const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
+
+  const markerUnion = useMemo(() => {
+    return [...markers, ...storedMarkers];
+  }, [markers, storedMarkers]);
 
   // Use audioId or fallback to readonlyToken for unique identification
   const uniqueAudioId = audioId || audioReadOnlyToken;
@@ -84,7 +88,7 @@ export default function ListenOnlyAudioPlayer({
         audioUrl={audioUrl}
         audioName={audioName}
         audioReadOnlyToken={audioReadOnlyToken}
-        markers={[...markers, ...storedMarkers]}
+        markers={markerUnion}
         onTimeUpdate={handleTimeUpdate}
         onPlayFromFnReady={handlePlayFromFnReady}
         onSelectedRegionUpdate={handleSelectedRegionUpdate}

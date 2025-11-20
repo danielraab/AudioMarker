@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Section Loop Behavior**: Fixed automatic looping for section markers
   - Clear active region when interacting with the waveform
   - Improved section marker interaction and playback behavior
+- Marker list on listen page is now wrapped in a useMemo (decrease rerendering)
 
 ## [0.4.2] - 2025-11-17
 
