@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
-import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
+import RegionsPlugin, { type Region } from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { Button, Chip, Slider } from '@heroui/react';
 import { Play, Pause, Square, ZoomIn, Gauge, SquareArrowOutUpRight, Volume2 } from 'lucide-react';
 import LoadingOverlay from '../global/LoadingOverlay';
@@ -23,7 +23,7 @@ interface AudioPlayerProps {
   markers?: AudioMarker[];
   onTimeUpdate?: (time: number) => void;
   onPlayFromFnReady?: (playFrom: (marker: AudioMarker) => void) => void;
-  onRegionUpdate?: (start: number | null, end: number | null) => void;
+  onSelectedRegionUpdate?: (start: number | null, end: number | null) => void;
   onClearRegionReady?: (clearRegion: () => void) => void;
 }
 
@@ -34,7 +34,7 @@ export default function AudioPlayer({
   markers = [],
   onTimeUpdate,
   onPlayFromFnReady,
-  onRegionUpdate,
+  onSelectedRegionUpdate,
   onClearRegionReady,
 }: AudioPlayerProps) {
   const t = useTranslations('AudioPlayer');
@@ -52,34 +52,84 @@ export default function AudioPlayer({
   const selectionRegionId = useRef<string | null>(null);
   const activeRegionId = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!waveformRef.current) return;
+  // Create regions from markers - memoized to prevent unnecessary recreations
+  const createRegionsFromMarkers = useCallback((markers: AudioMarker[]) => {
+    if (!regionsPlugin.current || !wavesurfer.current) return;
 
-    regionsPlugin.current = RegionsPlugin.create();
-    regionsPlugin.current.on('region-double-clicked', (region, e) => {
-      e.stopPropagation() // prevent triggering a click on the waveform
-      activeRegionId.current = region.id;
-      region.play()
-    })
+    // Get existing marker regions
+    const existingRegions = regionsPlugin.current.getRegions();
+    const existingMarkerRegions = existingRegions.filter(r => r.id.startsWith(markerIdPrefix));
 
-    regionsPlugin.current.on('region-out', (region) => {
-      console.log('region-out', region.id);
-      if (activeRegionId.current === region.id && wavesurfer.current?.isPlaying()) {
-          region.play();
+    // Create a set of new marker IDs
+    const newMarkerIds = new Set(markers.map(m => markerIdPrefix + m.id));
+
+    // Remove regions that no longer exist in markers
+    existingMarkerRegions.forEach((region) => {
+      if (!newMarkerIds.has(region.id)) {
+        region.remove();
       }
     });
 
-    // Listen for region updates (drag/resize)
-    regionsPlugin.current.on('region-updated', (region) => {
-      // Only track selection region updates
-      if (region.id === selectionRegionId.current && onRegionUpdate) {
-        onRegionUpdate(region.start, region.end);
-      }
-    })
+    // Add or update regions from markers
+    markers.forEach((marker) => {
+      const regionId = markerIdPrefix + marker.id;
+      const markerIsSection = isSection(marker);
 
-    // Ensure only one manual selection region exists
-    regionsPlugin.current.on('region-created', (region) => {
-      if(region.id.startsWith(markerIdPrefix)) {
+      // For sections, make color transparent by converting to hsla with low opacity
+      const regionColor = markerIsSection && marker.color
+        ? marker.color.replace('hsl(', 'hsla(').replace(')', ', 0.15)')
+        : marker.color;
+
+      // Check if region already exists
+      const existingRegion = existingRegions.find(r => r.id === regionId);
+
+      if (existingRegion) {
+        // Update existing region if needed
+        existingRegion.setOptions({
+          start: marker.timestamp,
+          end: markerIsSection ? marker.endTimestamp! : undefined,
+          color: regionColor,
+          content: marker.label,
+        });
+      } else {
+        // Create new region
+        regionsPlugin.current?.addRegion({
+          id: regionId,
+          start: marker.timestamp,
+          end: markerIsSection ? marker.endTimestamp! : undefined,
+          color: regionColor,
+          content: marker.label,
+          drag: false,
+          resize: false,
+        });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!waveformRef.current) return;
+
+    // Initialize RegionsPlugin
+    regionsPlugin.current = RegionsPlugin.create();
+
+    const handleRegionDoubleClick = (region: Region, e: MouseEvent) => {
+      e.stopPropagation(); // prevent triggering a click on the waveform
+      activeRegionId.current = region.id;
+      region.play();
+    };
+    const handleRegionOut = (region: Region) => {
+      if (activeRegionId.current === region.id && wavesurfer.current?.isPlaying()) {
+        region.play();
+      }
+    };
+    const handleRegionUpdated = (region: Region) => {
+      // Only track selection region updates
+      if (region.id === selectionRegionId.current && onSelectedRegionUpdate) {
+        onSelectedRegionUpdate(region.start, region.end);
+      }
+    };
+    const handleRegionCreated = (region: Region) => {
+      if (region.id.startsWith(markerIdPrefix)) {
         // It's a marker region, ignore
         return;
       }
@@ -96,15 +146,21 @@ export default function AudioPlayer({
       selectionRegionId.current = region.id;
 
       // Notify about the new region
-      if (onRegionUpdate) {
-        onRegionUpdate(region.start, region.end);
+      if (onSelectedRegionUpdate) {
+        onSelectedRegionUpdate(region.start, region.end);
       }
-    });
+    };
 
+    // Set up region event listeners
+    regionsPlugin.current.on('region-double-clicked', handleRegionDoubleClick);
+    regionsPlugin.current.on('region-out', handleRegionOut);
+    regionsPlugin.current.on('region-updated', handleRegionUpdated);
+    regionsPlugin.current.on('region-created', handleRegionCreated);
 
     // Initialize WaveSurfer
     wavesurfer.current = WaveSurfer.create({
       container: waveformRef.current,
+      url: audioUrl,
       waveColor: '#0070f0',
       progressColor: '#0052cc',
       cursorColor: '#0070f0',
@@ -124,96 +180,53 @@ export default function AudioPlayer({
       color: 'rgba(0, 112, 240, 0.2)',
     });
 
-    wavesurfer.current.on('play', () => setIsPlaying(true));
-    wavesurfer.current.on('pause', () => setIsPlaying(false));
-    wavesurfer.current.on('finish', () => setIsPlaying(false));
-  }, [onRegionUpdate]);
-
-  useEffect(() => {
-    if (!wavesurfer.current) return;
-    // Load audio
-    void wavesurfer.current.load(audioUrl);
-
-    return () => {
-      wavesurfer.current?.destroy();
-    };
-  }, [audioUrl]);
-
-
-  useEffect(() => {
-    if (!wavesurfer.current) return;
-
-    // Event listeners
-    const unsubscribe = wavesurfer.current.on('ready', () => {
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleFinish = () => setIsPlaying(false);
+    const handleReady = () => {
       setIsLoading(false);
       wavesurfer.current?.zoom(initialZoomLevel);
-
-      // Create regions from markers
       createRegionsFromMarkers(markers);
-    });
-
-    return () => {
-      unsubscribe();
     };
-  }, [markers]);
-
-
-  useEffect(() => {
-    if (!wavesurfer.current) return;
-    wavesurfer.current.on('audioprocess', () => {
+    const handleAudioProcess = () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
       onTimeUpdate?.(time);
-    });
-
-    wavesurfer.current.on('interaction', () => {
+    };
+    const handleInteraction = () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
       activeRegionId.current = null;
       onTimeUpdate?.(time);
-    });
+    };
 
-  }, [onTimeUpdate]);
+    // Set up WaveSurfer event listeners
+    wavesurfer.current.on('play', handlePlay);
+    wavesurfer.current.on('pause', handlePause);
+    wavesurfer.current.on('finish', handleFinish);
+    wavesurfer.current.on('ready', handleReady);
+    wavesurfer.current.on('audioprocess', handleAudioProcess);
+    wavesurfer.current.on('interaction', handleInteraction);
 
-  // Create regions from markers
-  const createRegionsFromMarkers = (markers: AudioMarker[]) => {
-    if (!regionsPlugin.current || !wavesurfer.current) return;
-
-    // Clear all regions except the selection region
-    const existingRegions = regionsPlugin.current.getRegions();
-    existingRegions.forEach((region) => {
-      if (region.id !== selectionRegionId.current) {
-        region.remove();
+    // Cleanup function
+    return () => {
+      if (regionsPlugin.current) {
+        regionsPlugin.current.un('region-double-clicked', handleRegionDoubleClick);
+        regionsPlugin.current.un('region-out', handleRegionOut);
+        regionsPlugin.current.un('region-updated', handleRegionUpdated);
+        regionsPlugin.current.un('region-created', handleRegionCreated);
       }
-    });
-
-    // Create regions from markers
-    markers.forEach((marker) => {
-      const markerIsSection = isSection(marker);
-
-      // For sections, make color transparent by converting to hsla with low opacity
-      const regionColor = markerIsSection && marker.color
-        ? marker.color.replace('hsl(', 'hsla(').replace(')', ', 0.15)')
-        : marker.color;
-
-      regionsPlugin.current?.addRegion({
-        id: markerIdPrefix + marker.id,
-        start: marker.timestamp,
-        end: markerIsSection ? marker.endTimestamp! : undefined,
-        color: regionColor,
-        content: marker.label,
-        drag: false,
-        resize: false,
-      });
-    });
-  };
-
-  // Update regions when markers change
-  useEffect(() => {
-    if (wavesurfer.current && !isLoading) {
-      createRegionsFromMarkers(markers);
-    }
-  }, [markers, isLoading]);
+      if (wavesurfer.current) {
+        wavesurfer.current.un('play', handlePlay);
+        wavesurfer.current.un('pause', handlePause);
+        wavesurfer.current.un('finish', handleFinish);
+        wavesurfer.current.un('ready', handleReady);
+        wavesurfer.current.un('audioprocess', handleAudioProcess);
+        wavesurfer.current.un('interaction', handleInteraction);
+        wavesurfer.current.destroy();
+      }
+    };
+  }, [audioUrl, onSelectedRegionUpdate, onTimeUpdate, createRegionsFromMarkers, markers]);
 
   const handleZoomChange = (value: number | number[]) => {
     const zoom = Array.isArray(value) ? value[0] : value;
@@ -274,9 +287,9 @@ export default function AudioPlayer({
 
   const playFrom = useCallback((marker: AudioMarker) => {
     if (wavesurfer.current) {
-      if(regionsPlugin.current) {
+      if (regionsPlugin.current) {
         const region = regionsPlugin.current.getRegions().find(r => r.id === markerIdPrefix + marker.id);
-        if(region) {
+        if (region) {
           activeRegionId.current = region.id;
           region.play();
           return;
@@ -295,9 +308,9 @@ export default function AudioPlayer({
         region.remove();
       }
       selectionRegionId.current = null;
-      onRegionUpdate?.(null, null);
+      onSelectedRegionUpdate?.(null, null);
     }
-  }, [onRegionUpdate]);
+  }, [onSelectedRegionUpdate]);
 
   // Expose playFrom function to parent component when ready
   useEffect(() => {
@@ -396,7 +409,7 @@ export default function AudioPlayer({
       />
 
       {/* Loading Overlay */}
-  {isLoading && <LoadingOverlay label={t('loadingLabel')} />}
+      {isLoading && <LoadingOverlay label={t('loadingLabel')} />}
 
       {/* Zoom and Playback Rate Controls */}
       <div className="flex flex-col sm:flex-row gap-4 my-4">

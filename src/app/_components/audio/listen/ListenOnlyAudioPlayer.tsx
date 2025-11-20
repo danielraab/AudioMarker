@@ -59,7 +59,7 @@ export default function ListenOnlyAudioPlayer({
     }
   }, [playFromFunction]);
 
-  const handleRegionUpdate = useCallback((start: number | null, end: number | null) => {
+  const handleSelectedRegionUpdate = useCallback((start: number | null, end: number | null) => {
     if (start !== null && end !== null) {
       setSelectedRegion({ start, end });
     }
@@ -87,7 +87,7 @@ export default function ListenOnlyAudioPlayer({
         markers={[...markers, ...storedMarkers]}
         onTimeUpdate={handleTimeUpdate}
         onPlayFromFnReady={handlePlayFromFnReady}
-        onRegionUpdate={handleRegionUpdate}
+        onSelectedRegionUpdate={handleSelectedRegionUpdate}
         onClearRegionReady={handleClearRegionReady}
       />
 

@@ -24,7 +24,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
     setCurrentTime(time);
   }, []);
   
-  const handleRegionUpdate = useCallback((start: number | null, end: number | null) => {
+  const handleSelectedRegionUpdate = useCallback((start: number | null, end: number | null) => {
     setSelectedRegion({ start, end });
   }, []);
   
@@ -53,7 +53,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
         markers={markers}
         onTimeUpdate={handleTimeUpdate}
         onPlayFromFnReady={handlePlayFromFnReady}
-        onRegionUpdate={handleRegionUpdate}
+        onSelectedRegionUpdate={handleSelectedRegionUpdate}
         onClearRegionReady={handleClearRegionReady}
       />
 
