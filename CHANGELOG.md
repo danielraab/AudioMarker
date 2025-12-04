@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.4.4] - 2025-12-04
+
+### Fixed
+
+- **TypeScript Build Error**: Fixed type incompatibility between `@auth/core` types from `next-auth` and `@auth/prisma-adapter`
+  - Updated module augmentation to use correct `next-auth/adapters` module path
+  - Added type cast for PrismaAdapter to resolve duplicate type definitions
+
+### Security
+
+- Necessary dependency updates
+
 ## [0.4.3] - 2025-11-20
 
 ### Changed
