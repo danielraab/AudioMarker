@@ -1,5 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import { env } from "~/env";
 import Authentik from "next-auth/providers/authentik";
 import Nodemailer from "next-auth/providers/nodemailer";
@@ -31,7 +32,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "@auth/core/adapters" {
+declare module "next-auth/adapters" {
   interface AdapterUser {
     isAdmin: boolean;
     isDisabled: boolean;
@@ -67,7 +68,7 @@ export const authConfig = {
       }),
     ] : []),
   ],
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db) as Adapter,
   callbacks: {
     session: ({ session, user }) => {
       // Block disabled users from creating sessions

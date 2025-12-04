@@ -17,13 +17,6 @@ Live Demo (comming soon) • [Report Bug](https://github.com/danielraab/AudioMar
 
 </div>
 
----
-
-> [!WARNING]
-> **⚠️ Rapid Development Notice**
-> 
-> This project is under active development and may contain bugs or incomplete features. Automated tests are not yet implemented. We appreciate your understanding and encourage you to [report any issues](https://github.com/danielraab/AudioMarker/issues) you encounter.
-
 ## 📋 Table of Contents
 
 - [About](#about)
