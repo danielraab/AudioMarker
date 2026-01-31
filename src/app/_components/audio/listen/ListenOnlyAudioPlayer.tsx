@@ -22,7 +22,7 @@ export default function ListenOnlyAudioPlayer({
   audioId 
 }: AudioPlayerWithMarkersProps) {
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
-  const [ storedMarkers ] = api.marker.getMarkers.useSuspenseQuery({ audioId });
+  const { data: storedMarkers = [] } = api.marker.getMarkers.useQuery({ audioId });
   const [currentTime, setCurrentTime] = useState(0);
   const [playFromFunction, setPlayFromFunction] = useState<((marker: AudioMarker) => void) | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<{start: number, end: number} | null>(null);

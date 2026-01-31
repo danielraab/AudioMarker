@@ -49,8 +49,14 @@ export default function AudioPlayer({
   const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(100);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const selectionRegionId = useRef<string | null>(null);
   const activeRegionId = useRef<string | null>(null);
+
+  // Track when component is mounted (client-side only)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Create regions from markers - memoized to prevent unnecessary recreations
   const createRegionsFromMarkers = useCallback((markers: AudioMarker[]) => {
@@ -426,7 +432,7 @@ export default function AudioPlayer({
             onChange={handleZoomChange}
             className="flex-1"
             color="primary"
-            isDisabled={isLoading}
+            isDisabled={mounted && isLoading}
             aria-label={t('zoom.ariaLabel')}
           />
           <span className="text-xs text-default-500 min-w-8">{zoomLevel}</span>
@@ -458,7 +464,7 @@ export default function AudioPlayer({
             onChange={handlePlaybackRateChange}
             className="flex-1"
             color="primary"
-            isDisabled={isLoading}
+            isDisabled={mounted && isLoading}
             aria-label={t('speed.ariaLabel')}
           />
           <span className="text-xs text-default-500 min-w-8">{playbackRate.toFixed(2)}x</span>
@@ -479,7 +485,7 @@ export default function AudioPlayer({
           color="primary"
           variant="flat"
           onPress={handlePlayPause}
-          isDisabled={isLoading}
+          isDisabled={mounted && isLoading}
           aria-label={isPlaying ? t('controls.pause') : t('controls.play')}
           startContent={isPlaying ? <Pause size={24} /> : <Play size={24} />}
         >
@@ -491,7 +497,7 @@ export default function AudioPlayer({
           color="danger"
           variant="flat"
           onPress={handleStop}
-          isDisabled={isLoading}
+          isDisabled={mounted && isLoading}
           aria-label={t('controls.stop')}
           startContent={<Square size={24} />}
         >
@@ -505,7 +511,7 @@ export default function AudioPlayer({
             color="default"
             variant="flat"
             onPress={toggleVolumeSlider}
-            isDisabled={isLoading}
+            isDisabled={mounted && isLoading}
             aria-label={t('volume.toggleLabel')}
             startContent={<Volume2 size={24} />}
           >
@@ -524,7 +530,7 @@ export default function AudioPlayer({
                   onChange={handleVolumeChange}
                   className="flex-1"
                   color="primary"
-                  isDisabled={isLoading}
+                  isDisabled={mounted && isLoading}
                   aria-label={t('volume.ariaLabel')}
                 />
                 <span className="text-xs text-default-500 min-w-12">{volume}%</span>
