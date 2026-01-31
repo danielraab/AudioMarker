@@ -1,4 +1,4 @@
-# Admin User Management Scripts
+# Admin Scripts
 
 ## Create Admin User
 

@@ -40,8 +40,10 @@ This document provides instructions for running the Audio Marker application usi
 
 The application uses two persistent volumes:
 
-- **`audio_uploads`**: Stores uploaded audio files (`/app/public/uploads`)
+- **`audio_uploads`**: Stores uploaded audio files (`.next/standalone/public/uploads`)
 - **`database_data`**: Stores the SQLite database (`/app/data`)
+
+**Note**: The uploads are mounted to `.next/standalone/public/uploads` to ensure Next.js standalone server can serve them immediately without restart.
 
 ### Environment Variables
 
@@ -96,7 +98,7 @@ docker volume create database_data
 docker run -d \
   --name audio-marker \
   -p 3000:3000 \
-  -v audio_uploads:/app/public/uploads \
+  -v audio_uploads:/app/.next/standalone/public/uploads \
   -v database_data:/app/data \
   -e DATABASE_URL="file:/app/data/db.sqlite" \
   -e AUTH_URL="http://localhost:3000" \
@@ -135,7 +137,7 @@ For more details, see [scripts/README.md](../scripts/README.md).
 ## Data Persistence
 
 ### Audio Files
-All uploaded audio files are stored in the `audio_uploads` volume, which maps to `/app/public/uploads` inside the container.
+All uploaded audio files are stored in the `audio_uploads` volume, which maps to `.next/standalone/public/uploads` inside the container. By mounting to the standalone public directory, uploaded files are immediately available without container restart.
 
 ### Database
 The SQLite database is stored in the `database_data` volume, which maps to `/app/data` inside the container.

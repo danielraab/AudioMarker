@@ -38,7 +38,11 @@ export async function POST(req: NextRequest) {
     // Generate unique ID and file path
     const id = uuidv4();
     const outFileName = `${id}${fileExtension}`;
-    const filePath = path.join(process.cwd(), 'public', 'uploads', outFileName);
+    // In standalone mode, save to .next/standalone/public/uploads
+    const uploadDir = process.env.NODE_ENV === 'production' 
+      ? path.join(process.cwd(), '.next', 'standalone', 'public', 'uploads')
+      : path.join(process.cwd(), 'public', 'uploads');
+    const filePath = path.join(uploadDir, outFileName);
 
     // Convert file to buffer and save
     const bytes = await file.arrayBuffer();
