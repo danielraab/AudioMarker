@@ -44,6 +44,7 @@ export default function AudioPlayer({
   const volumeControlRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(initialZoomLevel);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -191,8 +192,14 @@ export default function AudioPlayer({
     const handleFinish = () => setIsPlaying(false);
     const handleReady = () => {
       setIsLoading(false);
+      setLoadError(null);
       wavesurfer.current?.zoom(initialZoomLevel);
       createRegionsFromMarkers(markers);
+    };
+    const handleError = (error: Error) => {
+      setIsLoading(false);
+      setLoadError(error.message);
+      console.error('Audio loading error:', error);
     };
     const handleAudioProcess = () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
@@ -211,6 +218,7 @@ export default function AudioPlayer({
     wavesurfer.current.on('pause', handlePause);
     wavesurfer.current.on('finish', handleFinish);
     wavesurfer.current.on('ready', handleReady);
+    wavesurfer.current.on('error', handleError);
     wavesurfer.current.on('audioprocess', handleAudioProcess);
     wavesurfer.current.on('interaction', handleInteraction);
 
@@ -227,6 +235,7 @@ export default function AudioPlayer({
         wavesurfer.current.un('pause', handlePause);
         wavesurfer.current.un('finish', handleFinish);
         wavesurfer.current.un('ready', handleReady);
+        wavesurfer.current.un('error', handleError);
         wavesurfer.current.un('audioprocess', handleAudioProcess);
         wavesurfer.current.un('interaction', handleInteraction);
         wavesurfer.current.destroy();
@@ -413,6 +422,15 @@ export default function AudioPlayer({
         className="w-full border border-default-200 rounded-lg p-2"
         style={{ minHeight: '100px' }}
       />
+
+      {/* Error Display */}
+      {loadError && (
+        <div className="my-4 p-4 bg-danger-50 border border-danger-200 rounded-lg">
+          <p className="text-danger-600 font-semibold">{t('error.title')}</p>
+          <p className="text-danger-500 text-sm mt-1">{t('error.message')}</p>
+          <p className="text-danger-400 text-xs mt-2">{loadError}</p>
+        </div>
+      )}
 
       {/* Loading Overlay */}
       {isLoading && <LoadingOverlay label={t('loadingLabel')} />}
