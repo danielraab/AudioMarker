@@ -19,8 +19,8 @@ services:
       - AUTH_AUTHENTIK_SECRET=your-authentik-secret
       - AUTH_AUTHENTIK_ISSUER=your-authentik-issuer
     volumes:
-      # Mount audio files directory to standalone public location
-      - audio_uploads:/app/.next/standalone/public/uploads
+      # Mount audio files directory
+      - audio_uploads:/app/public/uploads
       # Mount database directory
       - database_data:/app/data
     restart: unless-stopped
