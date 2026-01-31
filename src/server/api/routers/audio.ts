@@ -170,54 +170,6 @@ export const audioRouter = createTRPCRouter({
       return updatedAudio;
     }),
 
-  uploadAudio: protectedProcedure
-    .input(z.object({
-      name: z.string().min(1, "Name is required").max(100, "Name is too long"),
-      fileName: z.string(),
-      fileData: z.string(), // base64 encoded file data
-      fileSize: z.number().max(50 * 1024 * 1024, "File size must be less than 50MB"), // 50MB limit
-    }))
-    .mutation(async ({ ctx, input }) => {
-      const { writeFile } = await import('fs/promises');
-      const { v4: uuidv4 } = await import('uuid');
-      const path = await import('path');
-
-      // Validate file extension
-      const fileExtension = path.extname(input.fileName).toLowerCase();
-      if (fileExtension !== '.mp3') {
-        throw new Error('Only .mp3 files are allowed');
-      }
-
-      // Generate unique ID
-      const id = uuidv4();
-      const outFileName = `${id}${fileExtension}`;
-      const filePath = path.join(process.cwd(), 'public', 'uploads', outFileName);
-
-      try {
-        // Convert base64 to buffer and save
-        const buffer = Buffer.from(input.fileData, 'base64');
-        await writeFile(filePath, buffer);
-
-        // Create database record
-        const audio = await ctx.db.audio.create({
-          data: {
-            id,
-            name: input.name,
-            originalFileName: input.fileName,
-            filePath: `/uploads/${outFileName}`,
-            createdById: ctx.session.user.id,
-          },
-        });
-
-        return {
-          id: audio.id
-        };
-      } catch (error) {
-        console.error('File upload error:', error);
-        throw new Error('Upload failed');
-      }
-    }),
-
   incrementListenCount: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

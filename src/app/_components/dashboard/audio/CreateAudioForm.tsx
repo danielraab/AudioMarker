@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState } from "react";
-import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner } from "@heroui/react";
+import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner, Progress } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 import { Music4, Plus } from "lucide-react";
 import { useTranslations } from 'next-intl';
 
@@ -14,22 +13,9 @@ export default function CreateAudioForm() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"" | "uploading" | "success" | "error">("");
   const [message, setMessage] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
-
-  const uploadAudioMutation = api.audio.uploadAudio.useMutation({
-    onSuccess: () => {
-      setStatus("success");
-      setMessage(t('uploadSuccess'));
-      router.refresh(); // Refresh to show the new audio file in the list
-      setAudioName("");
-      setFile(null);
-    },
-    onError: (error) => {
-      console.error("Upload error:", error);
-      setStatus("error");
-      setMessage(error.message || t('uploadError'));
-    },
-  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -55,17 +41,42 @@ export default function CreateAudioForm() {
     }
   };
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
+  const uploadFileWithProgress = (file: File, name: string): Promise<{ id: string }> => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const result = reader.result as string;
-        // Remove the data URL prefix (e.g., "data:audio/mpeg;base64,")
-        const base64Data = result.split(',')[1];
-        resolve(base64Data ?? '');
+      const xhr = new XMLHttpRequest();
+      
+      // Track upload progress
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = (event.loaded / event.total) * 100;
+          setUploadProgress(percentComplete);
+        }
       };
-      reader.onerror = () => reject(new Error('Failed to read file'));
+      
+      // Handle completion
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText) as { success: boolean; id: string };
+          resolve(response);
+        } else {
+          const error = JSON.parse(xhr.responseText) as { error: string };
+          reject(new Error(error.error || 'Upload failed'));
+        }
+      };
+      
+      // Handle errors
+      xhr.onerror = () => {
+        reject(new Error('Network error occurred'));
+      };
+      
+      // Prepare form data
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('name', name);
+      
+      // Send request
+      xhr.open('POST', '/api/upload');
+      xhr.send(formData);
     });
   };
 
@@ -79,19 +90,29 @@ export default function CreateAudioForm() {
 
     setStatus("uploading");
     setMessage(t('uploading'));
+    setUploadProgress(0);
+    setIsUploading(true);
 
     try {
-      const fileData = await convertFileToBase64(file);
-
-      await uploadAudioMutation.mutateAsync({
-        name: audioName,
-        fileName: file.name,
-        fileData,
-        fileSize: file.size,
-      });
+      await uploadFileWithProgress(file, audioName);
+      
+      setStatus("success");
+      setMessage(t('uploadSuccess'));
+      router.refresh(); // Refresh to show the new audio file in the list
+      setAudioName("");
+      setFile(null);
+      
+      // Reset progress after a delay
+      setTimeout(() => {
+        setUploadProgress(0);
+        setIsUploading(false);
+      }, 2000);
     } catch (err) {
-      // Error handling is done in the mutation's onError callback
       console.error("Upload error:", err);
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : t('uploadError'));
+      setUploadProgress(0);
+      setIsUploading(false);
     }
   };
 
@@ -152,26 +173,37 @@ export default function CreateAudioForm() {
               onPress={() => setIsExpanded(false)}
               type="button"
                 variant="light"
-              isDisabled={uploadAudioMutation.isPending}
-              startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
+              isDisabled={isUploading}
+              startContent={isUploading ? <Spinner size="sm" color="white" /> : null}
             >
               {t('cancel')}
             </Button>
             <Button
               type="submit"
               color="primary"
-              isDisabled={uploadAudioMutation.isPending}
-              startContent={uploadAudioMutation.isPending ? <Spinner size="sm" color="white" /> : null}
+              isDisabled={isUploading}
+              startContent={isUploading ? <Spinner size="sm" color="white" /> : null}
             >
-              {uploadAudioMutation.isPending ? t('uploading') : t('uploadButton')}
+              {isUploading ? t('uploading') : t('uploadButton')}
             </Button>
           </div>
-          {status && (
+          
+          {status === "uploading" && uploadProgress > 0 && (
+            <Progress 
+              value={uploadProgress}
+              color="primary"
+              size="sm"
+              label={t('uploading')}
+              showValueLabel={true}
+              className="max-w-full"
+            />
+          )}
+          
+          {status && status !== "uploading" && (
             <Chip
               color={
                 status === "success" ? "success" :
-                  status === "uploading" ? "primary" :
-                    status === "error" ? "danger" : "default"
+                  status === "error" ? "danger" : "default"
               }
               variant="flat"
               className="w-full justify-center"
