@@ -40,8 +40,8 @@ This document provides instructions for running the Audio Marker application usi
 
 The application uses two persistent volumes:
 
-- **`audio_uploads`**: Stores uploaded audio files (`/app/public/uploads`)
-- **`database_data`**: Stores the SQLite database (`/app/data`)
+- **`audio_uploads`**: Stores uploaded audio files (`/app/data/uploads`)
+- **`database_data`**: Stores the SQLite database and other data (`/app/data`)
 
 ### Environment Variables
 
@@ -96,7 +96,7 @@ docker volume create database_data
 docker run -d \
   --name audio-marker \
   -p 3000:3000 \
-  -v audio_uploads:/app/public/uploads \
+  -v audio_uploads:/app/data/uploads \
   -v database_data:/app/data \
   -e DATABASE_URL="file:/app/data/db.sqlite" \
   -e AUTH_URL="http://localhost:3000" \

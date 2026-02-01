@@ -35,7 +35,7 @@ export default async function ListenPage({ params }: ListenPageProps) {
       <div className="w-full flex flex-col items-center mx-auto py-8">
         <VisibilityBanner isPublic={audio.isPublic} isCreator={isCreator} />
         <ListenOnlyAudioPlayer
-          audioUrl={audio.filePath}
+          audioUrl={`/api/audio/${audio.id}/file`}
           audioName={audio.name}
           audioReadOnlyToken={audio.id}
           audioId={audio.id}

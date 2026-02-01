@@ -38,20 +38,20 @@ export async function POST(req: NextRequest) {
     // Generate unique ID and file path
     const id = uuidv4();
     const outFileName = `${id}${fileExtension}`;
-    const filePath = path.join(process.cwd(), 'public', 'uploads', outFileName);
+    const filePath = path.join(process.cwd(), 'data', 'uploads', outFileName);
 
     // Convert file to buffer and save
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     await writeFile(filePath, buffer);
 
-    // Create database record
+    // Create database record (store only filename)
     const audio = await db.audio.create({
       data: {
         id,
         name,
         originalFileName: file.name,
-        filePath: `/uploads/${outFileName}`,
+        filePath: outFileName,
         createdById: session.user.id,
       },
     });

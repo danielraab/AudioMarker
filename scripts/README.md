@@ -1,5 +1,40 @@
 # Admin Scripts
 
+## Migrate Audio Storage
+
+This script updates the database to migrate from full file paths to filenames only.
+
+### Usage
+
+#### Development
+```bash
+npm run migrate:storage
+```
+
+#### Production (Docker Container)
+```bash
+# Execute inside the running container
+docker exec -it <container-name> npm run migrate:storage
+
+# Or using docker-compose
+docker-compose -f docker/docker-compose.yml exec audio-marker npm run migrate:storage
+```
+
+### What it does
+
+1. Updates all database records to store only filenames (e.g., `abc123.mp3` instead of `/uploads/abc123.mp3`)
+2. Does NOT move or copy files - files stay in their current location
+3. Docker volumes are mounted to the correct locations automatically
+
+### Migration Context
+
+This migration is necessary when upgrading from versions that stored full paths to the new system that uses:
+- Database: stores only filenames
+- API route: serves files from `/data/uploads` with permission checks
+- Docker volumes: `audio_uploads` mounted at `/app/data/uploads`
+
+---
+
 ## Create Admin User
 
 This script allows you to create a new admin user or promote an existing user to admin status.

@@ -48,7 +48,7 @@ export default function CreateAudioForm() {
       // Track upload progress
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
-          const percentComplete = (event.loaded / event.total) * 100;
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
           setUploadProgress(percentComplete);
         }
       };
@@ -195,7 +195,12 @@ export default function CreateAudioForm() {
               size="sm"
               label={t('uploading')}
               showValueLabel={true}
-              className="max-w-full"
+              className="w-full"
+              classNames={{
+                base: "w-full",
+                track: "h-2",
+                indicator: "h-2"
+              }}
             />
           )}
           

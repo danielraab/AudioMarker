@@ -47,7 +47,7 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
     <div className="w-full flex flex-col items-center mx-auto space-y-6">
       
       <AudioPlayer
-        audioUrl={audio.filePath}
+        audioUrl={`/api/audio/${audio.id}/file`}
         audioName={audio.name}
         audioReadOnlyToken={audio.id}
         markers={markers}

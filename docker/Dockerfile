@@ -55,8 +55,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Create uploads directory
-RUN mkdir -p public/uploads
+# Create data directories for uploads and database
+RUN mkdir -p data/uploads
 
 # Copy Prisma files and full node_modules for CLI access
 COPY --from=builder /app/prisma ./prisma
