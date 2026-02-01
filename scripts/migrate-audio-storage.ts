@@ -1,4 +1,6 @@
-import { db } from "../src/server/db";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 /**
  * Migration script to update database records:
@@ -12,7 +14,7 @@ async function migrateAudioStorage() {
   console.log("Starting audio storage database migration...");
 
   // Get all audio records from database
-  const audios = await db.audio.findMany({
+  const audios = await prisma.audio.findMany({
     select: {
       id: true,
       filePath: true,
@@ -38,7 +40,7 @@ async function migrateAudioStorage() {
       }
 
       // Update database to store only filename
-      await db.audio.update({
+      await prisma.audio.update({
         where: { id: audio.id },
         data: { filePath: filename },
       });
@@ -61,11 +63,13 @@ async function migrateAudioStorage() {
 
 // Run the migration
 migrateAudioStorage()
-  .then(() => {
+  .then(async () => {
+    await prisma.$disconnect();
     console.log("\nMigration completed!");
     process.exit(0);
   })
-  .catch((error) => {
+  .catch(async (error) => {
+    await prisma.$disconnect();
     console.error("\nMigration failed:", error);
     process.exit(1);
   });
