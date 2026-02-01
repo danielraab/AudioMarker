@@ -15,6 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.4.7] - 2026-02-01
+
+### Added
+
+- **Upload Progress Bar**: File uploads now display a progress bar showing upload status
+
+### Fixed
+
+- **Docker Upload Issues**: Fixed file upload problems when using Docker by routing files through Next.js webserver
+- **Hydration Errors**: Resolved React hydration errors for improved stability
+- **File Loading**: Added error message when audio files cannot be loaded
+
+### Changed
+
+- **Sentry Logging**: Enhanced console logging for better error tracking
+
 ## [0.4.4] - 2025-12-04
 
 ### Fixed
