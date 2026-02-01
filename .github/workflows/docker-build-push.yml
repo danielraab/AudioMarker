@@ -74,6 +74,8 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             GIT_VERSION_LABEL=${{ steps.version.outputs.version }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Generate artifact attestation
         if: github.event_name != 'pull_request'

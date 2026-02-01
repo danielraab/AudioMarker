@@ -45,6 +45,8 @@ The application uses two persistent volumes:
 
 ### Environment Variables
 
+**Runtime Environment Variables** (set in docker-compose.yml or passed to `docker run`):
+
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `DATABASE_URL` | SQLite database path | `file:/app/data/db.sqlite` |
@@ -53,13 +55,28 @@ The application uses two persistent volumes:
 | `AUTH_AUTHENTIK_ID` | Authentik OAuth client ID | Required |
 | `AUTH_AUTHENTIK_SECRET` | Authentik OAuth client secret | Required |
 | `AUTH_AUTHENTIK_ISSUER` | Authentik issuer URL | Required |
+| `SENTRY_DSN` | Sentry DSN for server-side error tracking | Optional |
+
+**Build-time Arguments** (must be set when building the Docker image):
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for client-side error tracking (baked into build) | Optional |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token for uploading source maps | Optional |
+| `GIT_VERSION_LABEL` | Git version label to display in app footer | `unknown` |
+
+> **Important**: Variables prefixed with `NEXT_PUBLIC_` must be set at **build time** as they are baked into the JavaScript bundle. Setting them at runtime will not work.
 
 ## Docker Commands
 
 ### Build the image
 ```bash
-# Build with current git version (tag or commit hash)
-docker build -f docker/Dockerfile -t audio-marker --build-arg GIT_VERSION_LABEL=$(git describe --tags --always) .
+# Build with current git version (tag or commit hash) and Sentry
+docker build -f docker/Dockerfile -t audio-marker \
+  --build-arg GIT_VERSION_LABEL=$(git describe --tags --always) \
+  --build-arg NEXT_PUBLIC_SENTRY_DSN="your-sentry-dsn" \
+  --build-arg SENTRY_AUTH_TOKEN="your-sentry-auth-token" \
+  .
 
 # Build with specific version tag
 docker build -f docker/Dockerfile -t audio-marker --build-arg GIT_VERSION_LABEL=v0.2.3 .
@@ -212,3 +229,17 @@ For production deployment:
 4. Configure automated backups
 5. Use Docker secrets for sensitive environment variables
 6. Consider using a managed database instead of SQLite for better performance and reliability
+
+### GitHub Actions Setup
+
+If you're building images via GitHub Actions (as configured in `.github/workflows/`), you need to add these secrets to your GitHub repository:
+
+1. Go to your repository → Settings → Secrets and variables → Actions
+2. Add the following secrets:
+   - `SENTRY_DSN`: Your Sentry DSN URL
+   - `SENTRY_AUTH_TOKEN`: Your Sentry auth token for uploading source maps
+
+The workflows are already configured to pass these as build arguments. When you push a new tag (e.g., `v1.0.0`), the workflows will automatically:
+- Build Docker images with Sentry enabled
+- Push to both GitHub Container Registry and Docker Hub (if configured)
+- Upload source maps to Sentry for better error tracking
