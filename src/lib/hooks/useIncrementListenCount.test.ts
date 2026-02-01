@@ -28,6 +28,7 @@ describe('useIncrementListenCount', () => {
 
     expect(mockMutate).toHaveBeenCalledWith(
       { id: 'audio-123' },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       expect.objectContaining({ onSuccess: expect.any(Function) })
     );
   });
@@ -96,12 +97,16 @@ describe('useIncrementListenCount', () => {
     );
 
     // Get the onSuccess callback and call it
-    const callArgs = mockMutate.mock.calls[0];
-    if (callArgs && callArgs[1] && 'onSuccess' in callArgs[1]) {
-      const onSuccessCallback = callArgs[1].onSuccess as () => void;
+    const callArgs = mockMutate.mock.calls[0] as [
+      { id: string },
+      { onSuccess?: () => void } | undefined
+    ];
+    const onSuccessCallback = callArgs?.[1]?.onSuccess;
+    if (onSuccessCallback) {
       onSuccessCallback();
     }
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(localStorage.setItem).toHaveBeenCalledWith(
       'audio_listen_audio-123',
       now.toString()
@@ -166,12 +171,16 @@ describe('useIncrementListenCount', () => {
     );
 
     // Get the onSuccess callback and call it
-    const callArgs = mockMutate.mock.calls[0];
-    if (callArgs && callArgs[1] && 'onSuccess' in callArgs[1]) {
-      const onSuccessCallback = callArgs[1].onSuccess as () => void;
+    const callArgs = mockMutate.mock.calls[0] as [
+      { id: string },
+      { onSuccess?: () => void } | undefined
+    ];
+    const onSuccessCallback = callArgs?.[1]?.onSuccess;
+    if (onSuccessCallback) {
       onSuccessCallback();
     }
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(localStorage.setItem).toHaveBeenCalledWith(
       'playlist_listen_playlist-456',
       now.toString()

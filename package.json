@@ -24,6 +24,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:run": "vitest run",
+    "test:ci": "npm run typecheck && npm run lint && npm run test:run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

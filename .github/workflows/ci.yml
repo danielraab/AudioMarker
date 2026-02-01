@@ -38,19 +38,6 @@ jobs:
       - name: Run tests
         run: npm run test:run
 
-      - name: Generate coverage report
-        run: npm run test:coverage
-        continue-on-error: true
-
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
-        if: always()
-        continue-on-error: true
-        with:
-          files: ./coverage/coverage-final.json
-          flags: unittests
-          name: codecov-umbrella
-
   security:
     name: Security Audit
     runs-on: ubuntu-latest
