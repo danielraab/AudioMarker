@@ -4,6 +4,7 @@
 const CACHE_NAME = 'audio-marker-v1';
 const AUDIO_CACHE_NAME = 'audio-marker-audio-v1';
 const STATIC_CACHE_NAME = 'audio-marker-static-v1';
+const AUDIO_API_REGEX = /^\/api\/audio\/[^\/]+\/file$/;
 
 // Static assets to cache on install
 const STATIC_ASSETS = [
@@ -162,6 +163,11 @@ function isAudioRequest(request) {
   const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac', '.webm'];
   const pathname = url.pathname.toLowerCase();
   
+  // Check if it's the audio API endpoint
+  if (pathname.match(AUDIO_API_REGEX)) {
+    return true;
+  }
+  
   // Check file extension
   if (audioExtensions.some(ext => pathname.endsWith(ext))) {
     return true;
@@ -186,6 +192,10 @@ function isStaticAsset(request) {
 
 function isApiRequest(request) {
   const url = new URL(request.url);
+  // Exclude audio file API from general API handling
+  if (url.pathname.match(AUDIO_API_REGEX)) {
+    return false;
+  }
   return url.pathname.startsWith('/api/');
 }
 
