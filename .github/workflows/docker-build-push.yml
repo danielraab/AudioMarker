@@ -30,12 +30,19 @@ jobs:
 
       - name: Run type check
         run: npm run typecheck
+        env:
+          SKIP_ENV_VALIDATION: true
 
       - name: Run linter
         run: npm run lint
+        env:
+          SKIP_ENV_VALIDATION: true
 
       - name: Run tests
         run: npm run test:run
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+          AUTH_SECRET: "test-secret-key-for-ci-only"
 
 
   build-and-push:
