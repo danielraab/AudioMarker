@@ -125,7 +125,10 @@ export default function AudioPlayer({
       region.play();
     };
     const handleRegionOut = (region: Region) => {
-      if (activeRegionId.current === region.id && wavesurfer.current?.isPlaying()) {
+      if (activeRegionId.current === region.id &&
+          region.end !== region.start &&
+          wavesurfer.current?.isPlaying()
+      ) {
         region.play();
       }
     };
@@ -311,8 +314,6 @@ export default function AudioPlayer({
         }
       }
       wavesurfer.current.seekTo(marker.timestamp / wavesurfer.current.getDuration());
-
-      void wavesurfer.current.play();
     }
   }, []);
 
