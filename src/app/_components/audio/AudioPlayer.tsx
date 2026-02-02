@@ -25,6 +25,8 @@ interface AudioPlayerProps {
   onPlayFromFnReady?: (playFrom: (marker: AudioMarker) => void) => void;
   onSelectedRegionUpdate?: (start: number | null, end: number | null) => void;
   onClearRegionReady?: (clearRegion: () => void) => void;
+  onFinish?: () => void;
+  onPlayReady?: (play: () => void) => void;
 }
 
 export default function AudioPlayer({
@@ -36,6 +38,8 @@ export default function AudioPlayer({
   onPlayFromFnReady,
   onSelectedRegionUpdate,
   onClearRegionReady,
+  onFinish,
+  onPlayReady,
 }: AudioPlayerProps) {
   const t = useTranslations('AudioPlayer');
   const waveformRef = useRef<HTMLDivElement>(null);
@@ -192,7 +196,10 @@ export default function AudioPlayer({
 
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
-    const handleFinish = () => setIsPlaying(false);
+    const handleFinish = () => {
+      setIsPlaying(false);
+      onFinish?.();
+    };
     const handleReady = () => {
       setIsLoading(false);
       setLoadError(null);
@@ -243,7 +250,7 @@ export default function AudioPlayer({
         wavesurfer.current.destroy();
       }
     };
-  }, [audioUrl, onSelectedRegionUpdate, onTimeUpdate, createRegionsFromMarkers]);
+  }, [audioUrl, onSelectedRegionUpdate, onTimeUpdate, createRegionsFromMarkers, onFinish]);
 
   // Update marker regions when markers change, without reinitializing WaveSurfer
   useEffect(() => {
@@ -301,6 +308,12 @@ export default function AudioPlayer({
     }
   }, [isPlaying]);
 
+  const play = useCallback(() => {
+    if (wavesurfer.current && !isPlaying) {
+      void wavesurfer.current.play();
+    }
+  }, [isPlaying]);
+
   const handleStop = () => {
     if (!wavesurfer.current) return;
     wavesurfer.current.stop();
@@ -340,6 +353,13 @@ export default function AudioPlayer({
       onPlayFromFnReady(playFrom);
     }
   }, [isLoading, playFrom, onPlayFromFnReady]);
+
+  // Expose play function to parent component when ready
+  useEffect(() => {
+    if (!isLoading && onPlayReady) {
+      onPlayReady(play);
+    }
+  }, [isLoading, play, onPlayReady]);
 
   // Expose clearSelectionRegion function to parent component when ready
   useEffect(() => {

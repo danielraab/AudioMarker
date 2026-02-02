@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import AudioPlayer from '../AudioPlayer';
 import BrowserMarkerManager from './BrowserMarkerManager';
 import type { AudioMarker } from '~/types/Audio';
 import { api } from "~/trpc/react";
 import StoredMarkers from './StoredMarkers';
 import { useIncrementListenCount } from '~/lib/hooks/useIncrementListenCount';
+import { AutoplayCountdownModal } from './AutoplayCountdownModal';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface AudioPlayerWithMarkersProps {
   audioUrl: string;
@@ -21,12 +23,47 @@ export default function ListenOnlyAudioPlayer({
   audioReadOnlyToken,
   audioId 
 }: AudioPlayerWithMarkersProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const playlistId = searchParams.get('playlistId');
+  
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
   const { data: storedMarkers = [] } = api.marker.getMarkers.useQuery({ audioId });
   const [currentTime, setCurrentTime] = useState(0);
   const [playFromFunction, setPlayFromFunction] = useState<((marker: AudioMarker) => void) | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<{start: number, end: number} | null>(null);
   const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
+  const [showCountdownModal, setShowCountdownModal] = useState(false);
+  const [nextAudio, setNextAudio] = useState<{ id: string; name: string } | null>(null);
+  const [hasFinished, setHasFinished] = useState(false);
+  const [playFunction, setPlayFunction] = useState<(() => void) | null>(null);
+  const [shouldAutoplay, setShouldAutoplay] = useState(!!playlistId);
+
+  // Fetch playlist data if autoplay is enabled
+  const { data: playlist } = api.playlist.getPublicPlaylistById.useQuery(
+    { id: playlistId! },
+    { enabled: !!playlistId }
+  );
+
+  // Find next audio in playlist
+  useEffect(() => {
+    if (!playlist || !hasFinished) return;
+
+    const currentIndex = playlist.audios.findIndex(pa => pa.audio.id === audioId);
+    if (currentIndex === -1 || currentIndex === playlist.audios.length - 1) {
+      // No next audio (last in playlist or not found)
+      return;
+    }
+
+    const nextPlaylistAudio = playlist.audios[currentIndex + 1];
+    if (nextPlaylistAudio) {
+      setNextAudio({
+        id: nextPlaylistAudio.audio.id,
+        name: nextPlaylistAudio.audio.name,
+      });
+      setShowCountdownModal(true);
+    }
+  }, [playlist, audioId, hasFinished]);
 
   const markerUnion = useMemo(() => {
     return [...markers, ...storedMarkers];
@@ -80,9 +117,50 @@ export default function ListenOnlyAudioPlayer({
     setSelectedRegion(null);
   }, [clearRegionFunction]);
 
+  const handleAudioFinish = useCallback(() => {
+    if (playlistId) {
+      setHasFinished(true);
+    }
+  }, [playlistId]);
+
+  const handlePlayNext = useCallback(() => {
+    if (nextAudio && playlistId) {
+      router.push(`/audios/${nextAudio.id}/listen?playlistId=${playlistId}`);
+    }
+  }, [nextAudio, playlistId, router]);
+
+  const handleCancelAutoplay = useCallback(() => {
+    setShowCountdownModal(false);
+    setHasFinished(false);
+    setNextAudio(null);
+  }, []);
+
+  const handlePlayReady = useCallback((play: () => void) => {
+    setPlayFunction(() => play);
+  }, []);
+
+  // Trigger autoplay when player is ready
+  useEffect(() => {
+    if (shouldAutoplay && playFunction) {
+      playFunction();
+      setShouldAutoplay(false);
+    }
+  }, [shouldAutoplay, playFunction]);
+
 
   return (
     <div className="w-full flex flex-col items-center space-y-6">
+      {/* Autoplay Countdown Modal */}
+      {nextAudio && (
+        <AutoplayCountdownModal
+          isOpen={showCountdownModal}
+          nextAudioName={nextAudio.name}
+          onCancel={handleCancelAutoplay}
+          onPlayNext={handlePlayNext}
+          countdownSeconds={5}
+        />
+      )}
+      
       {/* Audio Player */}
       <AudioPlayer
         audioUrl={audioUrl}
@@ -93,6 +171,8 @@ export default function ListenOnlyAudioPlayer({
         onPlayFromFnReady={handlePlayFromFnReady}
         onSelectedRegionUpdate={handleSelectedRegionUpdate}
         onClearRegionReady={handleClearRegionReady}
+        onFinish={handleAudioFinish}
+        onPlayReady={handlePlayReady}
       />
 
       <div className='flex flex-col items-center space-y-6'>

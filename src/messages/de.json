@@ -304,7 +304,18 @@
     },
     "empty": {
       "noPublicAudios": "Keine öffentlichen Audios in dieser Playlist."
+    },
+    "autoplay": {
+      "start": "Alle abspielen"
     }
+  },
+  "AutoplayCountdownModal": {
+    "title": "Nächstes Audio startet",
+    "message": "Nächstes wird abgespielt: {audioName}",
+    "seconds": "Sekunden",
+    "progressLabel": "Autoplay-Countdown-Fortschritt",
+    "cancel": "Autoplay abbrechen",
+    "playNow": "Jetzt abspielen"
   },
   "CreatePlaylistForm": {
     "cta": "Neue Playlist erstellen",

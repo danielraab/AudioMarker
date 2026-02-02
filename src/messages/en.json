@@ -274,7 +274,18 @@
     },
     "empty": {
       "noPublicAudios": "No public audios in this playlist."
+    },
+    "autoplay": {
+      "start": "Play All"
     }
+  },
+  "AutoplayCountdownModal": {
+    "title": "Next Audio Starting",
+    "message": "Playing next: {audioName}",
+    "seconds": "seconds",
+    "progressLabel": "Autoplay countdown progress",
+    "cancel": "Cancel Autoplay",
+    "playNow": "Play Now"
   },
   "PlaylistListItem": {
     "audioCount": "{count} {count, plural, one {audio} other {audios}}",

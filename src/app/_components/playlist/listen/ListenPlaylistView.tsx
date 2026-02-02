@@ -1,10 +1,10 @@
 'use client';
 
 import { ListenPlaylistAudioItem } from "./ListenPlaylistAudioItem";
-import { Card, CardBody, Chip } from "@heroui/react";
-import { Globe, User, ListMusic } from "lucide-react";
+import { Card, CardBody, Chip, Button } from "@heroui/react";
+import { Globe, User, ListMusic, PlayCircle } from "lucide-react";
 import { formatTimeAgo } from "~/lib/time";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import type { PlaylistWithAudios } from "~/types/Playlist";
 import { api } from "~/trpc/react";
 import { useIncrementListenCount } from "~/lib/hooks/useIncrementListenCount";
@@ -15,6 +15,8 @@ interface ListenPlaylistViewProps {
 }
 
 export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
+  const router = useRouter();
+  
   // Mutation to increment listen count
   const incrementListenCount = api.playlist.incrementListenCount.useMutation();
 
@@ -27,6 +29,15 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
 
   const t = useTranslations('ListenPlaylistView');
   const tPlaylist = useTranslations('PlaylistListItem');
+
+  const handleStartAutoplay = () => {
+    if (playlist.audios.length === 0) return;
+    
+    const firstAudio = playlist.audios[0];
+    if (!firstAudio) return;
+    
+    router.push(`/audios/${firstAudio.audio.id}/listen?playlistId=${playlist.id}`);
+  };
 
   try {
 
@@ -58,6 +69,21 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
                   <p><span className="font-medium">{tPlaylist('labels.lastUpdated')}</span> {formatTimeAgo(new Date(playlist.updatedAt))}</p>
                 </div>
               </div>
+              
+              {/* Autoplay Button */}
+              {playlist.audios.length > 0 && (
+                <div className="flex-shrink-0">
+                  <Button
+                    color="primary"
+                    variant="flat"
+                    startContent={<PlayCircle size={20} />}
+                    onPress={handleStartAutoplay}
+                    size="lg"
+                  >
+                    {t('autoplay.start')}
+                  </Button>
+                </div>
+              )}
             </div>
           </CardBody>
         </Card>
