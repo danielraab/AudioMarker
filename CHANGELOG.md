@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.4.10] - 2026-02-01
+
+### Changed
+
+- **Section Marker**: remove EndTime Input when adding section, only defined via player now
+
+### Fixed
+
+- **Caching audio files**: Audio file caching with new route works again
+- **Play on marker click**: The auto play when clicking on a marker works now also for non sections again
+
 ## [0.4.7] - 2026-02-01
 
 ### Added
