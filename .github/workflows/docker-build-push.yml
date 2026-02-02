@@ -5,6 +5,12 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip tests and security checks'
+        required: false
+        type: boolean
+        default: false
 
 env:
   REGISTRY: ghcr.io
@@ -13,6 +19,7 @@ env:
 jobs:
   test:
     name: Run Tests
+    if: github.event_name != 'workflow_dispatch' || !inputs.skip_tests
     runs-on: ubuntu-latest
     
     steps:
@@ -43,6 +50,28 @@ jobs:
         env:
           DATABASE_URL: "postgresql://test:test@localhost:5432/test"
           AUTH_SECRET: "test-secret-key-for-ci-only"
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "Checking for high and critical vulnerabilities..."
+          npm audit --json > audit-report.json || true
+          
+          HIGH_VULNS=$(cat audit-report.json | jq '.metadata.vulnerabilities.high // 0')
+          CRITICAL_VULNS=$(cat audit-report.json | jq '.metadata.vulnerabilities.critical // 0')
+          
+          echo "High vulnerabilities: $HIGH_VULNS"
+          echo "Critical vulnerabilities: $CRITICAL_VULNS"
+          
+          if [ "$HIGH_VULNS" -gt 0 ] || [ "$CRITICAL_VULNS" -gt 0 ]; then
+            echo "::error::Found $HIGH_VULNS high and $CRITICAL_VULNS critical vulnerabilities"
+            echo "Run 'npm audit' locally to see details"
+            exit 1
+          fi
+          
+          echo "✅ No high or critical vulnerabilities found"
 
 
   build-and-push:
