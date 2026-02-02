@@ -36,7 +36,26 @@ export default function AddMarker({ currentTime, onAddMarker, selectedRegion, on
     setNewMarkerLabel('');
   };
 
+  const hasValidRegion = selectedRegion?.start && selectedRegion?.end && selectedRegion.end > selectedRegion.start;
+
   return (<div className="flex flex-col gap-2 w-full">
+    <Switch
+      size="sm"
+      isSelected={isSection}
+      isDisabled={!hasValidRegion}
+      onValueChange={(checked) => {
+        setIsSection(checked);
+        if (checked && sectionEndTime <= effectiveStartTime) {
+          setSectionEndTime(effectiveStartTime + 10);
+        }
+        // Clear region selection when switch is disabled
+        if (!checked && onClearRegion) {
+          onClearRegion();
+        }
+      }}
+    >
+      <span className="text-sm">{t('createSection', { defaultMessage: 'Create section' })}</span>
+    </Switch>
     <div className="flex flex-col sm:flex-row gap-2">
       <Input
         size="sm"
@@ -51,19 +70,6 @@ export default function AddMarker({ currentTime, onAddMarker, selectedRegion, on
         }}
       />
 
-
-      {isSection && (
-        <Input
-          size="sm"
-          type="number"
-          label={t('endTime', { defaultMessage: 'End time (seconds)' })}
-          value={effectiveEndTime.toString()}
-          onValueChange={(value) => setSectionEndTime(parseFloat(value) || effectiveStartTime + 10)}
-          min={effectiveStartTime}
-        />
-      )}
-
-
       {/* Quick Add Marker at Current Time */}
       <Button
         size="sm"
@@ -73,25 +79,11 @@ export default function AddMarker({ currentTime, onAddMarker, selectedRegion, on
         startContent={<Plus size={16} />}
         className="shrink-0"
       >
-        {t('addAt', { time: formatTime(effectiveStartTime) })}
+        {isSection 
+          ? t('addSection', { start: formatTime(effectiveStartTime), end: formatTime(effectiveEndTime) })
+          : t('addAt', { time: formatTime(effectiveStartTime) })
+        }
       </Button>
     </div>
-
-    <Switch
-      size="sm"
-      isSelected={isSection}
-      onValueChange={(checked) => {
-        setIsSection(checked);
-        if (checked && sectionEndTime <= effectiveStartTime) {
-          setSectionEndTime(effectiveStartTime + 10);
-        }
-        // Clear region selection when switch is disabled
-        if (!checked && onClearRegion) {
-          onClearRegion();
-        }
-      }}
-    >
-      <span className="text-sm">{t('createSection', { defaultMessage: 'Create section' })}</span>
-    </Switch>
   </div>);
 }

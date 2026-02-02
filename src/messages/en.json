@@ -166,6 +166,7 @@
   "AddMarker": {
     "labelPlaceholder": "Marker label (optional)",
     "addAt": "Add at {time}",
+    "addSection": "Add {start} - {end}",
     "createSection": "Create section",
     "endTime": "End time (seconds)"
   },
