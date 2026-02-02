@@ -9,15 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **navigation for playlists**: a new navigation for playlist is added to the audio listen page
-
 ### Changed
+
+### Fixed
+
+### Security
+
+## [0.4.11] - 2026-02-02
+
+### Added
+
+- **navigation for playlists**: a new navigation for playlist is added to the audio listen page
 
 ### Fixed
 
 - **unnecessary Player rerenderign**: no rerendering of player when marker added
 
-### Security
 
 ## [0.4.10] - 2026-02-01
 

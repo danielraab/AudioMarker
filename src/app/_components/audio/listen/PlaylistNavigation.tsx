@@ -22,7 +22,7 @@ export function PlaylistNavigation({
   onAutoplayToggle,
 }: PlaylistNavigationProps) {
   const t = useTranslations('PlaylistNavigation');
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const currentIndex = playlist.audios.findIndex(pa => pa.audio.id === currentAudioId);
   const hasPrev = currentIndex > 0;
