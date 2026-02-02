@@ -197,7 +197,6 @@ export default function AudioPlayer({
       setIsLoading(false);
       setLoadError(null);
       wavesurfer.current?.zoom(initialZoomLevel);
-      createRegionsFromMarkers(markers);
     };
     const handleError = (error: Error) => {
       setIsLoading(false);
@@ -244,7 +243,14 @@ export default function AudioPlayer({
         wavesurfer.current.destroy();
       }
     };
-  }, [audioUrl, onSelectedRegionUpdate, onTimeUpdate, createRegionsFromMarkers, markers]);
+  }, [audioUrl, onSelectedRegionUpdate, onTimeUpdate, createRegionsFromMarkers]);
+
+  // Update marker regions when markers change, without reinitializing WaveSurfer
+  useEffect(() => {
+    if (!isLoading && wavesurfer.current && regionsPlugin.current) {
+      createRegionsFromMarkers(markers);
+    }
+  }, [markers, isLoading, createRegionsFromMarkers]);
 
   const handleZoomChange = (value: number | number[]) => {
     const zoom = Array.isArray(value) ? value[0] : value;

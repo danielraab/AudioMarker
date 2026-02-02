@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **unnecessary Player rerenderign**: no rerendering of player when marker added
+
 ### Security
 
 ## [0.4.10] - 2026-02-01
