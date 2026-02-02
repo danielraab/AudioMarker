@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **navigation for playlists**: a new navigation for playlist is added to the audio listen page
+
 ### Changed
 
 ### Fixed

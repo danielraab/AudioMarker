@@ -317,6 +317,15 @@
     "cancel": "Autoplay abbrechen",
     "playNow": "Jetzt abspielen"
   },
+  "PlaylistNavigation": {
+    "position": "{current} von {total}",
+    "autoplay": "Autoplay",
+    "playing": "Läuft",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "collapse": "Playlist einklappen",
+    "expand": "Playlist ausklappen"
+  },
   "CreatePlaylistForm": {
     "cta": "Neue Playlist erstellen",
     "title": "Neue Playlist erstellen",

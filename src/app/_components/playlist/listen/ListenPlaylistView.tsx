@@ -36,7 +36,7 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
     const firstAudio = playlist.audios[0];
     if (!firstAudio) return;
     
-    router.push(`/audios/${firstAudio.audio.id}/listen?playlistId=${playlist.id}`);
+    router.push(`/audios/${firstAudio.audio.id}/listen?playlistId=${playlist.id}&autoplay=true`);
   };
 
   try {
@@ -107,6 +107,7 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
                 <ListenPlaylistAudioItem
                   key={playlistAudio.id}
                   playlistAudio={playlistAudio}
+                  playlistId={playlist.id}
                 />
               ))}
             </div>

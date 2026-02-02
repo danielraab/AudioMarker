@@ -8,9 +8,10 @@ import { useTranslations } from "next-intl";
 
 interface ListenPlaylistAudioItemProps {
   playlistAudio: PlaylistAudio;
+  playlistId: string;
 }
 
-export function ListenPlaylistAudioItem({ playlistAudio }: ListenPlaylistAudioItemProps) {
+export function ListenPlaylistAudioItem({ playlistAudio, playlistId }: ListenPlaylistAudioItemProps) {
   const { audio } = playlistAudio;
   const t = useTranslations("PlaylistAudioItem");
   const tGlobal = useTranslations();
@@ -33,7 +34,7 @@ export function ListenPlaylistAudioItem({ playlistAudio }: ListenPlaylistAudioIt
                 variant="light"
                 color="primary"
                 as="a"
-                href={`/audios/${audio.id}/listen`}
+                href={`/audios/${audio.id}/listen?playlistId=${playlistId}`}
                 target="_blank"
                 title={t("actions.play")}
               >

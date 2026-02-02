@@ -286,8 +286,15 @@
     "progressLabel": "Autoplay countdown progress",
     "cancel": "Cancel Autoplay",
     "playNow": "Play Now"
-  },
-  "PlaylistListItem": {
+  },  "PlaylistNavigation": {
+    "position": "{current} of {total}",
+    "autoplay": "Autoplay",
+    "playing": "Playing",
+    "previous": "Previous",
+    "next": "Next",
+    "collapse": "Collapse playlist",
+    "expand": "Expand playlist"
+  },  "PlaylistListItem": {
     "audioCount": "{count} {count, plural, one {audio} other {audios}}",
     "listens": "{count} {count, plural, one {listen} other {listens}}",
     "visibility": {

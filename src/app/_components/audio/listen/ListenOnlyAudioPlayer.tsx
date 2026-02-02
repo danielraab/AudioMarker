@@ -8,6 +8,7 @@ import { api } from "~/trpc/react";
 import StoredMarkers from './StoredMarkers';
 import { useIncrementListenCount } from '~/lib/hooks/useIncrementListenCount';
 import { AutoplayCountdownModal } from './AutoplayCountdownModal';
+import { PlaylistNavigation } from './PlaylistNavigation';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface AudioPlayerWithMarkersProps {
@@ -26,6 +27,7 @@ export default function ListenOnlyAudioPlayer({
   const router = useRouter();
   const searchParams = useSearchParams();
   const playlistId = searchParams.get('playlistId');
+  const autoplayParam = searchParams.get('autoplay') === 'true';
   
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
   const { data: storedMarkers = [] } = api.marker.getMarkers.useQuery({ audioId });
@@ -37,7 +39,8 @@ export default function ListenOnlyAudioPlayer({
   const [nextAudio, setNextAudio] = useState<{ id: string; name: string } | null>(null);
   const [hasFinished, setHasFinished] = useState(false);
   const [playFunction, setPlayFunction] = useState<(() => void) | null>(null);
-  const [shouldAutoplay, setShouldAutoplay] = useState(!!playlistId);
+  const [shouldAutoplay, setShouldAutoplay] = useState(!!playlistId && autoplayParam);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(autoplayParam);
 
   // Fetch playlist data if autoplay is enabled
   const { data: playlist } = api.playlist.getPublicPlaylistById.useQuery(
@@ -47,7 +50,7 @@ export default function ListenOnlyAudioPlayer({
 
   // Find next audio in playlist
   useEffect(() => {
-    if (!playlist || !hasFinished) return;
+    if (!playlist || !hasFinished || !autoplayEnabled) return;
 
     const currentIndex = playlist.audios.findIndex(pa => pa.audio.id === audioId);
     if (currentIndex === -1 || currentIndex === playlist.audios.length - 1) {
@@ -63,7 +66,7 @@ export default function ListenOnlyAudioPlayer({
       });
       setShowCountdownModal(true);
     }
-  }, [playlist, audioId, hasFinished]);
+  }, [playlist, audioId, hasFinished, autoplayEnabled]);
 
   const markerUnion = useMemo(() => {
     return [...markers, ...storedMarkers];
@@ -125,9 +128,14 @@ export default function ListenOnlyAudioPlayer({
 
   const handlePlayNext = useCallback(() => {
     if (nextAudio && playlistId) {
-      router.push(`/audios/${nextAudio.id}/listen?playlistId=${playlistId}`);
+      const params = new URLSearchParams();
+      params.set('playlistId', playlistId);
+      if (autoplayEnabled) {
+        params.set('autoplay', 'true');
+      }
+      router.push(`/audios/${nextAudio.id}/listen?${params.toString()}`);
     }
-  }, [nextAudio, playlistId, router]);
+  }, [nextAudio, playlistId, autoplayEnabled, router]);
 
   const handleCancelAutoplay = useCallback(() => {
     setShowCountdownModal(false);
@@ -138,6 +146,17 @@ export default function ListenOnlyAudioPlayer({
   const handlePlayReady = useCallback((play: () => void) => {
     setPlayFunction(() => play);
   }, []);
+
+  const handleNavigate = useCallback((audioId: string) => {
+    if (playlistId) {
+      const params = new URLSearchParams();
+      params.set('playlistId', playlistId);
+      if (autoplayEnabled) {
+        params.set('autoplay', 'true');
+      }
+      router.push(`/audios/${audioId}/listen?${params.toString()}`);
+    }
+  }, [playlistId, autoplayEnabled, router]);
 
   // Trigger autoplay when player is ready
   useEffect(() => {
@@ -150,6 +169,19 @@ export default function ListenOnlyAudioPlayer({
 
   return (
     <div className="w-full flex flex-col items-center space-y-6">
+      {/* Playlist Navigation */}
+      {playlist && playlistId && (
+        <div className="w-full max-w-3xl">
+          <PlaylistNavigation
+            playlist={playlist}
+            currentAudioId={audioId}
+            onNavigate={handleNavigate}
+            autoplayEnabled={autoplayEnabled}
+            onAutoplayToggle={setAutoplayEnabled}
+          />
+        </div>
+      )}
+    
       {/* Autoplay Countdown Modal */}
       {nextAudio && (
         <AutoplayCountdownModal
