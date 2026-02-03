@@ -21,6 +21,7 @@ services:
       - AUTH_AUTHENTIK_SECRET=your-authentik-secret
       - AUTH_AUTHENTIK_ISSUER=your-authentik-issuer
       - SENTRY_DSN=${SENTRY_DSN}
+      - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
     volumes:
       # Mount audio files directory (now points to data/uploads inside container)
       - audio_uploads:/app/data/uploads

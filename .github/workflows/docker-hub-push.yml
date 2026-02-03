@@ -128,8 +128,10 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             GIT_VERSION_LABEL=${{ steps.version.outputs.version }}
+            SENTRY_DSN=${{ secrets.SENTRY_DSN }}
             NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }}
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            NEXT_PUBLIC_ENVIRONMENT=production
 
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4
