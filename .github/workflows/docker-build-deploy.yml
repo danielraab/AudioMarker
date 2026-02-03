@@ -1,0 +1,292 @@
+name: Build and Deploy Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip tests and security checks'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  GHCR_REGISTRY: ghcr.io
+  GHCR_IMAGE_NAME: ${{ github.repository }}
+  DOCKERHUB_IMAGE_NAME: audio-marker
+
+jobs:
+  test:
+    name: Run Tests
+    if: github.event_name != 'workflow_dispatch' || !inputs.skip_tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run type check
+        run: npm run typecheck
+        env:
+          SKIP_ENV_VALIDATION: true
+
+      - name: Run linter
+        run: npm run lint
+        env:
+          SKIP_ENV_VALIDATION: true
+
+      - name: Run tests
+        run: npm run test:run
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+          AUTH_SECRET: "test-secret-key-for-ci-only"
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "Checking for high and critical vulnerabilities..."
+          npm audit --json > audit-report.json || true
+          
+          HIGH_VULNS=$(cat audit-report.json | jq '.metadata.vulnerabilities.high // 0')
+          CRITICAL_VULNS=$(cat audit-report.json | jq '.metadata.vulnerabilities.critical // 0')
+          
+          echo "High vulnerabilities: $HIGH_VULNS"
+          echo "Critical vulnerabilities: $CRITICAL_VULNS"
+          
+          if [ "$HIGH_VULNS" -gt 0 ] || [ "$CRITICAL_VULNS" -gt 0 ]; then
+            echo "::error::Found $HIGH_VULNS high and $CRITICAL_VULNS critical vulnerabilities"
+            echo "Run 'npm audit' locally to see details"
+            exit 1
+          fi
+          
+          echo "✅ No high or critical vulnerabilities found"
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [test]
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      app_env: ${{ steps.environment.outputs.app_env }}
+      ghcr-tags: ${{ steps.ghcr-meta.outputs.tags }}
+      ghcr-labels: ${{ steps.ghcr-meta.outputs.labels }}
+      dockerhub-tags: ${{ steps.dockerhub-meta.outputs.tags }}
+      dockerhub-labels: ${{ steps.dockerhub-meta.outputs.labels }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine deployment environment
+        id: environment
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/*RC* ]] || [[ "${{ github.ref }}" == refs/tags/*rc* ]]; then
+            echo "app_env=staging" >> $GITHUB_OUTPUT
+            echo "📦 Building for STAGING environment"
+          else
+            echo "app_env=production" >> $GITHUB_OUTPUT
+            echo "🚀 Building for PRODUCTION environment"
+          fi
+
+      - name: Extract metadata for GitHub Container Registry
+        id: ghcr-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Extract metadata for Docker Hub
+        id: dockerhub-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Determine version string
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # If this is a tag push, use the tag name
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            # Otherwise use git describe or fall back to short SHA
+            VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "${{ github.sha }}")
+            echo "version=${VERSION:0:12}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: |
+            ${{ steps.ghcr-meta.outputs.tags }}
+            ${{ steps.dockerhub-meta.outputs.tags }}
+          labels: |
+            ${{ steps.ghcr-meta.outputs.labels }}
+            ${{ steps.dockerhub-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/image.tar
+          build-args: |
+            GIT_VERSION_LABEL=${{ steps.version.outputs.version }}
+            SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            APP_ENV=${{ steps.environment.outputs.app_env }}
+            NEXT_PUBLIC_APP_ENV=${{ steps.environment.outputs.app_env }}
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp/image.tar
+          retention-days: 1
+
+  deploy-github:
+    name: Deploy to GitHub Container Registry
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine version string
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "${{ github.sha }}")
+            echo "version=${VERSION:0:12}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push to GitHub Container Registry
+        id: push
+        run: |
+          echo "Pushing to GitHub Container Registry..."
+          
+          # Log in to GHCR
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.GHCR_REGISTRY }} -u ${{ github.actor }} --password-stdin
+          
+          # Build and push to GHCR
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --push \
+            --tag ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}:${{ steps.version.outputs.version }} \
+            --tag ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}:latest \
+            --cache-from type=gha \
+            --build-arg GIT_VERSION_LABEL=${{ steps.version.outputs.version }} \
+            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --build-arg NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            --build-arg APP_ENV=${{ needs.build.outputs.app_env }} \
+            --build-arg NEXT_PUBLIC_APP_ENV=${{ needs.build.outputs.app_env }} \
+            -f ./docker/Dockerfile \
+            .
+          
+          echo "✅ Successfully pushed to GitHub Container Registry with environment: ${{ needs.build.outputs.app_env }}"
+
+      - name: Generate artifact attestation for GHCR
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+  deploy-dockerhub:
+    name: Deploy to Docker Hub
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name != 'pull_request'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine version string
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "${{ github.sha }}")
+            echo "version=${VERSION:0:12}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push to Docker Hub
+        run: |
+          echo "Pushing to Docker Hub..."
+          
+          # Log in to Docker Hub
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          
+          # Build and push to Docker Hub
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --push \
+            --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ steps.version.outputs.version }} \
+            --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}:latest \
+            --cache-from type=gha \
+            --build-arg GIT_VERSION_LABEL=${{ steps.version.outputs.version }} \
+            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --build-arg NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            --build-arg APP_ENV=${{ needs.build.outputs.app_env }} \
+            --build-arg NEXT_PUBLIC_APP_ENV=${{ needs.build.outputs.app_env }} \
+            -f ./docker/Dockerfile \
+            .
+          
+          echo "✅ Successfully pushed to Docker Hub with environment: ${{ needs.build.outputs.app_env }}"
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}
+          readme-filepath: ./docker/README.Docker.md
