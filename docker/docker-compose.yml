@@ -22,8 +22,8 @@ services:
       - AUTH_AUTHENTIK_ID=your-authentik-id
       - AUTH_AUTHENTIK_SECRET=your-authentik-secret
       - AUTH_AUTHENTIK_ISSUER=your-authentik-issuer
-      - SENTRY_DSN=${SENTRY_DSN}
-      - SENTRY_LOG_LEVELS=${SENTRY_LOG_LEVELS:-log,warn,error}
+      - NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+      - NEXT_PUBLIC_SENTRY_LOG_LEVELS=${NEXT_PUBLIC_SENTRY_LOG_LEVELS:-log,warn,error}
     volumes:
       # Mount audio files directory (now points to data/uploads inside container)
       - audio_uploads:/app/data/uploads

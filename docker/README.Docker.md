@@ -55,7 +55,7 @@ The application uses two persistent volumes:
 | `AUTH_AUTHENTIK_ID` | Authentik OAuth client ID | Required |
 | `AUTH_AUTHENTIK_SECRET` | Authentik OAuth client secret | Required |
 | `AUTH_AUTHENTIK_ISSUER` | Authentik issuer URL | Required |
-| `SENTRY_DSN` | Sentry DSN for server-side error tracking | Optional |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for server-side error tracking | Optional |
 
 **Build-time Arguments** (must be set when building the Docker image):
 
@@ -236,7 +236,7 @@ If you're building images via GitHub Actions (as configured in `.github/workflow
 
 1. Go to your repository → Settings → Secrets and variables → Actions
 2. Add the following secrets:
-   - `SENTRY_DSN`: Your Sentry DSN URL
+   - `NEXT_PUBLIC_SENTRY_DSN`: Your Sentry DSN URL
    - `SENTRY_AUTH_TOKEN`: Your Sentry auth token for uploading source maps
 
 The workflows are already configured to pass these as build arguments. When you push a new tag (e.g., `v1.0.0`), the workflows will automatically:
