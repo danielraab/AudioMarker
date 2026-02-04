@@ -7,7 +7,12 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-  DEFAULT_LOCALE: z.enum(['en', 'de']).default("en"),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
+    DEFAULT_LOCALE: z.enum(['en', 'de']).default("en"),
+    DATABASE_URL: z.string().url(),
+
     AUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string()
@@ -23,14 +28,8 @@ export const env = createEnv({
     EMAIL_SERVER_PASSWORD: z.string().optional(),
     EMAIL_FROM: z.string().email().optional(),
     MAIL_REGISTRATION_ENABLED: z.string().transform((val) => val !== "false").default("true"),
+    
     REQUIRE_AUTH_FOR_PUBLIC_CONTENT: z.string().transform((val) => val === "true").default("false"),
-    DATABASE_URL: z.string().url(),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
-    SENTRY_DSN: z.string().url().optional(),
-    SENTRY_TRACES_SAMPLE_RATE: z.string().optional(),
-    SENTRY_PROFILES_SAMPLE_RATE: z.string().optional(),
   },
 
   /**
@@ -40,9 +39,10 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_ENVIRONMENT: z
-    .enum(["development", "test", "production"])
-    .default("development"),
-    NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+      .enum(["development", "test", "production"])
+      .default("development"),
+    NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+    NEXT_PUBLIC_SENTRY_LOG_LEVELS: z.string().default("log,warn,error"),
   },
 
   /**
@@ -50,26 +50,28 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_ENVIRONMENT: process.env.ENVIRONMENT,
     DEFAULT_LOCALE: process.env.DEFAULT_LOCALE,
+    DATABASE_URL: process.env.DATABASE_URL,
+
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_AUTHENTIK_LABEL: process.env.AUTH_AUTHENTIK_LABEL,
     AUTH_AUTHENTIK_ID: process.env.AUTH_AUTHENTIK_ID,
     AUTH_AUTHENTIK_SECRET: process.env.AUTH_AUTHENTIK_SECRET,
     AUTH_AUTHENTIK_ISSUER: process.env.AUTH_AUTHENTIK_ISSUER,
+
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
     MAIL_REGISTRATION_ENABLED: process.env.MAIL_REGISTRATION_ENABLED,
+
     REQUIRE_AUTH_FOR_PUBLIC_CONTENT: process.env.REQUIRE_AUTH_FOR_PUBLIC_CONTENT,
-    DATABASE_URL: process.env.DATABASE_URL,
-    NODE_ENV: process.env.NODE_ENV,
-    SENTRY_DSN: process.env.SENTRY_DSN,
-    SENTRY_TRACES_SAMPLE_RATE: process.env.SENTRY_TRACES_SAMPLE_RATE,
-    SENTRY_PROFILES_SAMPLE_RATE: process.env.SENTRY_PROFILES_SAMPLE_RATE,
-    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN,
-    NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT || process.env.NODE_ENV || "development",
+
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_SENTRY_LOG_LEVELS: process.env.NEXT_PUBLIC_SENTRY_LOG_LEVELS,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

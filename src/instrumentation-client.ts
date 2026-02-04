@@ -3,23 +3,25 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { env } from "./env";
 
 Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  environment: process.env.NEXT_PUBLIC_APP_ENV ?? 'development',
+  dsn: env.NEXT_PUBLIC_SENTRY_DSN,
+  environment: env.NEXT_PUBLIC_ENVIRONMENT ?? 'production',
   
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: env.NEXT_PUBLIC_ENVIRONMENT === 'production' ? 0.1 : 1.0,
+
   // Enable logs to be sent to Sentry
   enableLogs: true,
+
   integrations: [
     // send console.log, console.warn, and console.error calls as logs to Sentry
-    Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
+    Sentry.consoleLoggingIntegration({ levels: (env.NEXT_PUBLIC_SENTRY_LOG_LEVELS ?? "log,warn,error").split(',') as ("log" | "warn" | "error")[] }),
   ],
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: true,
-//  tunnel: "/api/sentryTunnel",
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

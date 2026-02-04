@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@heroui/link";
 
 export default async function Footer() {
-  // Get version from environment (git tag, git describe, or commit hash)
+  // Get version from environment (git tag, git describe, or commit hash) (it is set in the nextjs config)
   const displayVersion = process.env.NEXT_PUBLIC_GIT_VERSION_LABEL ?? "dev";
   const t = await getTranslations("Footer");
   

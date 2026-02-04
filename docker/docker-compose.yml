@@ -8,12 +8,14 @@ services:
 #      dockerfile: docker/Dockerfile
 #      args:
 #        GIT_VERSION_LABEL: ${GIT_VERSION_LABEL:-unknown}
-#        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+#        NEXT_PUBLIC_SENTRY_DSN: ${SENTRY_DSN}
+#        NEXT_PUBLIC_ENVIRONMENT: ${ENVIRONMENT:-production}
 #        SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - ENVIRONMENT=production
       - DATABASE_URL=file:/app/data/db.sqlite
       - AUTH_URL=http://localhost:3000
       - AUTH_SECRET=your-auth-secret-here
@@ -21,7 +23,7 @@ services:
       - AUTH_AUTHENTIK_SECRET=your-authentik-secret
       - AUTH_AUTHENTIK_ISSUER=your-authentik-issuer
       - SENTRY_DSN=${SENTRY_DSN}
-      - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_LOG_LEVELS=${SENTRY_LOG_LEVELS:-log,warn,error}
     volumes:
       # Mount audio files directory (now points to data/uploads inside container)
       - audio_uploads:/app/data/uploads
