@@ -15,6 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.4.13] - 2026-02-04
+
+### Changed
+
+- **Sentry Configuration**: Updated Sentry configuration to use environment variables for improved Docker workflow
+- **Mobile View**: Improved mobile view experience
+- **CI/CD Pipeline**: Updated pipeline configuration and environment variables
+
+### Fixed
+
+- **Environment Variables**: Fixed issues with environment variable naming
+- **Pipeline Issues**: Resolved multiple pipeline configuration issues
+
 ## [0.4.11] - 2026-02-02
 
 ### Added
