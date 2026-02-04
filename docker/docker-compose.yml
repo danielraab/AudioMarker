@@ -15,7 +15,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - ENVIRONMENT=production
+      - NEXT_PUBLIC_ENVIRONMENT=production
       - DATABASE_URL=file:/app/data/db.sqlite
       - AUTH_URL=http://localhost:3000
       - AUTH_SECRET=your-auth-secret-here

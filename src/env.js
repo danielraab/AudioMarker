@@ -51,7 +51,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_ENVIRONMENT: process.env.ENVIRONMENT,
+    NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
     DEFAULT_LOCALE: process.env.DEFAULT_LOCALE,
     DATABASE_URL: process.env.DATABASE_URL,
 
