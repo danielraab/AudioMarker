@@ -348,7 +348,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [ ] allow more audio file types
 - [ ] Add description field for audio, playlist and markers
-- [ ] Add Regions (like markers with start and end, with possible loopplay)
+- [x] Add Regions (like markers with start and end, with possible loopplay)
 - [ ] Filter or load more button with for the audios on the dashboard incl search functionallity 
 - [ ] Make existing markers editable
 - [ ] Save shared audio and playlist listen links (only if logged in)

@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import EditPlaylistForm from "~/app/_components/playlist/edit/EditPlaylistForm";
 import PageHeader from "~/app/_components/global/layout/PageHeader";
+import Link from "next/link";
+import { Play } from "lucide-react";
 
 interface PlaylistEditPageProps {
   params: Promise<{
@@ -35,7 +37,15 @@ export default async function PlaylistEditPage({ params }: PlaylistEditPageProps
           <p className="text-default-500">Loading playlist details...</p>
         </div>
       }>
-        <PageHeader backHref="/" title="Edit Playlist" />
+        <div className="w-full text-center max-w-4xl px-4">
+          <Link
+            href={`/playlists/${playlistId}/listen`}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-success bg-success/10 hover:bg-success/20 rounded-lg transition-colors"
+          >
+            <Play size={18} />
+            Listen
+          </Link>
+        </div>
         <EditPlaylistForm playlistId={playlistId} />
         <PlaylistEditContainer playlistId={playlistId} />
       </Suspense>

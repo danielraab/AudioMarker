@@ -72,19 +72,11 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
 
   return (
     <Card className="mx-auto">
-      <CardHeader className="flex gap-3 justify-between">
+      <CardHeader className="flex gap-3">
         <div className="flex flex-col">
           <p className="text-md font-semibold">{t('title', { name: audio.name })}</p>
           <p className="text-small text-default-500">{t('subtitle')}</p>
         </div>
-        <Button
-          color="success"
-          startContent={<Play size={16} />}
-          onPress={() => {
-            handleNavigationAttempt(`/audios/${audio.id}/listen`);
-          }}>
-          {t('preview')}
-        </Button>
       </CardHeader>
       <CardBody>
         <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -130,8 +130,8 @@ export default function AudioPlayer({
     };
     const handleRegionOut = (region: Region) => {
       if (activeRegionId.current === region.id &&
-          region.end !== region.start &&
-          wavesurfer.current?.isPlaying()
+        region.end !== region.start &&
+        wavesurfer.current?.isPlaying()
       ) {
         region.play();
       }
@@ -420,27 +420,30 @@ export default function AudioPlayer({
 
   return (
     <div className="relative w-full">
-      <div className='flex justify-between'>
-        <div className="flex flex-col">
-          <p className="flex items-center gap-2 text-lg font-semibold">
+      <div className='flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-4'>
+        <div className="flex flex-col mb-3 w-full">
+          <div className="flex items-center justify-between gap-2 text-lg font-semibold">
             {audioName}
             <Link href={`/audios/${audioReadOnlyToken}/listen`}
               title={t('publicLinkTitle')}><SquareArrowOutUpRight size={16} /></Link>
-          </p>
-          <p className="text-small text-default-500">{t('subtitle')}</p>
+          </div>
+          <div className='flex flex-row justify-between items-center'>
+            <p className="text-small text-default-500">{t('subtitle')}</p>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-default-500">{t('status.label')}</span>
+              <Chip
+                size="sm"
+                color={isPlaying ? "success" : "default"}
+                variant="flat"
+              >
+                {isLoading ? t('status.loading') : isPlaying ? t('status.playing') : t('status.paused')}
+              </Chip>
+            </div>
+          </div>
         </div>
 
         {/* Audio Info */}
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-default-500">{t('status.label')}</span>
-          <Chip
-            size="sm"
-            color={isPlaying ? "success" : "default"}
-            variant="flat"
-          >
-            {isLoading ? t('status.loading') : isPlaying ? t('status.playing') : t('status.paused')}
-          </Chip>
-        </div>
+
       </div>
 
       {/* Waveform Container */}

@@ -5,6 +5,8 @@ import { EditPageContainer } from "~/app/_components/audio/edit/EditPageContaine
 import { HydrateClient } from "~/trpc/server";
 import { Suspense } from "react";
 import { EditAudioForm } from "~/app/_components/audio/edit/EditAudioForm";
+import Link from "next/link";
+import { Play } from "lucide-react";
 
 interface EditAudioPageProps {
   params: Promise<{ audioId: string }>;
@@ -28,6 +30,15 @@ export default async function EditAudioPage({ params }: EditAudioPageProps) {
 
   return (
     <div className="w-full flex min-h-screen flex-col items-center gap-4">
+      <div className="w-full flex flex-col items-center mx-auto">
+        <Link
+          href={`/audios/${audioId}/listen`}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-success bg-success/10 hover:bg-success/20 rounded-lg transition-colors"
+        >
+          <Play size={18} />
+          Preview
+        </Link>
+      </div>
       <HydrateClient>
         <Suspense fallback={
           <div className="flex items-center justify-center py-8">

@@ -46,18 +46,16 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
         {/* Playlist Header */}
         <Card className="shadow-sm">
           <CardBody className="gap-4">
-            <div className="flex flex-row justify-between items-start gap-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
               <div className="grow">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
                   <h1 className="text-2xl font-bold">{playlist.name}</h1>
-                  <div title={t('visibility.publicPlaylist')}>
-                    <Globe size={20} className="text-success" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 mb-3">
                   <Chip size="sm" variant="flat" color="secondary">
                     {tPlaylist('audioCount', { count: playlist.audios.length })}
                   </Chip>
+                  <div title={t('visibility.publicPlaylist')}>
+                    <Globe size={20} className="text-success" />
+                  </div>
                 </div>
                 <div className="space-y-1 text-sm text-default-500">
                   <div className="flex items-center gap-1">
@@ -72,13 +70,14 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
               
               {/* Autoplay Button */}
               {playlist.audios.length > 0 && (
-                <div className="flex-shrink-0">
+                <div className="w-full sm:w-auto sm:flex-shrink-0">
                   <Button
                     color="primary"
                     variant="flat"
                     startContent={<PlayCircle size={20} />}
                     onPress={handleStartAutoplay}
-                    size="lg"
+                    size="sm"
+                    className="w-full sm:w-auto"
                   >
                     {t('autoplay.start')}
                   </Button>

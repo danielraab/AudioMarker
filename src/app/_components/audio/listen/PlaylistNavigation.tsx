@@ -55,19 +55,21 @@ export function PlaylistNavigation({
     <Card className="shadow-sm w-full">
       <CardBody className="gap-3">
         {/* Header with playlist name */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <Button
-            isIconOnly
-            size="sm"
-            variant="light"
-            onPress={() => setIsExpanded(!isExpanded)}
-            aria-label={isExpanded ? t('collapse') : t('expand')}
-          >
-            {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </Button>
-          <List size={18} className="text-primary" />
-          <h3 className="text-md font-semibold">{playlist.name}</h3>
-          <Chip size="sm" variant="flat" color="secondary">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              onPress={() => setIsExpanded(!isExpanded)}
+              aria-label={isExpanded ? t('collapse') : t('expand')}
+            >
+              {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </Button>
+            <List size={18} className="text-primary flex-shrink-0" />
+            <h3 className="text-md font-semibold truncate">{playlist.name}</h3>
+          </div>
+          <Chip size="sm" variant="flat" color="secondary" className="self-start sm:self-center">
             {t('position', { current: currentIndex + 1, total: playlist.audios.length })}
           </Chip>
         </div>

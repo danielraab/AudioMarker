@@ -76,21 +76,10 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
 
   return (
     <Card>
-      <CardHeader className="flex gap-3 justify-between">
-        <div className="flex flex-row flex-wrap gap-2 justify-end">
-          <div className="grow" >
-            <p className="text-md font-semibold">{t('title', { name: playlist.name })}</p>
-            <p className="text-small text-default-500">{t('subtitle')}</p>
-          </div>
-          <Button
-            startContent={<Play size={16} />}
-            as={Link}
-            href={`/playlists/${playlistId}/listen`}
-            className="text-white"
-            color="success"
-          >
-            {t('listen')}
-          </Button>
+      <CardHeader className="flex gap-3">
+        <div className="flex flex-col">
+          <p className="text-md font-semibold">{t('title', { name: playlist.name })}</p>
+          <p className="text-small text-default-500">{t('subtitle')}</p>
         </div>
       </CardHeader>
       <CardBody>
