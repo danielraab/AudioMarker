@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.4.14] - 2026-02-04
+
+### Changed
+
+- **Audio Player**: Switched to WebAudio backend for more accurate timing synchronization
+  - Fixes Firefox audio/visual sync issues by using AudioContext.currentTime
+  - Provides sample-accurate timing instead of relying on the media element
+
+### Security
+
+- Updated dependencies: Next.js 15.5.12, wavesurfer.js 7.12.1
+
 ## [0.4.13] - 2026-02-04
 
 ### Changed

@@ -172,6 +172,9 @@ export default function AudioPlayer({
     regionsPlugin.current.on('region-created', handleRegionCreated);
 
     // Initialize WaveSurfer
+    // Using WebAudio backend for more accurate timing synchronization
+    // This fixes Firefox audio/visual sync issues by using AudioContext.currentTime
+    // which provides sample-accurate timing instead of relying on the media element
     wavesurfer.current = WaveSurfer.create({
       container: waveformRef.current,
       url: audioUrl,
@@ -183,6 +186,7 @@ export default function AudioPlayer({
       height: 150,
       normalize: true,
       mediaControls: false,
+      backend: 'WebAudio',
       plugins: [
         Timeline.create(),
         regionsPlugin.current
@@ -210,7 +214,7 @@ export default function AudioPlayer({
       setLoadError(error.message);
       console.error('Audio loading error:', error);
     };
-    const handleAudioProcess = () => {
+    const handleTimeUpdate = () => {
       const time = wavesurfer.current?.getCurrentTime() ?? 0;
       setCurrentTime(time);
       onTimeUpdate?.(time);
@@ -228,7 +232,7 @@ export default function AudioPlayer({
     wavesurfer.current.on('finish', handleFinish);
     wavesurfer.current.on('ready', handleReady);
     wavesurfer.current.on('error', handleError);
-    wavesurfer.current.on('audioprocess', handleAudioProcess);
+    wavesurfer.current.on('timeupdate', handleTimeUpdate);
     wavesurfer.current.on('interaction', handleInteraction);
 
     // Cleanup function
@@ -245,7 +249,7 @@ export default function AudioPlayer({
         wavesurfer.current.un('finish', handleFinish);
         wavesurfer.current.un('ready', handleReady);
         wavesurfer.current.un('error', handleError);
-        wavesurfer.current.un('audioprocess', handleAudioProcess);
+        wavesurfer.current.un('timeupdate', handleTimeUpdate);
         wavesurfer.current.un('interaction', handleInteraction);
         wavesurfer.current.destroy();
       }
