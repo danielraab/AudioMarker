@@ -112,6 +112,7 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=test,enable=${{ contains(github.ref, 'RC') }}
 
       - name: Determine version string
         id: version
