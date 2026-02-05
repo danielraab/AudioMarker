@@ -193,6 +193,13 @@
   "EmptyMarkerList": {
     "description": "Noch keine Markierungen hinzugefügt. Verwende die obenstehenden Schaltflächen, um Markierungen an bestimmten Zeitstempeln hinzuzufügen."
   },
+  "MarkerList": {
+    "sectionTitle": "Abschnitt",
+    "pointMarkerTitle": "Punkt-Markierung",
+    "editMarker": "Markierung bearbeiten",
+    "saveChanges": "Änderungen speichern",
+    "deleteMarker": "Markierung löschen"
+  },
   "AddMarker": {
     "labelPlaceholder": "Marker-Beschriftung (optional)",
     "addAt": "Hinzufügen bei {time}",

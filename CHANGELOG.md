@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Editable Markers**: Markers and sections can now be edited directly in the waveform
+  - Click the pencil icon to enable drag/resize mode for a marker
+  - Click the check icon to save changes
+  - Sections can be resized; point markers can be repositioned
+  - Changes are saved to database (stored markers) or localStorage (browser markers)
+
 ### Changed
 
 ### Fixed

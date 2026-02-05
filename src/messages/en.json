@@ -163,6 +163,13 @@
   "EmptyMarkerList": {
     "description": "No markers added yet. Use the buttons above to add markers at specific timestamps."
   },
+  "MarkerList": {
+    "sectionTitle": "Section",
+    "pointMarkerTitle": "Point marker",
+    "editMarker": "Edit marker",
+    "saveChanges": "Save changes",
+    "deleteMarker": "Delete marker"
+  },
   "AddMarker": {
     "labelPlaceholder": "Marker label (optional)",
     "addAt": "Add at {time}",

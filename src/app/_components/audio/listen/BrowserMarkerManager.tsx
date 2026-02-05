@@ -15,6 +15,10 @@ interface MarkerManagerProps {
   onMarkerClick?: (marker: AudioMarker) => void;
   selectedRegion?: {start: number, end: number} | null;
   onClearRegion?: () => void;
+  editingMarkerId?: string | null;
+  onToggleEdit?: (markerId: string) => void;
+  /** Called when BrowserMarkerManager is ready, passes update function to parent */
+  onUpdateMarkerReady?: (updateFn: (markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => void) => void;
 }
 
 export default function BrowserMarkerManager({
@@ -23,9 +27,13 @@ export default function BrowserMarkerManager({
   onMarkersChange,
   onMarkerClick,
   selectedRegion,
-  onClearRegion
+  onClearRegion,
+  editingMarkerId,
+  onToggleEdit,
+  onUpdateMarkerReady
 }: MarkerManagerProps) {
   const [markers, setMarkers] = useState<AudioMarker[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load markers from localStorage on component mount
   useEffect(() => {
@@ -39,17 +47,41 @@ export default function BrowserMarkerManager({
         console.error('Error parsing saved markers:', error);
       }
     }
+    setIsLoaded(true);
   }, [audioId, onMarkersChange]);
 
-  // Save markers to localStorage whenever markers change
+  // Save markers to localStorage whenever markers change (only after initial load)
   useEffect(() => {
+    if (!isLoaded) return;
     localStorage.setItem(`audioMarkers_${audioId}`, JSON.stringify(markers));
     onMarkersChange(markers);
-  }, [markers, audioId, onMarkersChange]);
+  }, [markers, audioId, onMarkersChange, isLoaded]);
 
 
   const removeMarker = (markerId: string) => {
     setMarkers(prev => prev.filter(marker => marker.id !== markerId));
+  };
+
+  const updateMarker = React.useCallback((markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => {
+    setMarkers(prev => {
+      if (!prev.some(m => m.id === markerId)) return prev;
+      return prev.map(marker =>
+        marker.id === markerId
+          ? { ...marker, timestamp: updates.timestamp, endTimestamp: updates.endTimestamp ?? marker.endTimestamp }
+          : marker
+      ).sort((a, b) => a.timestamp - b.timestamp);
+    });
+  }, []);
+
+  // Expose updateMarker to parent
+  React.useEffect(() => {
+    if (onUpdateMarkerReady) {
+      onUpdateMarkerReady(updateMarker);
+    }
+  }, [onUpdateMarkerReady, updateMarker]);
+
+  const handleToggleEdit = (markerId: string) => {
+    onToggleEdit?.(markerId);
   };
 
   const addMarkerAtCurrentTime = (label: string, startTime: number, endTime?: number | null) => {
@@ -96,7 +128,9 @@ export default function BrowserMarkerManager({
             </h4>
             <MarkerList markers={markers}
               onMarkerClick={onMarkerClick}
-              onRemoveMarker={removeMarker} />
+              onRemoveMarker={removeMarker}
+              onToggleEdit={handleToggleEdit}
+              editingMarkerId={editingMarkerId} />
           </div>
         )}
 

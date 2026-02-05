@@ -16,9 +16,11 @@ interface MarkerManagerProps {
   onMarkerClick?: (marker: AudioMarker) => void;
   selectedRegion?: { start: number | null; end: number | null };
   onClearRegion?: (() => void) | null;
+  editingMarkerId?: string | null;
+  onToggleEdit?: (markerId: string) => void;
 }
 
-export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerClick, selectedRegion, onClearRegion }: MarkerManagerProps) {
+export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerClick, selectedRegion, onClearRegion, editingMarkerId, onToggleEdit }: MarkerManagerProps) {
   const utils = api.useUtils();
   const t = useTranslations('StoredMarkers');
 
@@ -76,7 +78,9 @@ export function StoredMarkerManager({ audioId, currentTime, markers, onMarkerCli
             </h4>
             <MarkerList markers={markers}
               onMarkerClick={onMarkerClick}
-              onRemoveMarker={onDeleteMarker} />
+              onRemoveMarker={onDeleteMarker}
+              onToggleEdit={onToggleEdit}
+              editingMarkerId={editingMarkerId} />
           </div>
         )}
 

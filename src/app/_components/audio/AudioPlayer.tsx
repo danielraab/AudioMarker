@@ -27,6 +27,8 @@ interface AudioPlayerProps {
   onClearRegionReady?: (clearRegion: () => void) => void;
   onFinish?: () => void;
   onPlayReady?: (play: () => void) => void;
+  editingMarkerId?: string | null;
+  onMarkerUpdated?: (markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => void;
 }
 
 export default function AudioPlayer({
@@ -40,6 +42,8 @@ export default function AudioPlayer({
   onClearRegionReady,
   onFinish,
   onPlayReady,
+  editingMarkerId,
+  onMarkerUpdated,
 }: AudioPlayerProps) {
   const t = useTranslations('AudioPlayer');
   const waveformRef = useRef<HTMLDivElement>(null);
@@ -57,6 +61,17 @@ export default function AudioPlayer({
   const [mounted, setMounted] = useState(false);
   const selectionRegionId = useRef<string | null>(null);
   const activeRegionId = useRef<string | null>(null);
+  const markersRef = useRef<AudioMarker[]>(markers);
+  const onMarkerUpdatedRef = useRef(onMarkerUpdated);
+
+  // Keep refs in sync with props
+  useEffect(() => {
+    markersRef.current = markers;
+  }, [markers]);
+
+  useEffect(() => {
+    onMarkerUpdatedRef.current = onMarkerUpdated;
+  }, [onMarkerUpdated]);
 
   // Track when component is mounted (client-side only)
   useEffect(() => {
@@ -64,7 +79,7 @@ export default function AudioPlayer({
   }, []);
 
   // Create regions from markers - memoized to prevent unnecessary recreations
-  const createRegionsFromMarkers = useCallback((markers: AudioMarker[]) => {
+  const createRegionsFromMarkers = useCallback((markers: AudioMarker[], editingId: string | null | undefined) => {
     if (!regionsPlugin.current || !wavesurfer.current) return;
 
     // Get existing marker regions
@@ -85,6 +100,7 @@ export default function AudioPlayer({
     markers.forEach((marker) => {
       const regionId = markerIdPrefix + marker.id;
       const markerIsSection = isSection(marker);
+      const isEditing = editingId === marker.id;
 
       // For sections, make color transparent by converting to hsla with low opacity
       const regionColor = markerIsSection && marker.color
@@ -101,6 +117,8 @@ export default function AudioPlayer({
           end: markerIsSection ? marker.endTimestamp! : undefined,
           color: regionColor,
           content: marker.label,
+          drag: isEditing,
+          resize: isEditing && markerIsSection,
         });
       } else {
         // Create new region
@@ -110,8 +128,8 @@ export default function AudioPlayer({
           end: markerIsSection ? marker.endTimestamp! : undefined,
           color: regionColor,
           content: marker.label,
-          drag: false,
-          resize: false,
+          drag: isEditing,
+          resize: isEditing && markerIsSection,
         });
       }
     });
@@ -137,9 +155,24 @@ export default function AudioPlayer({
       }
     };
     const handleRegionUpdated = (region: Region) => {
-      // Only track selection region updates
+      // Track selection region updates
       if (region.id === selectionRegionId.current && onSelectedRegionUpdate) {
         onSelectedRegionUpdate(region.start, region.end);
+      }
+      
+      // Track marker region updates when editing
+      if (region.id.startsWith(markerIdPrefix) && onMarkerUpdatedRef.current) {
+        const markerId = region.id.replace(markerIdPrefix, '');
+        const marker = markersRef.current.find(m => m.id === markerId);
+        if (marker) {
+          const updates: { timestamp: number; endTimestamp?: number | null } = {
+            timestamp: region.start,
+          };
+          if (isSection(marker)) {
+            updates.endTimestamp = region.end;
+          }
+          onMarkerUpdatedRef.current(markerId, updates);
+        }
       }
     };
     const handleRegionCreated = (region: Region) => {
@@ -259,9 +292,27 @@ export default function AudioPlayer({
   // Update marker regions when markers change, without reinitializing WaveSurfer
   useEffect(() => {
     if (!isLoading && wavesurfer.current && regionsPlugin.current) {
-      createRegionsFromMarkers(markers);
+      createRegionsFromMarkers(markers, editingMarkerId);
     }
-  }, [markers, isLoading, createRegionsFromMarkers]);
+  }, [markers, isLoading, createRegionsFromMarkers, editingMarkerId]);
+
+  // When editing marker changes, stop playback and seek to marker position
+  useEffect(() => {
+    if (!isLoading && wavesurfer.current && editingMarkerId) {
+      const marker = markers.find(m => m.id === editingMarkerId);
+      if (marker) {
+        // Stop playback
+        if (wavesurfer.current.isPlaying()) {
+          wavesurfer.current.pause();
+        }
+        // Seek to marker position
+        const duration = wavesurfer.current.getDuration();
+        if (duration > 0) {
+          wavesurfer.current.seekTo(marker.timestamp / duration);
+        }
+      }
+    }
+  }, [editingMarkerId, isLoading, markers]);
 
   const handleZoomChange = (value: number | number[]) => {
     const zoom = Array.isArray(value) ? value[0] : value;

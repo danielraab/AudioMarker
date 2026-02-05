@@ -41,6 +41,8 @@ export default function ListenOnlyAudioPlayer({
   const [playFunction, setPlayFunction] = useState<(() => void) | null>(null);
   const [shouldAutoplay, setShouldAutoplay] = useState(!!playlistId && autoplayParam);
   const [autoplayEnabled, setAutoplayEnabled] = useState(autoplayParam);
+  const [editingMarkerId, setEditingMarkerId] = useState<string | null>(null);
+  const [updateBrowserMarker, setUpdateBrowserMarker] = useState<((markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => void) | null>(null);
 
   // Fetch playlist data if autoplay is enabled
   const { data: playlist } = api.playlist.getPublicPlaylistById.useQuery(
@@ -158,6 +160,27 @@ export default function ListenOnlyAudioPlayer({
     }
   }, [playlistId, autoplayEnabled, router]);
 
+  // Handle marker updates from dragging/resizing in wavesurfer - save immediately
+  const handleMarkerUpdated = useCallback((markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => {
+    // Update browser markers via the exposed updateMarker function
+    if (updateBrowserMarker) {
+      updateBrowserMarker(markerId, updates);
+    }
+  }, [updateBrowserMarker]);
+
+  const handleUpdateMarkerReady = useCallback((updateFn: (markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => void) => {
+    setUpdateBrowserMarker(() => updateFn);
+  }, []);
+
+  // Toggle edit mode for a marker - just toggles state, saving happens immediately on drag
+  const handleToggleEdit = useCallback((markerId: string) => {
+    if (editingMarkerId === markerId) {
+      setEditingMarkerId(null);
+    } else {
+      setEditingMarkerId(markerId);
+    }
+  }, [editingMarkerId]);
+
   // Trigger autoplay when player is ready
   useEffect(() => {
     if (shouldAutoplay && playFunction) {
@@ -205,6 +228,8 @@ export default function ListenOnlyAudioPlayer({
         onClearRegionReady={handleClearRegionReady}
         onFinish={handleAudioFinish}
         onPlayReady={handlePlayReady}
+        editingMarkerId={editingMarkerId}
+        onMarkerUpdated={handleMarkerUpdated}
       />
 
       <div className='flex flex-col items-center space-y-6'>
@@ -223,6 +248,9 @@ export default function ListenOnlyAudioPlayer({
           onMarkerClick={handleMarkerClick}
           selectedRegion={selectedRegion}
           onClearRegion={handleClearRegion}
+          editingMarkerId={editingMarkerId}
+          onToggleEdit={handleToggleEdit}
+          onUpdateMarkerReady={handleUpdateMarkerReady}
         />
       </div>
     </div>

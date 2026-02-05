@@ -15,9 +15,17 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
   const [playFromFunction, setPlayFromFunction] = useState<((marker: AudioMarker) => void) | null>(null);
   const [clearRegionFunction, setClearRegionFunction] = useState<(() => void) | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<{ start: number | null; end: number | null }>({ start: null, end: null });
+  const [editingMarkerId, setEditingMarkerId] = useState<string | null>(null);
 
+  const utils = api.useUtils();
   const [audio] = api.audio.getUserAudioById.useSuspenseQuery({ id: audioId });
   const [markers] = api.marker.getMarkers.useSuspenseQuery({ audioId });
+
+  const updateMarker = api.marker.updateMarker.useMutation({
+    onSuccess: () => {
+      void utils.marker.getMarkers.invalidate({ audioId });
+    },
+  });
 
   //for player -> marker manager
   const handleTimeUpdate = useCallback((time: number) => {
@@ -43,6 +51,24 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
     }
   }, [playFromFunction]);
 
+  // Handle marker updates from dragging/resizing in wavesurfer - save immediately
+  const handleMarkerUpdated = useCallback((markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => {
+    updateMarker.mutate({
+      id: markerId,
+      timestamp: updates.timestamp,
+      endTimestamp: updates.endTimestamp,
+    });
+  }, [updateMarker]);
+
+  // Toggle edit mode for a marker - just toggles state, saving happens immediately on drag
+  const handleToggleEdit = useCallback((markerId: string) => {
+    if (editingMarkerId === markerId) {
+      setEditingMarkerId(null);
+    } else {
+      setEditingMarkerId(markerId);
+    }
+  }, [editingMarkerId]);
+
   return (
     <div className="w-full flex flex-col items-center mx-auto space-y-6">
       
@@ -55,6 +81,8 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
         onPlayFromFnReady={handlePlayFromFnReady}
         onSelectedRegionUpdate={handleSelectedRegionUpdate}
         onClearRegionReady={handleClearRegionReady}
+        editingMarkerId={editingMarkerId}
+        onMarkerUpdated={handleMarkerUpdated}
       />
 
       <StoredMarkerManager
@@ -64,6 +92,8 @@ export function EditPageContainer({ audioId }: EditPageContainerProps) {
         onMarkerClick={handleMarkerClick}
         selectedRegion={selectedRegion}
         onClearRegion={clearRegionFunction}
+        editingMarkerId={editingMarkerId}
+        onToggleEdit={handleToggleEdit}
       />
     </div>
   );

@@ -85,4 +85,45 @@ export const markerRouter = createTRPCRouter({
       });
       return { success: true };
     }),
+
+  updateMarker: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      timestamp: z.number().min(0).optional(),
+      endTimestamp: z.number().min(0).optional().nullable(),
+      label: z.string().min(1).optional(),
+      color: z.string().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // First verify the user owns the associated audio
+      const marker = await ctx.db.marker.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          audio: {
+            select: {
+              createdById: true,
+            },
+          },
+        },
+      });
+
+      if (!marker || marker.audio.createdById !== ctx.session.user.id) {
+        throw new Error("Unauthorized");
+      }
+
+      const updatedMarker = await ctx.db.marker.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          ...(input.timestamp !== undefined && { timestamp: input.timestamp }),
+          ...(input.endTimestamp !== undefined && { endTimestamp: input.endTimestamp }),
+          ...(input.label !== undefined && { label: input.label }),
+          ...(input.color !== undefined && { color: input.color }),
+        },
+      });
+      return updatedMarker;
+    }),
 });
