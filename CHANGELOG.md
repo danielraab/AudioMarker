@@ -9,17 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Security
+
+## [0.5.0] - 2026-02-05
+
+### Added
+
 - **Editable Markers**: Markers and sections can now be edited directly in the waveform
   - Click the pencil icon to enable drag/resize mode for a marker
   - Click the check icon to save changes
   - Sections can be resized; point markers can be repositioned
   - Changes are saved to database (stored markers) or localStorage (browser markers)
 
-### Changed
-
 ### Fixed
 
-### Security
+- **Browser Markers Persistence**: Fixed issue where browser markers were cleared on page load instead of being restored from localStorage
 
 ## [0.4.14] - 2026-02-04
 
