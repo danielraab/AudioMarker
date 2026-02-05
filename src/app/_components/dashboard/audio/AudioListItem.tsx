@@ -13,6 +13,7 @@ interface AudioListItemProps {
   audio: {
     id: string;
     name: string;
+    description?: string | null;
     originalFileName: string;
     createdAt: Date;
     markerCount: number;
@@ -82,6 +83,11 @@ export function AudioListItem({ audio }: AudioListItemProps) {
               </div>
             </div>
           </div>
+          {audio.description && (
+            <p className="text-sm text-default-600 line-clamp-2">
+              {audio.description.substring(0, 100)}{audio.description.length > 100 ? '...' : ''}
+            </p>
+          )}
           <div className="space-y-1 text-sm text-default-500">
             <p className="break-words"><span className="font-medium">{t('labels.originalFileName')}</span> {audio.originalFileName}</p>
             <p><span className="font-medium">{t('labels.uploaded')}</span> {formatTimeAgo(new Date(audio.createdAt))}</p>

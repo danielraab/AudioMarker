@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Button, Input, Switch, Card, CardBody, CardHeader } from "@heroui/react";
+import { Button, Input, Switch, Card, CardBody, CardHeader, Textarea } from "@heroui/react";
 import { ListMusic, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 export function CreatePlaylistForm() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const t = useTranslations('CreatePlaylistForm');
@@ -17,6 +18,7 @@ export function CreatePlaylistForm() {
   const createPlaylistMutation = api.playlist.createPlaylist.useMutation({
     onSuccess: () => {
       setName("");
+      setDescription("");
       setIsPublic(false);
       setIsExpanded(false);
       router.refresh();
@@ -31,6 +33,7 @@ export function CreatePlaylistForm() {
     if (name.trim()) {
       createPlaylistMutation.mutate({
         name: name.trim(),
+        description: description.trim() || undefined,
         isPublic,
       });
     }
@@ -38,6 +41,7 @@ export function CreatePlaylistForm() {
 
   const handleCancel = () => {
     setName("");
+    setDescription("");
     setIsPublic(false);
     setIsExpanded(false);
   };
@@ -73,6 +77,15 @@ export function CreatePlaylistForm() {
               maxLength={100}
               description={t('name.description')}
               autoFocus
+            />
+            
+            <Textarea
+              label={t('description.label')}
+              placeholder={t('description.placeholder')}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength={500}
+              minRows={3}
             />
             
             <div className="flex items-center gap-2">

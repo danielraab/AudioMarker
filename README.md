@@ -347,14 +347,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🗺️ Roadmap
 
 - [ ] allow more audio file types
-- [ ] Add description field for audio, playlist and markers
+- [x] Add description field for audio, playlist and markers
 - [x] Add Regions (like markers with start and end, with possible loopplay)
 - [ ] Filter or load more button with for the audios on the dashboard incl search functionallity 
-- [ ] Make existing markers editable
+- [x] Make existing markers editable
 - [ ] Save shared audio and playlist listen links (only if logged in)
 - [ ] Share audio files in edit mode (to logged in only)
 - [ ] Share playlist files in edit mode (to logged in only)
-- [ ] auto play for playlists in listen mode
+- [x] auto play for playlists in listen mode
 - [ ] Export and import browser markers
 - [ ] Listen statistics chart
 

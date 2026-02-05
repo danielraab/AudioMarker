@@ -17,6 +17,7 @@ export const audioRouter = createTRPCRouter({
       select: {
         id: true,
         name: true,
+        description: true,
         originalFileName: true,
         filePath: true,
         createdAt: true,
@@ -60,6 +61,7 @@ export const audioRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           originalFileName: true,
           filePath: true,
           createdAt: true,
@@ -88,6 +90,7 @@ export const audioRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           originalFileName: true,
           filePath: true,
           createdAt: true,
@@ -137,6 +140,7 @@ export const audioRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
       name: z.string().min(1, "Name is required").max(100, "Name is too long"),
+      description: z.string().max(500, "Description is too long").optional(),
       isPublic: z.boolean(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -157,6 +161,7 @@ export const audioRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           name: input.name,
+          description: input.description,
           isPublic: input.isPublic,
         },
         select: {

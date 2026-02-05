@@ -51,9 +51,6 @@ const getGitVersion = () => {
 const config = {
   output: "standalone",
 
-  // Enable instrumentation for Sentry (stable in Next.js 15)
-  instrumentationHook: true,
-
   env: {
     NEXT_PUBLIC_GIT_VERSION_LABEL: getGitVersion(),
   },

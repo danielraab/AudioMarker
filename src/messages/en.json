@@ -102,6 +102,8 @@
     "fileInvalidType": "Please select an MP3 file.",
     "fileInvalidExtension": "Please select a file with .mp3 extension.",
     "namePlaceholder": "Enter a name for your audio",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Add a description for your audio",
     "fileLabel": "MP3 File",
     "selectedFile": "Selected: {fileName}",
     "selectFile": "Choose an MP3 audio file"
@@ -192,6 +194,10 @@
         "label": "Audio Name",
         "placeholder": "Enter a name for your audio"
       },
+      "description": {
+        "label": "Description (optional)",
+        "placeholder": "Add a description for your audio"
+      },
       "isPublic": {
         "label": "Make audio public"
       }
@@ -235,6 +241,10 @@
       "name": {
         "label": "Playlist Name",
         "placeholder": "Enter playlist name"
+      },
+      "description": {
+        "label": "Description (optional)",
+        "placeholder": "Add a description for your playlist"
       },
       "isPublic": {
         "label": "Make playlist public"
@@ -338,6 +348,10 @@
       "label": "Playlist Name",
       "placeholder": "Enter playlist name",
       "description": "Give your playlist a descriptive name"
+    },
+    "description": {
+      "label": "Description (optional)",
+      "placeholder": "Add a description for your playlist"
     },
     "visibility": {
       "makePublic": "Make playlist public"

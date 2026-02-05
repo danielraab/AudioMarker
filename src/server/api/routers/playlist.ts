@@ -17,6 +17,7 @@ export const playlistRouter = createTRPCRouter({
       select: {
         id: true,
         name: true,
+        description: true,
         isPublic: true,
         createdAt: true,
         updatedAt: true,
@@ -65,6 +66,7 @@ export const playlistRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           isPublic: true,
           createdBy: true,
           createdAt: true,
@@ -84,6 +86,7 @@ export const playlistRouter = createTRPCRouter({
                 select: {
                   id: true,
                   name: true,
+                  description: true,
                   originalFileName: true,
                   filePath: true,
                   createdAt: true,
@@ -131,6 +134,7 @@ export const playlistRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           isPublic: true,
           createdAt: true,
           updatedAt: true,
@@ -150,6 +154,7 @@ export const playlistRouter = createTRPCRouter({
                 select: {
                   id: true,
                   name: true,
+                  description: true,
                   isPublic: true,
                   originalFileName: true,
                   filePath: true,
@@ -192,12 +197,14 @@ export const playlistRouter = createTRPCRouter({
   createPlaylist: protectedProcedure
     .input(z.object({
       name: z.string().min(1, "Name is required").max(100, "Name is too long"),
+      description: z.string().max(500, "Description is too long").optional(),
       isPublic: z.boolean().default(false),
     }))
     .mutation(async ({ ctx, input }) => {
       const playlist = await ctx.db.playlist.create({
         data: {
           name: input.name,
+          description: input.description,
           isPublic: input.isPublic,
           createdById: ctx.session.user.id,
         },
@@ -216,6 +223,7 @@ export const playlistRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
       name: z.string().min(1, "Name is required").max(100, "Name is too long"),
+      description: z.string().max(500, "Description is too long").optional(),
       isPublic: z.boolean(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -236,6 +244,7 @@ export const playlistRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           name: input.name,
+          description: input.description,
           isPublic: input.isPublic,
         },
         select: {
@@ -346,6 +355,7 @@ export const playlistRouter = createTRPCRouter({
             select: {
               id: true,
               name: true,
+              description: true,
               originalFileName: true,
               filePath: true,
             },
@@ -462,6 +472,7 @@ export const playlistRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           originalFileName: true,
           filePath: true,
           createdAt: true,
@@ -495,6 +506,7 @@ export const playlistRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           isPublic: true,
           createdAt: true,
           updatedAt: true,
@@ -559,6 +571,7 @@ export const playlistRouter = createTRPCRouter({
         select: {
           id: true,
           name: true,
+          description: true,
           originalFileName: true,
           filePath: true,
           createdAt: true,

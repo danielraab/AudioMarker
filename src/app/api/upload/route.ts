@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     // Parse form data
     const formData = await req.formData();
     const name = formData.get('name') as string;
+    const description = formData.get('description') as string | null;
     const file = formData.get('file') as File;
 
     if (!name || !file) {
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
       data: {
         id,
         name,
+        description: description || undefined,
         originalFileName: file.name,
         filePath: outFileName,
         createdById: session.user.id,

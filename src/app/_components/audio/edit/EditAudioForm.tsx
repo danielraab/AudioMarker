@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
-import { Button, Input, Card, CardBody, CardHeader, Switch } from "@heroui/react";
+import { Button, Input, Card, CardBody, CardHeader, Switch, Textarea } from "@heroui/react";
 import { api } from "~/trpc/react";
 import { Play, Save } from "lucide-react";
 import { UnsavedChangesModal } from "../../global/UnsavedChangesModal";
@@ -44,6 +44,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
   const submitForm = (form: HTMLFormElement) => {
     const formData = new FormData(form);
     const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
     const isPublic = formData.get('isPublic') !== null;
 
     if (!name) {
@@ -52,7 +53,7 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
     }
 
     updateAudio.mutate(
-      { id: audioId, name, isPublic }
+      { id: audioId, name, description: description || undefined, isPublic }
     );
   };
 
@@ -91,6 +92,18 @@ export function EditAudioForm({ audioId }: EditAudioFormProps) {
             labelPlacement="outside"
             onChange={handleFormChange}
             maxLength={100}
+          />
+
+          <Textarea
+            name="description"
+            label={t('fields.description.label')}
+            placeholder={t('fields.description.placeholder')}
+            defaultValue={audio.description ?? ''}
+            variant="bordered"
+            labelPlacement="outside"
+            onChange={handleFormChange}
+            maxLength={500}
+            minRows={3}
           />
 
           <Switch

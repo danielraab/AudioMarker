@@ -69,6 +69,7 @@ model VerificationToken {
 model Audio {
     id               String    @id @default(cuid())
     name             String
+    description      String?
     originalFileName String
     filePath         String
     createdBy        User      @relation(fields: [createdById], references: [id])
@@ -99,6 +100,7 @@ model Marker {
 model Playlist {
     id            String          @id @default(cuid())
     name          String
+    description   String?
     isPublic      Boolean         @default(false)
     createdBy     User            @relation(fields: [createdById], references: [id])
     createdById   String

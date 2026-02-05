@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, CardBody, CardHeader, Input, Switch } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Input, Switch, Textarea } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { api } from "~/trpc/react";
@@ -48,6 +48,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
   const submitForm = (form: HTMLFormElement) => {
     const formData = new FormData(form);
     const name = (formData.get('name') as string).trim();
+    const description = formData.get('description') as string;
     const isPublic = formData.get('isPublic') !== null;
 
     if (!name) {
@@ -56,7 +57,7 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
     }
 
     updatePlaylistMutation.mutate(
-      { id: playlistId, name: name, isPublic },
+      { id: playlistId, name: name, description: description || undefined, isPublic },
     );
   };
 
@@ -95,6 +96,18 @@ export default function EditPlaylistForm({ playlistId }: EditPlaylistFormProps) 
             variant="bordered"
             labelPlacement="outside"
             maxLength={100}
+          />
+
+          <Textarea
+            name="description"
+            label={t('fields.description.label')}
+            placeholder={t('fields.description.placeholder')}
+            defaultValue={playlist.description ?? ''}
+            variant="bordered"
+            labelPlacement="outside"
+            onChange={handleFormChange}
+            maxLength={500}
+            minRows={3}
           />
 
           <Switch

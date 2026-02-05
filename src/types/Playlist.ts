@@ -3,6 +3,7 @@ import type { User } from "next-auth";
 export interface Playlist {
   id: string;
   name: string;
+  description?: string | null;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -14,6 +15,7 @@ export interface Playlist {
 export interface PlaylistForAudio {
   id: string;
   name: string;
+  description?: string | null;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +26,7 @@ export interface PlaylistForAudio {
 export interface PlaylistWithAudios {
   id: string;
   name: string;
+  description?: string | null;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -40,6 +43,7 @@ export interface PlaylistAudio {
   audio: {
     id: string;
     name: string;
+    description?: string | null;
     originalFileName: string;
     filePath: string;
     createdAt: Date;
@@ -52,6 +56,7 @@ export interface PlaylistAudio {
 export interface AudioForPlaylist {
   id: string;
   name: string;
+  description?: string | null;
   originalFileName: string;
   filePath: string;
   createdAt: Date;
@@ -63,6 +68,7 @@ export interface AudioForPlaylist {
 export interface AudioWithPlaylistInfo {
   id: string;
   name: string;
+  description?: string | null;
   originalFileName: string;
   filePath: string;
   createdAt: Date;

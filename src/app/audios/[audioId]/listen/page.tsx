@@ -50,6 +50,7 @@ export default async function ListenPage({ params }: ListenPageProps) {
         <ListenOnlyAudioPlayer
           audioUrl={`/api/audio/${audio.id}/file`}
           audioName={audio.name}
+          audioDescription={audio.description}
           audioReadOnlyToken={audio.id}
           audioId={audio.id}
         />
@@ -70,7 +71,7 @@ export async function generateMetadata({ params }: ListenPageProps) {
       await api.audio.getPublicAudioById({ id: audioId });
     return {
       title: `${audio.name} - Audio Marker`,
-      description: `Listen to ${audio.name}`,
+      description: audio.description ?? `Listen to ${audio.name}`,
     };
   } catch {
     return {

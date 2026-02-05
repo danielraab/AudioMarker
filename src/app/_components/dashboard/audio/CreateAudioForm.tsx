@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
-import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner, Progress } from "@heroui/react";
+import { Button, Input, Card, CardBody, CardHeader, Chip, Spinner, Progress, Textarea } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { Music4, Plus } from "lucide-react";
 import { useTranslations } from 'next-intl';
@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 export default function CreateAudioForm() {
   const t = useTranslations('CreateAudioForm');
   const [audioName, setAudioName] = useState("");
+  const [description, setDescription] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"" | "uploading" | "success" | "error">("");
@@ -41,7 +42,7 @@ export default function CreateAudioForm() {
     }
   };
 
-  const uploadFileWithProgress = (file: File, name: string): Promise<{ id: string }> => {
+  const uploadFileWithProgress = (file: File, name: string, description: string): Promise<{ id: string }> => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       
@@ -73,6 +74,9 @@ export default function CreateAudioForm() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('name', name);
+      if (description) {
+        formData.append('description', description);
+      }
       
       // Send request
       xhr.open('POST', '/api/upload');
@@ -94,12 +98,13 @@ export default function CreateAudioForm() {
     setIsUploading(true);
 
     try {
-      await uploadFileWithProgress(file, audioName);
+      await uploadFileWithProgress(file, audioName, description);
       
       setStatus("success");
       setMessage(t('uploadSuccess'));
       router.refresh(); // Refresh to show the new audio file in the list
       setAudioName("");
+      setDescription("");
       setFile(null);
       
       // Reset progress after a delay
@@ -151,6 +156,17 @@ export default function CreateAudioForm() {
             variant="bordered"
             labelPlacement="outside"
             autoFocus
+          />
+
+          <Textarea
+            label={t('descriptionLabel')}
+            placeholder={t('descriptionPlaceholder')}
+            value={description}
+            onValueChange={setDescription}
+            variant="bordered"
+            labelPlacement="outside"
+            maxLength={500}
+            minRows={3}
           />
 
           <Input

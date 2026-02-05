@@ -19,6 +19,7 @@ const initialZoomLevel = 20;
 interface AudioPlayerProps {
   audioUrl: string;
   audioName: string;
+  audioDescription?: string | null;
   audioReadOnlyToken: string;
   markers?: AudioMarker[];
   onTimeUpdate?: (time: number) => void;
@@ -34,6 +35,7 @@ interface AudioPlayerProps {
 export default function AudioPlayer({
   audioUrl,
   audioName,
+  audioDescription,
   audioReadOnlyToken,
   markers = [],
   onTimeUpdate,
@@ -482,6 +484,9 @@ export default function AudioPlayer({
             <Link href={`/audios/${audioReadOnlyToken}/listen`}
               title={t('publicLinkTitle')}><SquareArrowOutUpRight size={16} /></Link>
           </div>
+          {audioDescription && (
+            <p className="text-sm text-default-600 mt-1 mb-2">{audioDescription}</p>
+          )}
           <div className='flex flex-row justify-between items-center'>
             <p className="text-small text-default-500">{t('subtitle')}</p>
             <div className="flex items-center gap-2 text-sm">

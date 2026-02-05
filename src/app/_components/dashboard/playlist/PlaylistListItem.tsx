@@ -13,6 +13,7 @@ interface PlaylistListItemProps {
   playlist: {
     id: string;
     name: string;
+    description?: string | null;
     isPublic: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -87,6 +88,11 @@ export function PlaylistListItem({ playlist }: PlaylistListItemProps) {
               </div>
             </div>
           </div>
+          {playlist.description && (
+            <p className="text-sm text-default-600 line-clamp-2">
+              {playlist.description.substring(0, 100)}{playlist.description.length > 100 ? '...' : ''}
+            </p>
+          )}
           <div className="space-y-1 text-sm text-default-500">
             <p><span className="font-medium">{t('labels.created')}</span> {formatTimeAgo(new Date(playlist.createdAt))}</p>
             <p><span className="font-medium">{t('labels.lastUpdated')}</span> {formatTimeAgo(new Date(playlist.updatedAt))}</p>
