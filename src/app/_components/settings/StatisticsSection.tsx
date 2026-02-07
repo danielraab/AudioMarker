@@ -218,12 +218,12 @@ export default function StatisticsSection() {
               {inactiveAudios.map((audio) => (
                 <div
                   key={audio.id}
-                  className="flex items-center justify-between rounded-lg border border-warning/30 bg-warning/5 p-3"
+                  className="flex flex-col gap-3 rounded-lg border border-warning/30 bg-warning/5 p-3 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div className="flex items-center gap-3">
-                    <Music className="text-warning" size={20} />
-                    <div>
-                      <p className="font-medium">{audio.name}</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Music className="text-warning shrink-0" size={20} />
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{audio.name}</p>
                       <p className="text-xs text-default-400">
                         {t("inactiveAudios.createdBy")}{" "}
                         {audio.createdBy.name ?? audio.createdBy.email ?? t("inactiveAudios.unknown")} •{" "}
@@ -239,7 +239,7 @@ export default function StatisticsSection() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap sm:shrink-0">
                     <Chip size="sm" variant="flat" color={audio.isPublic ? "success" : "default"}>
                       {audio.isPublic ? t("inactiveAudios.public") : t("inactiveAudios.private")}
                     </Chip>

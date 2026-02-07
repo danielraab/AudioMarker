@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.6.0] - 2026-02-07
+
+### Added
+
+- **Audio & Playlist Search**: Implemented search functionality with pagination for audios and playlists
+- **Description Fields**: Added description field to audios and playlists
+- **Audio Statistics**: Added listen tracking and statistics for audio files
+- **Statistics Dashboard**: Added statistics section to settings page with overall statistics and unused audios overview
+- **Inactive Audios Detection**: Implemented inactive audios feature with configurable time range selection
+
+### Fixed
+
+- **Linting**: Fixed various linting errors
+
 ## [0.5.0] - 2026-02-05
 
 ### Added
