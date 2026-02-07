@@ -5,7 +5,6 @@ import { PlaylistEditContainer } from "~/app/_components/playlist/edit/PlaylistE
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import EditPlaylistForm from "~/app/_components/playlist/edit/EditPlaylistForm";
-import PageHeader from "~/app/_components/global/layout/PageHeader";
 import Link from "next/link";
 import { Play } from "lucide-react";
 

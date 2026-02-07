@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       data: {
         id,
         name,
-        description: description || undefined,
+        description: description ?? undefined,
         originalFileName: file.name,
         filePath: outFileName,
         createdById: session.user.id,
