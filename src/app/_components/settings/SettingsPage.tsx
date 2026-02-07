@@ -5,6 +5,7 @@ import UserListSection from "./UserListSection";
 import GeneralSettingsSection from "./GeneralSettingsSection";
 import SoftDeletedSection from "./SoftDeletedSection";
 import LegalInformationSection from "./LegalInformationSection";
+import StatisticsSection from "./StatisticsSection";
 import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
@@ -17,6 +18,11 @@ export default function SettingsPage() {
       </div>
 
       <Tabs aria-label={t('tabs.ariaLabel')} variant="underlined">
+        <Tab key="statistics" title={t('tabs.statistics')}>
+          <div className="py-4">
+            <StatisticsSection />
+          </div>
+        </Tab>
         <Tab key="users" title={t('tabs.users')}>
           <div className="py-4">
             <UserListSection />

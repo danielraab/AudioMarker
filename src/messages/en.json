@@ -370,6 +370,7 @@
     "description": "Manage users and system settings",
     "tabs": {
       "ariaLabel": "Settings sections",
+      "statistics": "Statistics",
       "users": "Users",
       "softDeleted": "Deleted",
       "system": "System",
@@ -526,6 +527,40 @@
     },
     "peakDay": "Peak activity: {date} with {count} {count, plural, one {listen} other {listens}}",
     "createdAt": "Audio created on {date}"
+  },
+  "AdminStatistics": {
+    "loading": "Loading statistics...",
+    "error": "Failed to load statistics",
+    "stats": {
+      "users": "Total Users",
+      "audios": "Active Audios",
+      "playlists": "Active Playlists",
+      "totalListens": "Total Listens",
+      "publicCount": "{count} public",
+      "recentListens": "{count} in last 7 days"
+    },
+    "storage": {
+      "title": "Storage",
+      "totalFiles": "Total Files",
+      "totalSize": "Total Size",
+      "deletedAudios": "Deleted Audios"
+    },
+    "topAudios": {
+      "title": "Top Listened Audios",
+      "listens": "{count} listens"
+    },
+    "unusedAudios": {
+      "title": "Unused Audios",
+      "description": "Audio files that have never been listened to. These may be test uploads or unused content.",
+      "found": "Found {count} unused audios",
+      "none": "All audios have been listened to at least once",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure you want to delete \"{name}\"? The audio will be moved to the deleted items.",
+      "createdBy": "by",
+      "unknown": "Unknown",
+      "public": "Public",
+      "private": "Private"
+    }
   }
 }
 

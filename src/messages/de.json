@@ -372,6 +372,7 @@
     "description": "Verwalte Benutzer und Systemeinstellungen",
     "tabs": {
       "ariaLabel": "Einstellungsbereiche",
+      "statistics": "Statistiken",
       "users": "Benutzer",
       "softDeleted": "Gelöschte Elemente",
       "system": "System",
@@ -528,5 +529,39 @@
     },
     "peakDay": "Höchste Aktivität: {date} mit {count} {count, plural, one {Wiedergabe} other {Wiedergaben}}",
     "createdAt": "Audio erstellt am {date}"
+  },
+  "AdminStatistics": {
+    "loading": "Statistiken werden geladen...",
+    "error": "Fehler beim Laden der Statistiken",
+    "stats": {
+      "users": "Benutzer gesamt",
+      "audios": "Aktive Audios",
+      "playlists": "Aktive Playlists",
+      "totalListens": "Wiedergaben gesamt",
+      "publicCount": "{count} öffentlich",
+      "recentListens": "{count} in den letzten 7 Tagen"
+    },
+    "storage": {
+      "title": "Speicher",
+      "totalFiles": "Dateien gesamt",
+      "totalSize": "Gesamtgröße",
+      "deletedAudios": "Gelöschte Audios"
+    },
+    "topAudios": {
+      "title": "Meistgehörte Audios",
+      "listens": "{count} Wiedergaben"
+    },
+    "unusedAudios": {
+      "title": "Ungenutzte Audios",
+      "description": "Audiodateien, die noch nie abgespielt wurden. Dies könnten Test-Uploads oder ungenutzter Inhalt sein.",
+      "found": "{count} ungenutzte Audios gefunden",
+      "none": "Alle Audios wurden mindestens einmal abgespielt",
+      "delete": "Löschen",
+      "confirmDelete": "Möchtest du \"{name}\" wirklich löschen? Das Audio wird in die gelöschten Elemente verschoben.",
+      "createdBy": "von",
+      "unknown": "Unbekannt",
+      "public": "Öffentlich",
+      "private": "Privat"
+    }
   }
 }
