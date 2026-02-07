@@ -1,32 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import { api } from "~/trpc/react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Spinner } from "@heroui/spinner";
 import { Chip } from "@heroui/chip";
+import { Select, SelectItem } from "@heroui/select";
 import {
   Users,
   Music,
   ListMusic,
   Headphones,
-  HardDrive,
   AlertTriangle,
   Trash2,
   TrendingUp,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-}
+const TIME_RANGE_OPTIONS = [
+  { value: "7", label: "7 days" },
+  { value: "14", label: "14 days" },
+  { value: "30", label: "30 days" },
+  { value: "60", label: "60 days" },
+  { value: "90", label: "90 days" },
+  { value: "180", label: "180 days" },
+  { value: "365", label: "1 year" },
+];
 
 export default function StatisticsSection() {
   const t = useTranslations("AdminStatistics");
+  const [daysInactive, setDaysInactive] = useState(30);
 
   const {
     data: stats,
@@ -35,20 +39,20 @@ export default function StatisticsSection() {
   } = api.admin.statistics.getOverallStatistics.useQuery();
 
   const {
-    data: unusedAudios,
-    isLoading: unusedLoading,
-    refetch: refetchUnused,
-  } = api.admin.statistics.getUnusedAudios.useQuery();
+    data: inactiveAudios,
+    isLoading: inactiveLoading,
+    refetch: refetchInactive,
+  } = api.admin.statistics.getInactiveAudios.useQuery({ daysInactive });
 
   const softDeleteMutation = api.admin.statistics.softDeleteAudio.useMutation({
     onSuccess: () => {
-      void refetchUnused();
+      void refetchInactive();
       void refetchStats();
     },
   });
 
   const handleSoftDelete = (id: string, name: string) => {
-    if (confirm(t("unusedAudios.confirmDelete", { name }))) {
+    if (confirm(t("inactiveAudios.confirmDelete", { name }))) {
       softDeleteMutation.mutate({ id });
     }
   };
@@ -137,30 +141,6 @@ export default function StatisticsSection() {
         </Card>
       </div>
 
-      {/* Storage Stats */}
-      <Card>
-        <CardHeader className="flex flex-row items-center gap-2">
-          <HardDrive size={20} />
-          <h3 className="text-lg font-semibold">{t("storage.title")}</h3>
-        </CardHeader>
-        <CardBody>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div>
-              <p className="text-sm text-default-500">{t("storage.totalFiles")}</p>
-              <p className="text-xl font-semibold">{stats.storage.totalFiles}</p>
-            </div>
-            <div>
-              <p className="text-sm text-default-500">{t("storage.totalSize")}</p>
-              <p className="text-xl font-semibold">{formatBytes(stats.storage.totalSizeBytes)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-default-500">{t("storage.deletedAudios")}</p>
-              <p className="text-xl font-semibold">{stats.audios.deleted}</p>
-            </div>
-          </div>
-        </CardBody>
-      </Card>
-
       {/* Top Audios */}
       {stats.topAudios.length > 0 && (
         <Card>
@@ -179,7 +159,13 @@ export default function StatisticsSection() {
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">
                       {index + 1}
                     </span>
-                    <span className="font-medium">{audio.name}</span>
+                    <div>
+                      <span className="font-medium">{audio.name}</span>
+                      <p className="text-xs text-default-400">
+                        {t("topAudios.createdBy")}{" "}
+                        {audio.createdBy.name ?? audio.createdBy.email ?? t("topAudios.unknown")}
+                      </p>
+                    </div>
                   </div>
                   <Chip size="sm" variant="flat" color="primary">
                     {t("topAudios.listens", { count: audio.listens })}
@@ -191,27 +177,45 @@ export default function StatisticsSection() {
         </Card>
       )}
 
-      {/* Unused Audios */}
+      {/* Inactive Audios */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle size={20} className="text-warning" />
-            <h3 className="text-lg font-semibold">{t("unusedAudios.title")}</h3>
+            <h3 className="text-lg font-semibold">{t("inactiveAudios.title")}</h3>
           </div>
+          <Select
+            size="sm"
+            className="w-40"
+            selectedKeys={[String(daysInactive)]}
+            onSelectionChange={(keys) => {
+              const value = Array.from(keys)[0];
+              if (value) setDaysInactive(Number(value));
+            }}
+            aria-label={t("inactiveAudios.timeRange")}
+          >
+            {TIME_RANGE_OPTIONS.map((option) => (
+              <SelectItem key={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </Select>
         </CardHeader>
         <CardBody>
-          <p className="mb-4 text-sm text-default-500">{t("unusedAudios.description")}</p>
+          <p className="mb-4 text-sm text-default-500">
+            {t("inactiveAudios.description", { days: daysInactive })}
+          </p>
 
-          {unusedLoading ? (
+          {inactiveLoading ? (
             <div className="flex items-center justify-center py-8">
               <Spinner size="sm" />
             </div>
-          ) : unusedAudios && unusedAudios.length > 0 ? (
+          ) : inactiveAudios && inactiveAudios.length > 0 ? (
             <div className="space-y-2">
               <p className="mb-4 text-sm">
-                {t("unusedAudios.found", { count: unusedAudios.length })}
+                {t("inactiveAudios.found", { count: inactiveAudios.length })}
               </p>
-              {unusedAudios.map((audio) => (
+              {inactiveAudios.map((audio) => (
                 <div
                   key={audio.id}
                   className="flex items-center justify-between rounded-lg border border-warning/30 bg-warning/5 p-3"
@@ -221,15 +225,26 @@ export default function StatisticsSection() {
                     <div>
                       <p className="font-medium">{audio.name}</p>
                       <p className="text-xs text-default-400">
-                        {audio.originalFileName} • {t("unusedAudios.createdBy")}{" "}
-                        {audio.createdBy.name ?? audio.createdBy.email ?? t("unusedAudios.unknown")} •{" "}
-                        {new Date(audio.createdAt).toLocaleDateString()}
+                        {t("inactiveAudios.createdBy")}{" "}
+                        {audio.createdBy.name ?? audio.createdBy.email ?? t("inactiveAudios.unknown")} •{" "}
+                        {audio.totalListens > 0 ? (
+                          <>
+                            {t("inactiveAudios.lastListened", {
+                              date: new Date(audio.lastListenedAt!).toLocaleDateString(),
+                            })}
+                          </>
+                        ) : (
+                          t("inactiveAudios.neverListened")
+                        )}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Chip size="sm" variant="flat" color={audio.isPublic ? "success" : "default"}>
-                      {audio.isPublic ? t("unusedAudios.public") : t("unusedAudios.private")}
+                      {audio.isPublic ? t("inactiveAudios.public") : t("inactiveAudios.private")}
+                    </Chip>
+                    <Chip size="sm" variant="flat" color="primary">
+                      {t("inactiveAudios.listens", { count: audio.totalListens })}
                     </Chip>
                     <Button
                       color="danger"
@@ -242,7 +257,7 @@ export default function StatisticsSection() {
                         softDeleteMutation.variables?.id === audio.id
                       }
                     >
-                      {t("unusedAudios.delete")}
+                      {t("inactiveAudios.delete")}
                     </Button>
                   </div>
                 </div>
@@ -251,7 +266,7 @@ export default function StatisticsSection() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Music className="mb-2 text-success" size={32} />
-              <p className="text-success">{t("unusedAudios.none")}</p>
+              <p className="text-success">{t("inactiveAudios.none", { days: daysInactive })}</p>
             </div>
           )}
         </CardBody>

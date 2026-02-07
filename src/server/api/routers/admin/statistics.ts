@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { requireAdmin } from "./utils";
-import { readdir, stat } from "fs/promises";
-import path from "path";
 
 export const statisticsRouter = createTRPCRouter({
   getOverallStatistics: protectedProcedure.query(async ({ ctx }) => {
@@ -44,12 +42,18 @@ export const statisticsRouter = createTRPCRouter({
       }),
     ]);
 
-    // Get top listened audios
+    // Get top listened audios with creator info
     const topAudios = await ctx.db.audio.findMany({
       where: { deletedAt: null },
       select: {
         id: true,
         name: true,
+        createdBy: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
         _count: {
           select: { listenRecords: true },
         },
@@ -59,27 +63,6 @@ export const statisticsRouter = createTRPCRouter({
       },
       take: 5,
     });
-
-    // Get storage stats
-    let storageStats = { totalFiles: 0, totalSizeBytes: 0 };
-    try {
-      const uploadsDir = path.join(process.cwd(), "data", "uploads");
-      const files = await readdir(uploadsDir);
-      let totalSize = 0;
-      for (const file of files) {
-        try {
-          const fileStat = await stat(path.join(uploadsDir, file));
-          if (fileStat.isFile()) {
-            totalSize += fileStat.size;
-          }
-        } catch {
-          // Skip files that can't be stat'd
-        }
-      }
-      storageStats = { totalFiles: files.length, totalSizeBytes: totalSize };
-    } catch {
-      // Directory doesn't exist or can't be read
-    }
 
     return {
       users: {
@@ -106,42 +89,73 @@ export const statisticsRouter = createTRPCRouter({
         id: audio.id,
         name: audio.name,
         listens: audio._count.listenRecords,
+        createdBy: audio.createdBy,
       })),
-      storage: storageStats,
     };
   }),
 
-  getUnusedAudios: protectedProcedure.query(async ({ ctx }) => {
-    requireAdmin(ctx.session);
+  getInactiveAudios: protectedProcedure
+    .input(z.object({ daysInactive: z.number().min(1).default(30) }))
+    .query(async ({ ctx, input }) => {
+      requireAdmin(ctx.session);
 
-    // Get audios with 0 listens that are not deleted
-    const unusedAudios = await ctx.db.audio.findMany({
-      where: {
-        deletedAt: null,
-        listenRecords: {
-          none: {},
+      const cutoffDate = new Date(Date.now() - input.daysInactive * 24 * 60 * 60 * 1000);
+
+      // Get audios that have not been listened to in the specified time range
+      // This includes audios with no listens OR audios whose last listen was before cutoff
+      const inactiveAudios = await ctx.db.audio.findMany({
+        where: {
+          deletedAt: null,
+          OR: [
+            // Audios with no listen records at all
+            { listenRecords: { none: {} } },
+            // Audios whose most recent listen is before the cutoff date
+            {
+              listenRecords: {
+                every: {
+                  listenedAt: { lt: cutoffDate },
+                },
+              },
+            },
+          ],
         },
-      },
-      select: {
-        id: true,
-        name: true,
-        originalFileName: true,
-        createdAt: true,
-        isPublic: true,
-        createdBy: {
-          select: {
-            name: true,
-            email: true,
+        select: {
+          id: true,
+          name: true,
+          originalFileName: true,
+          createdAt: true,
+          isPublic: true,
+          createdBy: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+          listenRecords: {
+            orderBy: { listenedAt: "desc" },
+            take: 1,
+            select: { listenedAt: true },
+          },
+          _count: {
+            select: { listenRecords: true },
           },
         },
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
 
-    return unusedAudios;
-  }),
+      return inactiveAudios.map((audio) => ({
+        id: audio.id,
+        name: audio.name,
+        originalFileName: audio.originalFileName,
+        createdAt: audio.createdAt,
+        isPublic: audio.isPublic,
+        createdBy: audio.createdBy,
+        totalListens: audio._count.listenRecords,
+        lastListenedAt: audio.listenRecords[0]?.listenedAt ?? null,
+      }));
+    }),
 
   softDeleteAudio: protectedProcedure
     .input(z.object({ id: z.string() }))

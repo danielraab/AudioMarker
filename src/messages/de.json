@@ -541,27 +541,27 @@
       "publicCount": "{count} öffentlich",
       "recentListens": "{count} in den letzten 7 Tagen"
     },
-    "storage": {
-      "title": "Speicher",
-      "totalFiles": "Dateien gesamt",
-      "totalSize": "Gesamtgröße",
-      "deletedAudios": "Gelöschte Audios"
-    },
     "topAudios": {
       "title": "Meistgehörte Audios",
-      "listens": "{count} Wiedergaben"
+      "listens": "{count} Wiedergaben",
+      "createdBy": "von",
+      "unknown": "Unbekannt"
     },
-    "unusedAudios": {
-      "title": "Ungenutzte Audios",
-      "description": "Audiodateien, die noch nie abgespielt wurden. Dies könnten Test-Uploads oder ungenutzter Inhalt sein.",
-      "found": "{count} ungenutzte Audios gefunden",
-      "none": "Alle Audios wurden mindestens einmal abgespielt",
+    "inactiveAudios": {
+      "title": "Inaktive Audios",
+      "description": "Audios, die in den letzten {days} Tagen nicht abgespielt wurden.",
+      "timeRange": "Zeitraum",
+      "found": "{count} inaktive Audios gefunden",
+      "none": "Alle Audios wurden in den letzten {days} Tagen abgespielt",
       "delete": "Löschen",
       "confirmDelete": "Möchtest du \"{name}\" wirklich löschen? Das Audio wird in die gelöschten Elemente verschoben.",
       "createdBy": "von",
       "unknown": "Unbekannt",
       "public": "Öffentlich",
-      "private": "Privat"
+      "private": "Privat",
+      "listens": "{count} Wiedergaben",
+      "lastListened": "Zuletzt gehört am {date}",
+      "neverListened": "Nie gehört"
     }
   }
 }
