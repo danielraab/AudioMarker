@@ -140,6 +140,7 @@
     "copyPlayLink": "Wiedergabe-Link kopieren",
     "copied": "Kopiert!",
     "edit": "Bearbeiten",
+    "statistics": "Statistiken",
     "addToPlaylist": "Zur Playlist hinzufügen",
     "delete": "Löschen"
   },
@@ -498,5 +499,34 @@
       "emailRequired": "E-Mail ist erforderlich",
       "emailInvalid": "Ungültige E-Mail-Adresse"
     }
+  },
+  "AudioStatistics": {
+    "title": "Statistiken - {name}",
+    "subtitle": "Verfolge die Wiedergabe-Aktivität für deine Audiodatei",
+    "actions": {
+      "listen": "Anhören",
+      "edit": "Bearbeiten"
+    },
+    "periodSelector": {
+      "label": "Zeitraum",
+      "last7Days": "Letzte 7 Tage",
+      "last14Days": "Letzte 14 Tage",
+      "last30Days": "Letzte 30 Tage",
+      "last90Days": "Letzte 90 Tage",
+      "lastYear": "Letztes Jahr"
+    },
+    "stats": {
+      "totalListens": "Gesamtwiedergaben",
+      "periodListens": "Wiedergaben ({days} Tage)",
+      "avgPerDay": "Durchschn. pro Tag"
+    },
+    "chart": {
+      "title": "Wiedergabe-Aktivität",
+      "subtitle": "Tägliche Wiedergaben der letzten {days} Tage",
+      "noData": "Keine Wiedergabe-Aktivität in diesem Zeitraum",
+      "tooltipListens": "{count} {count, plural, one {Wiedergabe} other {Wiedergaben}}"
+    },
+    "peakDay": "Höchste Aktivität: {date} mit {count} {count, plural, one {Wiedergabe} other {Wiedergaben}}",
+    "createdAt": "Audio erstellt am {date}"
   }
 }

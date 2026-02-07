@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, useDisclosure } from "@heroui/react";
-import { MoreVertical, Play, Edit, Trash2, Link2, Check, ListMusic } from "lucide-react";
+import { MoreVertical, Play, Edit, Trash2, Link2, Check, ListMusic, BarChart3 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { AddToPlaylistModal } from "./AddToPlaylistModal";
 import { useTranslations } from "next-intl";
@@ -71,6 +71,15 @@ export function AudioActionsDropdown({
           color="primary"
         >
           {t('edit')}
+        </DropdownItem>
+        <DropdownItem
+          key="statistics"
+          startContent={<BarChart3 size={16} />}
+          href={`/audios/${audioId}/statistics`}
+          className="text-warning"
+          color="warning"
+        >
+          {t('statistics')}
         </DropdownItem>
         <DropdownItem
           key="add-to-playlist"
