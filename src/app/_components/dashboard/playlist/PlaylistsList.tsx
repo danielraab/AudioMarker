@@ -1,5 +1,5 @@
 import { auth } from "~/server/auth";
-import { PlaylistListItem } from "~/app/_components/dashboard/playlist/PlaylistListItem";
+import { PlaylistsListClient } from "~/app/_components/dashboard/playlist/PlaylistsListClient";
 import { api } from "~/trpc/server";
 import { ListMusic } from "lucide-react";
 import { getTranslations } from "next-intl/server";
@@ -23,21 +23,7 @@ export default async function PlaylistsList() {
           <p className="text-small text-default-500">{t("description", { playlistCount })}</p>
         </div>
       </header>
-      {(!playlists || playlists.length === 0) && (
-        <div className="flex items-center justify-center py-8">
-          <p className="text-default-500">{t("empty")}</p>
-        </div>
-      )}
-      {playlistCount > 0 && (
-        <div className="space-y-4">
-          {playlists.map((playlist) => (
-            <PlaylistListItem
-              key={playlist.id}
-              playlist={playlist}
-            />
-          ))}
-        </div>
-      )}
+      <PlaylistsListClient playlists={playlists} />
     </section>
   );
 }

@@ -1,5 +1,5 @@
 import { auth } from "~/server/auth";
-import { AudioListItem } from "~/app/_components/dashboard/audio/AudioListItem";
+import { AudioFilesListClient } from "~/app/_components/dashboard/audio/AudioFilesListClient";
 import { api } from "~/trpc/server";
 import { Music4 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
@@ -23,21 +23,7 @@ export default async function AudioFilesList() {
           <p className="text-small text-default-500">{t("description", { audioCount })}</p>
         </div>
       </header>
-      { audioCount === 0 &&
-        <div className="flex items-center justify-center py-8">
-          <p className="text-default-500">{t("empty")}</p>
-        </div>
-      }
-      { audioCount > 0 &&
-        <div className="space-y-4">
-          {audios.map((audio) => (
-            <AudioListItem
-              key={audio.id}
-              audio={audio}
-            />
-          ))}
-        </div>
-      }
+      <AudioFilesListClient audios={audios} />
     </section>
   );
 }

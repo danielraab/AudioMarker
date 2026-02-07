@@ -37,12 +37,16 @@
   "PlaylistsList": {
     "title": "Deine Playlists",
     "description": "Organisiere deine Audiodateien in Playlists ({playlistCount})",
-    "empty": "Noch keine Playlists erstellt. Erstelle deine erste Playlist!"
+    "empty": "Noch keine Playlists erstellt. Erstelle deine erste Playlist!",
+    "searchPlaceholder": "Playlists suchen...",
+    "noResults": "Keine Playlists entsprechen deiner Suche."
   },
   "AudioFilesList": {
     "title": "Deine Audiodateien",
     "description": "Verwalte deine hochgeladenen Audiodateien ({audioCount})",
-    "empty": "Noch keine Audiodateien hochgeladen. Lade oben deine erste Audiodatei hoch!"
+    "empty": "Noch keine Audiodateien hochgeladen. Lade oben deine erste Audiodatei hoch!",
+    "searchPlaceholder": "Audiodateien suchen...",
+    "noResults": "Keine Audiodateien entsprechen deiner Suche."
   },
   "VisibilityBanner": {
     "public": "Dieses Element ist öffentlich und kann von jedem mit dem Link aufgerufen werden.",
