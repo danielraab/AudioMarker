@@ -13,16 +13,18 @@ import { useTranslations } from 'next-intl';
 
 interface ListenChartProps {
   data: { date: string; listens: number }[];
+  translationNamespace?: 'AudioStatistics' | 'PlaylistStatistics';
 }
 
 interface CustomTooltipProps {
   active?: boolean;
   payload?: Array<{ value: number }>;
   label?: string;
+  translationNamespace: 'AudioStatistics' | 'PlaylistStatistics';
 }
 
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
-  const t = useTranslations('AudioStatistics');
+function CustomTooltip({ active, payload, label, translationNamespace }: CustomTooltipProps) {
+  const t = useTranslations(translationNamespace);
   
   if (active && payload?.length && label) {
     const date = new Date(label);
@@ -45,7 +47,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   return null;
 }
 
-export function ListenChart({ data }: ListenChartProps) {
+export function ListenChart({ data, translationNamespace = 'AudioStatistics' }: ListenChartProps) {
   // Format date labels based on data length
   const formatXAxis = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -99,7 +101,7 @@ export function ListenChart({ data }: ListenChartProps) {
             tickLine={false}
             width={40}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip translationNamespace={translationNamespace} />} />
           <Area
             type="monotone"
             dataKey="listens"

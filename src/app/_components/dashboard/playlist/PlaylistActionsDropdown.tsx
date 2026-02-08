@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
-import { MoreVertical, Edit, Trash2, Play, Check, Link2 } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Play, Check, Link2, BarChart3 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -70,6 +70,15 @@ export function PlaylistActionsDropdown({
           color="primary"
         >
           {t('edit')}
+        </DropdownItem>
+        <DropdownItem
+          key="statistics"
+          startContent={<BarChart3 size={16} />}
+          href={`/playlists/${playlistId}/statistics`}
+          className="text-warning"
+          color="warning"
+        >
+          {t('statistics')}
         </DropdownItem>
         <DropdownItem
           key="delete"

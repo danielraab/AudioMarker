@@ -344,6 +344,7 @@
     "copyListenLink": "Copy listen link",
     "copied": "Copied",
     "edit": "Edit",
+    "statistics": "Statistics",
     "delete": "Delete"
   },
   "CreatePlaylistForm": {
@@ -527,6 +528,35 @@
     },
     "peakDay": "Peak activity: {date} with {count} {count, plural, one {listen} other {listens}}",
     "createdAt": "Audio created on {date}"
+  },
+  "PlaylistStatistics": {
+    "title": "Statistics - {name}",
+    "subtitle": "Track listen activity for your playlist",
+    "actions": {
+      "listen": "Listen",
+      "edit": "Edit"
+    },
+    "periodSelector": {
+      "label": "Time Period",
+      "last7Days": "Last 7 days",
+      "last14Days": "Last 14 days",
+      "last30Days": "Last 30 days",
+      "last90Days": "Last 90 days",
+      "lastYear": "Last year"
+    },
+    "stats": {
+      "totalListens": "Total Listens",
+      "periodListens": "Listens ({days} days)",
+      "avgPerDay": "Avg. per Day"
+    },
+    "chart": {
+      "title": "Listen Activity",
+      "subtitle": "Daily listens over the last {days} days",
+      "noData": "No listen activity in this period",
+      "tooltipListens": "{count} {count, plural, one {listen} other {listens}}"
+    },
+    "peakDay": "Peak activity: {date} with {count} {count, plural, one {listen} other {listens}}",
+    "createdAt": "Playlist created on {date}"
   },
   "AdminStatistics": {
     "loading": "Loading statistics...",

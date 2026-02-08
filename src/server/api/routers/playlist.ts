@@ -636,4 +636,88 @@ export const playlistRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  getListenStatistics: protectedProcedure
+    .input(z.object({ 
+      id: z.string(),
+      days: z.number().min(7).max(365).default(30)
+    }))
+    .query(async ({ ctx, input }) => {
+      // Verify user owns this playlist
+      const playlist = await ctx.db.playlist.findUnique({
+        where: { 
+          id: input.id,
+          createdById: ctx.session.user.id,
+          deletedAt: null 
+        },
+        select: { 
+          id: true, 
+          name: true,
+          createdAt: true
+        },
+      });
+
+      if (!playlist) {
+        throw new Error("Playlist not found");
+      }
+
+      // Get the date range
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+      startDate.setHours(0, 0, 0, 0);
+
+      // Fetch all listen records within the date range
+      const listenRecords = await ctx.db.playlistListenRecord.findMany({
+        where: {
+          playlistId: input.id,
+          listenedAt: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        select: {
+          listenedAt: true,
+        },
+        orderBy: {
+          listenedAt: 'asc',
+        },
+      });
+
+      // Get total listen count
+      const totalListens = await ctx.db.playlistListenRecord.count({
+        where: { playlistId: input.id },
+      });
+
+      // Group by date
+      const dailyStats: Record<string, number> = {};
+      
+      // Initialize all dates in range with 0
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateKey = d.toISOString().split('T')[0]!;
+        dailyStats[dateKey] = 0;
+      }
+
+      // Count listens per day
+      for (const record of listenRecords) {
+        const dateKey = record.listenedAt.toISOString().split('T')[0]!;
+        if (dailyStats[dateKey] !== undefined) {
+          dailyStats[dateKey]++;
+        }
+      }
+
+      // Convert to array format for chart
+      const chartData = Object.entries(dailyStats).map(([date, count]) => ({
+        date,
+        listens: count,
+      }));
+
+      return {
+        playlistName: playlist.name,
+        playlistCreatedAt: playlist.createdAt,
+        totalListens,
+        periodListens: listenRecords.length,
+        dailyStats: chartData,
+      };
+    }),
 });
