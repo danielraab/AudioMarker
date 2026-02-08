@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.6.2] - 2026-02-08
+
+### Fixed
+
+- **Playback Rate**: Enhanced playback rate adjustment to maintain playback position when changing speed
+
 ## [0.6.1] - 2026-02-08
 
 ### Added
