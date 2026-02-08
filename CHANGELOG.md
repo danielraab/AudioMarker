@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.7.0] - 2026-02-08
+
+### Added
+
+- **Playlist Statistics**: Added detailed playlist statistics feature showing listen data per audio with UI components
+- **Database Seeding Script**: Added seed script for development and testing with usage instructions in README
+
+### Changed
+
+- **Tabs Component**: Enhanced Tabs component with custom class names for improved styling
+- **Listen Data Normalization**: Normalized listenedAt column format in migration and added inactive audios count logging
+
 ## [0.6.0] - 2026-02-07
 
 ### Added
