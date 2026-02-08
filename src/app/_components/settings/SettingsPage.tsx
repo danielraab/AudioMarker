@@ -17,7 +17,14 @@ export default function SettingsPage() {
         <p className="mt-2 text-default-500">{t('description')}</p>
       </div>
 
-      <Tabs aria-label={t('tabs.ariaLabel')} variant="underlined">
+      <Tabs
+        aria-label={t('tabs.ariaLabel')}
+        variant="underlined"
+        classNames={{
+          base: "w-full",
+          tabList: "w-full max-w-full overflow-x-scroll scrollbar-hide flex-nowrap",
+        }}
+      >
         <Tab key="statistics" title={t('tabs.statistics')}>
           <div className="py-4">
             <StatisticsSection />
