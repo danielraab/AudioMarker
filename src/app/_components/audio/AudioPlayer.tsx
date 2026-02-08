@@ -331,7 +331,27 @@ export default function AudioPlayer({
     if (typeof rate === 'number') {
       setPlaybackRate(rate);
       if (wavesurfer.current) {
+        // Store current state before changing rate
+        const wasPlaying = wavesurfer.current.isPlaying();
+        const currentTime = wavesurfer.current.getCurrentTime();
+        const duration = wavesurfer.current.getDuration();
+        
+        // Pause to prevent cursor desync with WebAudio backend
+        if (wasPlaying) {
+          wavesurfer.current.pause();
+        }
+        
         wavesurfer.current.setPlaybackRate(rate);
+        
+        // Restore position to prevent cursor jump
+        if (duration > 0) {
+          wavesurfer.current.seekTo(currentTime / duration);
+        }
+        
+        // Resume playback if it was playing
+        if (wasPlaying) {
+          void wavesurfer.current.play();
+        }
       }
     }
   };
