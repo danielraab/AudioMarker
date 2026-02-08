@@ -145,6 +145,9 @@ export const statisticsRouter = createTRPCRouter({
         },
       });
 
+      console.log(`Found ${inactiveAudios.length} inactive audios (no listens or last listen before ${cutoffDate.toISOString()})`); 
+    
+
       return inactiveAudios.map((audio) => ({
         id: audio.id,
         name: audio.name,
