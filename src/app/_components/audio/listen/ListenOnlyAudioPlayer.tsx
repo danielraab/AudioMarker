@@ -7,9 +7,11 @@ import type { AudioMarker } from '~/types/Audio';
 import { api } from "~/trpc/react";
 import StoredMarkers from './StoredMarkers';
 import { useIncrementListenCount } from '~/lib/hooks/useIncrementListenCount';
+import { useOfflineAudioCache, useNetworkStatus } from '~/lib/hooks/useOfflineCache';
 import { AutoplayCountdownModal } from './AutoplayCountdownModal';
 import { PlaylistNavigation } from './PlaylistNavigation';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Download, CheckCircle, WifiOff } from 'lucide-react';
 
 interface AudioPlayerWithMarkersProps {
   audioUrl: string;
@@ -17,6 +19,9 @@ interface AudioPlayerWithMarkersProps {
   audioDescription?: string | null;
   audioReadOnlyToken: string;
   audioId: string;
+  audioOriginalFileName?: string;
+  audioIsPublic?: boolean;
+  audioCreatedAt?: Date | string;
 }
 
 export default function ListenOnlyAudioPlayer({ 
@@ -24,7 +29,10 @@ export default function ListenOnlyAudioPlayer({
   audioName,
   audioDescription,
   audioReadOnlyToken,
-  audioId 
+  audioId,
+  audioOriginalFileName = '',
+  audioIsPublic = false,
+  audioCreatedAt,
 }: AudioPlayerWithMarkersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,6 +53,24 @@ export default function ListenOnlyAudioPlayer({
   const [autoplayEnabled, setAutoplayEnabled] = useState(autoplayParam);
   const [editingMarkerId, setEditingMarkerId] = useState<string | null>(null);
   const [updateBrowserMarker, setUpdateBrowserMarker] = useState<((markerId: string, updates: { timestamp: number; endTimestamp?: number | null }) => void) | null>(null);
+
+  // Network status for offline indicator
+  const { isOffline } = useNetworkStatus();
+
+  // Offline caching for audio
+  const audioDataForCache = useMemo(() => ({
+    id: audioId,
+    name: audioName,
+    description: audioDescription,
+    originalFileName: audioOriginalFileName,
+    isPublic: audioIsPublic,
+    createdAt: audioCreatedAt ?? new Date().toISOString(),
+  }), [audioId, audioName, audioDescription, audioOriginalFileName, audioIsPublic, audioCreatedAt]);
+
+  const { isAvailableOffline, isCaching, cacheForOffline } = useOfflineAudioCache(
+    audioDataForCache,
+    storedMarkers
+  );
 
   // Fetch playlist data if autoplay is enabled
   const { data: playlist } = api.playlist.getPublicPlaylistById.useQuery(
@@ -194,6 +220,16 @@ export default function ListenOnlyAudioPlayer({
 
   return (
     <div className="w-full flex flex-col items-center space-y-6">
+      {/* Offline Indicator */}
+      {isOffline && (
+        <div className="w-full max-w-3xl px-4">
+          <div className="flex items-center gap-2 px-4 py-2 bg-warning/10 border border-warning/20 rounded-lg text-warning text-sm">
+            <WifiOff size={16} />
+            <span>You&apos;re offline. Playing from cached content.</span>
+          </div>
+        </div>
+      )}
+
       {/* Playlist Navigation */}
       {playlist && playlistId && (
         <div className="w-full max-w-3xl">
@@ -204,6 +240,41 @@ export default function ListenOnlyAudioPlayer({
             autoplayEnabled={autoplayEnabled}
             onAutoplayToggle={setAutoplayEnabled}
           />
+        </div>
+      )}
+
+      {/* Save for Offline Button */}
+      {!isOffline && (
+        <div className="w-full max-w-3xl flex justify-end px-4">
+          <button
+            onClick={cacheForOffline}
+            disabled={isCaching || isAvailableOffline}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+              isAvailableOffline
+                ? 'bg-success/10 text-success cursor-default'
+                : isCaching
+                ? 'bg-default-100 text-default-400 cursor-wait'
+                : 'bg-primary/10 text-primary hover:bg-primary/20'
+            }`}
+            title={isAvailableOffline ? 'Available offline' : 'Save for offline listening'}
+          >
+            {isAvailableOffline ? (
+              <>
+                <CheckCircle size={14} />
+                Saved Offline
+              </>
+            ) : isCaching ? (
+              <>
+                <Download size={14} className="animate-pulse" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Download size={14} />
+                Save Offline
+              </>
+            )}
+          </button>
         </div>
       )}
     

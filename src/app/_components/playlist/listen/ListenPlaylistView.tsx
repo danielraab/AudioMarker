@@ -1,13 +1,14 @@
 'use client';
 
 import { ListenPlaylistAudioItem } from "./ListenPlaylistAudioItem";
-import { Card, CardBody, Chip, Button } from "@heroui/react";
-import { Globe, User, ListMusic, PlayCircle } from "lucide-react";
+import { Card, CardBody, Chip, Button, Progress } from "@heroui/react";
+import { Globe, User, ListMusic, PlayCircle, Download, CheckCircle, WifiOff } from "lucide-react";
 import { formatTimeAgo } from "~/lib/time";
 import { notFound, useRouter } from "next/navigation";
 import type { PlaylistWithAudios } from "~/types/Playlist";
 import { api } from "~/trpc/react";
 import { useIncrementListenCount } from "~/lib/hooks/useIncrementListenCount";
+import { useOfflinePlaylistCache, useNetworkStatus } from "~/lib/hooks/useOfflineCache";
 import { useTranslations } from "next-intl";
 
 interface ListenPlaylistViewProps {
@@ -27,6 +28,15 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
     incrementMutation: incrementListenCount,
   });
 
+  // Network status and offline caching
+  const { isOffline } = useNetworkStatus();
+  const { 
+    isAvailableOffline, 
+    isCaching, 
+    cachingProgress, 
+    cachePlaylistForOffline 
+  } = useOfflinePlaylistCache(playlist);
+
   const t = useTranslations('ListenPlaylistView');
   const tPlaylist = useTranslations('PlaylistListItem');
 
@@ -43,6 +53,14 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
 
     return (
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Offline Indicator */}
+        {isOffline && (
+          <div className="flex items-center gap-2 px-4 py-2 bg-warning/10 border border-warning/20 rounded-lg text-warning text-sm">
+            <WifiOff size={16} />
+            <span>You&apos;re offline. Playing from cached content.</span>
+          </div>
+        )}
+
         {/* Playlist Header */}
         <Card className="shadow-sm">
           <CardBody className="gap-4">
@@ -68,9 +86,10 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
                 </div>
               </div>
               
-              {/* Autoplay Button */}
-              {playlist.audios.length > 0 && (
-                <div className="w-full sm:w-auto sm:flex-shrink-0">
+              {/* Action Buttons */}
+              <div className="w-full sm:w-auto sm:flex-shrink-0 flex flex-col gap-2">
+                {/* Autoplay Button */}
+                {playlist.audios.length > 0 && (
                   <Button
                     color="primary"
                     variant="flat"
@@ -81,9 +100,47 @@ export function ListenPlaylistView({ playlist }: ListenPlaylistViewProps) {
                   >
                     {t('autoplay.start')}
                   </Button>
-                </div>
-              )}
+                )}
+                
+                {/* Save Offline Button */}
+                {!isOffline && playlist.audios.length > 0 && (
+                  <Button
+                    color={isAvailableOffline ? "success" : "default"}
+                    variant="flat"
+                    startContent={
+                      isAvailableOffline ? (
+                        <CheckCircle size={18} />
+                      ) : isCaching ? (
+                        <Download size={18} className="animate-pulse" />
+                      ) : (
+                        <Download size={18} />
+                      )
+                    }
+                    onPress={cachePlaylistForOffline}
+                    isDisabled={isCaching || isAvailableOffline}
+                    size="sm"
+                    className="w-full sm:w-auto"
+                  >
+                    {isAvailableOffline 
+                      ? 'Saved Offline' 
+                      : isCaching 
+                      ? `Saving ${cachingProgress.current}/${cachingProgress.total}...`
+                      : 'Save All Offline'}
+                  </Button>
+                )}
+              </div>
             </div>
+            
+            {/* Caching Progress */}
+            {isCaching && cachingProgress.total > 0 && (
+              <Progress 
+                size="sm" 
+                value={(cachingProgress.current / cachingProgress.total) * 100}
+                color="primary"
+                className="mt-2"
+                aria-label="Caching progress"
+              />
+            )}
           </CardBody>
         </Card>
 

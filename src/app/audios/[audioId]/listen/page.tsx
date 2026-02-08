@@ -60,6 +60,9 @@ export default async function ListenPage({ params }: ListenPageProps) {
           audioDescription={audio.description}
           audioReadOnlyToken={audio.id}
           audioId={audio.id}
+          audioOriginalFileName={audio.originalFileName}
+          audioIsPublic={audio.isPublic}
+          audioCreatedAt={audio.createdAt}
         />
       </div>
     );

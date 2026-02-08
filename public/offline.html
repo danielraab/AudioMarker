@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Audio Marker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #e1e1e1;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 500px;
+    }
+    
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+      opacity: 0.9;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      color: #a0a0a0;
+    }
+    
+    .cached-content {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+      text-align: left;
+    }
+    
+    .cached-content h2 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #00d9ff;
+    }
+    
+    .cached-list {
+      list-style: none;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .cached-list li {
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .cached-list li a {
+      color: #00d9ff;
+      text-decoration: none;
+    }
+    
+    .cached-list li a:hover {
+      text-decoration: underline;
+    }
+    
+    .empty-message {
+      color: #666;
+      font-style: italic;
+    }
+    
+    .retry-btn {
+      background: #00d9ff;
+      color: #1a1a2e;
+      border: none;
+      padding: 12px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 217, 255, 0.3);
+    }
+    
+    .retry-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="#00d9ff"/>
+    </svg>
+    
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Don't worry - you can still access audio files you've listened to before!</p>
+    
+    <button class="retry-btn" onclick="window.location.reload()">Try Again</button>
+    
+    <div class="cached-content" id="cachedContent" style="display: none;">
+      <h2>📁 Available Offline</h2>
+      <ul class="cached-list" id="cachedList">
+        <li class="empty-message">Loading cached content...</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    // Request cached content list from service worker
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'GET_CACHED_CONTENT' });
+      
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'CACHED_CONTENT_LIST') {
+          const { listenPages, audioFiles } = event.data.data;
+          const container = document.getElementById('cachedContent');
+          const list = document.getElementById('cachedList');
+          
+          if (listenPages.length > 0) {
+            container.style.display = 'block';
+            list.innerHTML = '';
+            
+            listenPages.forEach((url) => {
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = url;
+              
+              // Extract readable name from URL
+              const urlPath = new URL(url).pathname;
+              const match = urlPath.match(/\/(audios|playlists)\/([^\/]+)\/listen/);
+              if (match) {
+                const type = match[1] === 'audios' ? '🎵 Audio' : '📋 Playlist';
+                a.textContent = `${type}: ${urlPath}`;
+              } else {
+                a.textContent = urlPath;
+              }
+              
+              li.appendChild(a);
+              list.appendChild(li);
+            });
+          } else {
+            list.innerHTML = '<li class="empty-message">No content cached yet. Visit some audio or playlist pages while online to make them available offline.</li>';
+            container.style.display = 'block';
+          }
+        }
+      });
+    }
+    
+    // Auto-retry connection
+    let retryCount = 0;
+    const maxRetries = 10;
+    
+    function checkConnection() {
+      if (navigator.onLine) {
+        window.location.reload();
+      } else if (retryCount < maxRetries) {
+        retryCount++;
+        setTimeout(checkConnection, 5000);
+      }
+    }
+    
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+    
+    setTimeout(checkConnection, 5000);
+  </script>
+</body>
+</html>
