@@ -1,5 +1,47 @@
 # Admin Scripts
 
+## Database Seeder
+
+This script fills the database with test data for development and testing purposes. All dates are relative to the script execution time.
+
+### Usage
+
+#### Development
+```bash
+npm run db:seed
+```
+
+#### Production (Docker Container)
+```bash
+# Execute inside the running container
+docker exec -it <container-name> npm run db:seed
+
+# Or using docker-compose
+docker-compose -f docker/docker-compose.yml exec audio-marker npm run db:seed
+```
+
+### What it creates
+
+- **Users**: 4 users (1 admin, 2 regular, 1 disabled)
+  - `admin@example.com` - Admin user
+  - `user1@example.com` - Regular user (John Doe)
+  - `user2@example.com` - Regular user (Jane Smith)
+  - `disabled@example.com` - Disabled user
+- **Audios**: 6 audio files (5 public, 1 private) with descriptions
+- **Markers**: Various point markers and section markers with different colors
+- **Playlists**: 3 playlists (2 public, 1 private) with descriptions
+- **Listen Records**: Randomly distributed listen statistics over the past 2 weeks
+- **Legal Information**: Impressum, Privacy Policy, and Terms of Service
+
+### Notes
+
+- The script uses `upsert` for most entities, so it's safe to run multiple times
+- Listen records are regenerated on each run (deleted and recreated)
+- Audio files are not created - only database records pointing to placeholder paths
+- Users still need to sign in via the configured auth provider
+
+---
+
 ## Migrate Audio Storage
 
 This script updates the database to migrate from full file paths to filenames only.

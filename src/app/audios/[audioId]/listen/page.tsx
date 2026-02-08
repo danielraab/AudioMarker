@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { auth } from "~/server/auth";
 import { VisibilityBanner } from "~/app/_components/global/VisibilityBanner";
 import { env } from "~/env";
-import { Edit } from "lucide-react";
+import { BarChart3, Edit } from "lucide-react";
 import Link from "next/link";
 
 interface ListenPageProps {
@@ -37,13 +37,20 @@ export default async function ListenPage({ params }: ListenPageProps) {
       <div className="w-full flex flex-col items-center mx-auto py-8">
         <VisibilityBanner isPublic={audio.isPublic} isCreator={isCreator} />
         {isCreator && (
-          <div className="w-full text-center max-w-4xl px-4 mb-4">
+          <div className="w-full flex justify-center gap-2 max-w-4xl px-4 mb-4">
             <Link
               href={`/audios/${audio.id}/edit`}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
             >
               <Edit size={18} />
               Edit Audio
+            </Link>
+            <Link
+              href={`/audios/${audioId}/statistics`}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-warning bg-warning/10 hover:bg-warning/20 rounded-lg transition-colors"
+            >
+              <BarChart3 size={18} />
+              Statistics
             </Link>
           </div>
         )}
