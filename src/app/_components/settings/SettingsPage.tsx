@@ -18,6 +18,7 @@ export default function SettingsPage() {
       </div>
 
       <Tabs
+        id="settings-tabs"
         aria-label={t('tabs.ariaLabel')}
         variant="underlined"
         classNames={{

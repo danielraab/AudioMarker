@@ -185,4 +185,47 @@ export const statisticsRouter = createTRPCRouter({
 
       return { success: true, id: input.id };
     }),
+
+  getListenTrends: protectedProcedure
+    .input(z.object({ days: z.number().min(1).max(365).default(30) }))
+    .query(async ({ ctx, input }) => {
+      requireAdmin(ctx.session);
+
+      const startDate = new Date(Date.now() - input.days * 24 * 60 * 60 * 1000);
+
+      const [audioListens, playlistListens] = await Promise.all([
+        ctx.db.audioListenRecord.findMany({
+          where: { listenedAt: { gte: startDate } },
+          select: { listenedAt: true },
+          orderBy: { listenedAt: "asc" },
+        }),
+        ctx.db.playlistListenRecord.findMany({
+          where: { listenedAt: { gte: startDate } },
+          select: { listenedAt: true },
+          orderBy: { listenedAt: "asc" },
+        }),
+      ]);
+
+      // Build a map with all dates in the range initialized to 0
+      const dateMap = new Map<string, { date: string; audioListens: number; playlistListens: number }>();
+      for (let i = 0; i < input.days; i++) {
+        const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+        const dateStr = date.toISOString().split("T")[0]!;
+        dateMap.set(dateStr, { date: dateStr, audioListens: 0, playlistListens: 0 });
+      }
+
+      for (const listen of audioListens) {
+        const dateStr = listen.listenedAt.toISOString().split("T")[0]!;
+        const entry = dateMap.get(dateStr);
+        if (entry) entry.audioListens++;
+      }
+
+      for (const listen of playlistListens) {
+        const dateStr = listen.listenedAt.toISOString().split("T")[0]!;
+        const entry = dateMap.get(dateStr);
+        if (entry) entry.playlistListens++;
+      }
+
+      return Array.from(dateMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+    }),
 });

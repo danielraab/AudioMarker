@@ -577,6 +577,14 @@
       "createdBy": "von",
       "unknown": "Unbekannt"
     },
+    "listenTrends": {
+      "title": "Wiedergabe-Trends",
+      "subtitle": "Tägliche Wiedergabe-Aktivität im gewählten Zeitraum",
+      "timeRange": "Zeitraum",
+      "audioListens": "Audio-Wiedergaben",
+      "playlistListens": "Playlist-Wiedergaben",
+      "noData": "Keine Wiedergabedaten für diesen Zeitraum verfügbar"
+    },
     "inactiveAudios": {
       "title": "Inaktive Audios",
       "description": "Audios, die in den letzten {days} Tagen nicht abgespielt wurden.",

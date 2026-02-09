@@ -575,6 +575,14 @@
       "createdBy": "by",
       "unknown": "Unknown"
     },
+    "listenTrends": {
+      "title": "Listen Trends",
+      "subtitle": "Daily listen activity over the selected period",
+      "timeRange": "Time period",
+      "audioListens": "Audio Listens",
+      "playlistListens": "Playlist Listens",
+      "noData": "No listen data available for this period"
+    },
     "inactiveAudios": {
       "title": "Inactive Audios",
       "description": "Audios that have not been listened to in the last {days} days.",
