@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.7.0] - 2026-02-09
+
+### Added
+
+- **Wake Lock**: Implemented wake lock functionality to prevent device from sleeping during audio playback for enhanced user experience
+- **Listen Trends**: Added listen trends and statistics components with comprehensive localization support
+
 ## [0.6.2] - 2026-02-08
 
 ### Fixed
