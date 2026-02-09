@@ -65,6 +65,7 @@ export default function AudioPlayer({
   const activeRegionId = useRef<string | null>(null);
   const markersRef = useRef<AudioMarker[]>(markers);
   const onMarkerUpdatedRef = useRef(onMarkerUpdated);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   // Keep refs in sync with props
   useEffect(() => {
@@ -470,6 +471,59 @@ export default function AudioPlayer({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isLoading, handlePlayPause]);
+
+  // Wake Lock: acquire when playing, release when paused/stopped
+  useEffect(() => {
+    const acquireWakeLock = async () => {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLockRef.current = await navigator.wakeLock.request('screen');
+        } catch (err) {
+          // Wake lock request can fail (e.g. low battery, background tab)
+          console.log('Wake Lock request failed:', err);
+        }
+      }
+    };
+
+    const releaseWakeLock = async () => {
+      if (wakeLockRef.current) {
+        try {
+          await wakeLockRef.current.release();
+        } catch {
+          // Ignore release errors
+        }
+        wakeLockRef.current = null;
+      }
+    };
+
+    if (isPlaying) {
+      void acquireWakeLock();
+    } else {
+      void releaseWakeLock();
+    }
+
+    return () => {
+      void releaseWakeLock();
+    };
+  }, [isPlaying]);
+
+  // Re-acquire wake lock when tab becomes visible again (browser releases it on visibility change)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isPlaying && 'wakeLock' in navigator) {
+        navigator.wakeLock.request('screen').then((lock) => {
+          wakeLockRef.current = lock;
+        }).catch(() => {
+          // Ignore - best effort
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isPlaying]);
 
   // Click outside to close volume slider
   useEffect(() => {
