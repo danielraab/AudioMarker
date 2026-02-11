@@ -44,7 +44,6 @@ export function PlaylistAudioItem({ playlistAudio, onRemove, isRemoving }: Playl
                   color="primary"
                   as="a"
                   href={`/audios/${audio.id}/listen`}
-                  target="_blank"
                   title={t('actions.play')}
                 >
                   <Play size={16} />

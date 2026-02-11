@@ -35,7 +35,6 @@ export function ListenPlaylistAudioItem({ playlistAudio, playlistId }: ListenPla
                 color="primary"
                 as="a"
                 href={`/audios/${audio.id}/listen?playlistId=${playlistId}`}
-                target="_blank"
                 title={t("actions.play")}
               >
                 <Play size={16} />
