@@ -280,6 +280,10 @@ export default function AudioPlayer({
         regionsPlugin.current.un('region-created', handleRegionCreated);
       }
       if (wavesurfer.current) {
+        // Stop playback before cleanup
+        if (wavesurfer.current.isPlaying()) {
+          wavesurfer.current.pause();
+        }
         wavesurfer.current.un('play', handlePlay);
         wavesurfer.current.un('pause', handlePause);
         wavesurfer.current.un('finish', handleFinish);
