@@ -653,7 +653,23 @@ export const playlistRouter = createTRPCRouter({
         select: { 
           id: true, 
           name: true,
-          createdAt: true
+          createdAt: true,
+          audios: {
+            where: {
+              audio: {
+                deletedAt: null,
+              },
+            },
+            orderBy: { order: "asc" },
+            select: {
+              audio: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -712,12 +728,84 @@ export const playlistRouter = createTRPCRouter({
         listens: count,
       }));
 
+      // Fetch listen statistics for all audios in the playlist
+      const audioIds = playlist.audios.map(pa => pa.audio.id);
+
+      const audioListenRecords = audioIds.length > 0
+        ? await ctx.db.audioListenRecord.findMany({
+            where: {
+              audioId: { in: audioIds },
+              listenedAt: {
+                gte: startDate,
+                lte: endDate,
+              },
+            },
+            select: {
+              audioId: true,
+              listenedAt: true,
+            },
+          })
+        : [];
+
+      const audioTotalListens = audioIds.length > 0
+        ? await ctx.db.audioListenRecord.groupBy({
+            by: ['audioId'],
+            where: { audioId: { in: audioIds } },
+            _count: { id: true },
+          })
+        : [];
+
+      const totalListensByAudio = new Map(
+        audioTotalListens.map(r => [r.audioId, r._count.id])
+      );
+
+      // Group audio listen records by audioId and date
+      const audioStatsMap = new Map<string, Record<string, number>>();
+      for (const audioId of audioIds) {
+        const daily: Record<string, number> = {};
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+          const dateKey = d.toISOString().split('T')[0]!;
+          daily[dateKey] = 0;
+        }
+        audioStatsMap.set(audioId, daily);
+      }
+
+      for (const record of audioListenRecords) {
+        const dateKey = record.listenedAt.toISOString().split('T')[0]!;
+        const daily = audioStatsMap.get(record.audioId);
+        if (daily?.[dateKey] !== undefined) {
+          daily[dateKey]++;
+        }
+      }
+
+      const audioStats = playlist.audios.map(pa => {
+        const daily = audioStatsMap.get(pa.audio.id) ?? {};
+        const periodListens = audioListenRecords.filter(r => r.audioId === pa.audio.id).length;
+        const dailyChart = Object.entries(daily).map(([date, count]) => ({
+          date,
+          listens: count,
+        }));
+        const maxListens = Math.max(0, ...dailyChart.map(d => d.listens));
+        const peakDay = dailyChart.find(d => d.listens === maxListens && maxListens > 0);
+
+        return {
+          audioId: pa.audio.id,
+          audioName: pa.audio.name,
+          totalListens: totalListensByAudio.get(pa.audio.id) ?? 0,
+          periodListens,
+          avgPerDay: periodListens > 0 ? Number((periodListens / input.days).toFixed(1)) : 0,
+          peakDay: peakDay ? { date: peakDay.date, listens: peakDay.listens } : null,
+          dailyStats: dailyChart,
+        };
+      });
+
       return {
         playlistName: playlist.name,
         playlistCreatedAt: playlist.createdAt,
         totalListens,
         periodListens: listenRecords.length,
         dailyStats: chartData,
+        audioStats,
       };
     }),
 });

@@ -556,7 +556,21 @@
       "tooltipListens": "{count} {count, plural, one {listen} other {listens}}"
     },
     "peakDay": "Peak activity: {date} with {count} {count, plural, one {listen} other {listens}}",
-    "createdAt": "Playlist created on {date}"
+    "createdAt": "Playlist created on {date}",
+    "audioStats": {
+      "totalAudios": "Audios in Playlist",
+      "totalAudioListens": "Total Audio Listens",
+      "periodAudioListens": "Audio Listens ({days} days)",
+      "mostListened": "Most listened audio: {name} with {count} {count, plural, one {listen} other {listens}}",
+      "breakdownTitle": "Per-Audio Statistics",
+      "breakdownSubtitle": "Listen activity for each audio in the playlist",
+      "chartTitle": "Audio Listen Activity",
+      "chartSubtitle": "Daily listens per audio over the last {days} days",
+      "total": "Total",
+      "period": "Last {days}d",
+      "avg": "Avg/day",
+      "audioPeakDay": "Peak: {date} with {count} {count, plural, one {listen} other {listens}}"
+    }
   },
   "AdminStatistics": {
     "loading": "Loading statistics...",
