@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.8.0] - 2026-02-11
+
+### Added
+
+- **Audio Statistics Multi-Chart**: Added audio statistics and multi-chart component for enhanced playlist statistics visualization
+
+### Fixed
+
+- **Audio Player Cleanup**: Ensured playback stops before cleanup in AudioPlayer component to prevent audio issues
+- **Audio Links**: Removed target="_blank" from audio play links in PlaylistAudioItem and ListenPlaylistAudioItem components
+
 ## [0.7.0] - 2026-02-09
 
 ### Added
